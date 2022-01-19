@@ -21,7 +21,6 @@
 
 using System;
 using System.Runtime.InteropServices;
-using InteropDotNet;
 using TesseractOCR.Enums;
 
 // ReSharper disable InconsistentNaming
