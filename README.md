@@ -1,4 +1,5 @@
-![image](https://user-images.githubusercontent.com/6692947/150184416-564bcffe-3080-4be0-b7a4-68a11af98687.png)
+![image](https://user-images.githubusercontent.com/6692947/150184680-1ae82d62-891e-4dbd-b52b-e975c57f9761.png)
+
 
 What is TesseractOCR
 =========
