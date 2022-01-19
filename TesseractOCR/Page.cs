@@ -30,6 +30,7 @@ using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
+
 // ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR
@@ -162,14 +163,14 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region GetHOCRText
+        #region GetHOcrText
         /// <summary>
         ///     Gets the page's content as an HOCR text.
         /// </summary>
         /// <param name="pageNum">The page number (zero based).</param>
         /// <param name="useXHtml">True to use XHTML Output, False to HTML Output</param>
         /// <returns>The OCR'd output as an HOCR text string.</returns>
-        public string GetHOCRText(int pageNum, bool useXHtml = false)
+        public string GetHOcrText(int pageNum, bool useXHtml = false)
         {
             // Why Not Use 'nameof(pageNum)' instead of '"pageNum"'
             Guard.Require("pageNum", pageNum >= 0, "Page number must be greater than or equal to zero (0).");
@@ -222,13 +223,13 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region GetLSTMBoxText
+        #region GetLstmBoxText
         /// <summary>
         ///     Gets the page's content as a LSTMBox text.
         /// </summary>
         /// <param name="pageNum">The page number (zero based).</param>
         /// <returns>The OCR'd output as a LSTMBox text string.</returns>
-        public string GetLSTMBoxText(int pageNum)
+        public string GetLstmBoxText(int pageNum)
         {
             Guard.Require("pageNum", pageNum >= 0, "Page number must be greater than or equal to zero (0).");
             Recognize();
@@ -250,12 +251,12 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region GetUNLVText
+        #region GetUnlvText
         /// <summary>
         ///     Gets the page's content as an UNLV text.
         /// </summary>
         /// <returns>The OCR'd output as an UNLV text string.</returns>
-        public string GetUNLVText()
+        public string GetUnlvText()
         {
             Recognize();
             return TessApi.BaseAPIGetUnlvText(Engine.Handle);

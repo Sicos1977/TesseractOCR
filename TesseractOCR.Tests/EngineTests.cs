@@ -316,7 +316,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetHOCRText(1, useXHtml));
+                        actualResult = NormalizeNewLine(page.GetHOcrText(1, useXHtml));
                     }
                 }
             }
@@ -454,7 +454,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetLSTMBoxText(1));
+                        actualResult = NormalizeNewLine(page.GetLstmBoxText(1));
                     }
                 }
             }
@@ -524,7 +524,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetUNLVText());
+                        actualResult = NormalizeNewLine(page.GetUnlvText());
                     }
                 }
             }
