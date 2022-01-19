@@ -25,22 +25,14 @@ namespace TesseractOCR.Internal
     {
         #region Constants
         private const string ErrorMessageFormat = "{0}. See {1} for details.";
-        private const string WikiUrlFormat = "https://github.com/charlesw/tesseract/wiki/Error-{0}";
+        private const string WikiPageUrl = "https://github.com/Sicos1977/TesseractOCR/wiki/How-to-use-the-iLogger-interface";
         #endregion
 
         #region Format
-        public static string Format(int errorNumber, string messageFormat, params object[] messageArgs)
+        public static string Format(string messageFormat, params object[] messageArgs)
         {
             var errorMessage = string.Format(messageFormat, messageArgs);
-            var errorPageUrl = ErrorPageUrl(errorNumber);
-            return string.Format(ErrorMessageFormat, errorMessage, errorPageUrl);
-        }
-        #endregion
-
-        #region ErrorPageUrl
-        public static string ErrorPageUrl(int errorNumber)
-        {
-            return string.Format(WikiUrlFormat, errorNumber);
+            return string.Format(ErrorMessageFormat, errorMessage, WikiPageUrl);
         }
         #endregion
     }

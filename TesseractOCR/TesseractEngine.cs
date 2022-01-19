@@ -274,7 +274,7 @@ namespace TesseractOCR
             DefaultPageSegMode = PageSegMode.Auto;
             _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
-            Initialise(datapath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
+            Initialize(datapath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
         }
         #endregion
 
@@ -379,34 +379,42 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region Initialise
-        private void Initialise(string datapath, string language, EngineMode engineMode,
+        #region Initialize
+        /// <summary>
+        ///     Initializes the Tesseract engine
+        /// </summary>
+        /// <param name="dataPath">The language data path (e.g. tessdata)</param>
+        /// <param name="language">The language to use</param>
+        /// <param name="engineMode"><see cref="EngineMode"/></param>
+        /// <param name="configFiles">The config files to load</param>
+        /// <param name="initialValues"></param>
+        /// <param name="setOnlyNonDebugVariables"></param>
+        /// <exception cref="TesseractException"></exception>
+        private void Initialize(string dataPath, string language, EngineMode engineMode,
             IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
         {
             Guard.RequireNotNullOrEmpty("language", language);
 
             // do some minor processing on datapath to fix some common errors (this basically mirrors what tesseract does as of 3.04)
-            if (!string.IsNullOrEmpty(datapath))
+            if (!string.IsNullOrEmpty(dataPath))
             {
                 // remove any excess whitespace
-                datapath = datapath.Trim();
+                dataPath = dataPath.Trim();
 
                 // remove any trialing '\' or '/' characters
-                if (datapath.EndsWith("\\", StringComparison.Ordinal) ||
-                    datapath.EndsWith("/", StringComparison.Ordinal))
-                    datapath = datapath.Substring(0, datapath.Length - 1);
+                if (dataPath.EndsWith("\\", StringComparison.Ordinal) ||
+                    dataPath.EndsWith("/", StringComparison.Ordinal))
+                    dataPath = dataPath.Substring(0, dataPath.Length - 1);
             }
 
-            if (TessApi.BaseApiInit(_handle, datapath, language, (int)engineMode, configFiles ?? new List<string>(),
-                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) != 0)
-            {
-                // Special case logic to handle cleaning up as init has already released the handle if it fails.
-                _handle = new HandleRef(this, IntPtr.Zero);
-                GC.SuppressFinalize(this);
+            if (TessApi.BaseApiInit(_handle, dataPath, language, (int)engineMode, configFiles ?? new List<string>(),
+                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == 0) return;
+            
+            // Special case logic to handle cleaning up as init has already released the handle if it fails.
+            _handle = new HandleRef(this, IntPtr.Zero);
+            GC.SuppressFinalize(this);
 
-                throw new TesseractException(ErrorMessage.Format(1, "Failed to initialise tesseract engine."));
-
-            }
+            throw new TesseractException(ErrorMessage.Format("Failed to initialise tesseract engine."));
         }
         #endregion
 
