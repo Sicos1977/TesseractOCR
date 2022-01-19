@@ -24,6 +24,8 @@ using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default
 }
 ```
 
+For more examples see https://github.com/Sicos1977/TesseractOCR/wiki/examples.md
+
 Installing via NuGet
 ====================
 
