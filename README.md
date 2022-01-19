@@ -8,6 +8,10 @@ It is a .NET wrapper for Tesseract 5.0.0 that is originally copied from Charles 
 
 How to use
 ============
+
+You need trained data in tessdata by language
+You can get them at https://github.com/tesseract-ocr/tessdata or https://github.com/tesseract-ocr/tessdata_fast
+
 ```c#
 using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
 {
