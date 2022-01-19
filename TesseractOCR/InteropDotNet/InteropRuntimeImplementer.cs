@@ -48,12 +48,18 @@ namespace TesseractOCR.InteropDotNet
             // TODO : Fix code to work with .NET 5 and higher
             // Error CS1061  'AppDomain' does not contain a definition for 'DefineDynamicAssembly' and no accessible extension method 'DefineDynamicAssembly' accepting a first argument of type 'AppDomain' could be found(are you missing a using directive or an assembly reference ?)	TesseractOCR(net5.0)   D:\Progsoft\_GitHub_\TesseractOCR\TesseractOCR\InteropDotNet\InteropRuntimeImplementer.cs   49  Active
 
+#if (NET48)
             var assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+#endif
+
+#if (NET5_0)
+            var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+#endif
+
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
 
             var typeName = GetImplementationTypeName(assemblyName, interfaceType);
-            var typeBuilder = moduleBuilder.DefineType(typeName, TypeAttributes.Public,
-                typeof(object), new[] { interfaceType });
+            var typeBuilder = moduleBuilder.DefineType(typeName, TypeAttributes.Public, typeof(object), new[] { interfaceType });
             var methods = BuildMethods(interfaceType);
 
             ImplementDelegates(assemblyName, moduleBuilder, methods);
@@ -64,9 +70,9 @@ namespace TesseractOCR.InteropDotNet
             var implementationType = typeBuilder.CreateType();
             return (T)Activator.CreateInstance(implementationType, LibraryLoader.Instance);
         }
-        #endregion
+#endregion
 
-        #region BuildMethods
+#region BuildMethods
         private static MethodItem[] BuildMethods(Type interfaceType)
         {
             var methodInfoArray = interfaceType.GetMethods();
@@ -83,18 +89,18 @@ namespace TesseractOCR.InteropDotNet
 
             return methods;
         }
-        #endregion
+#endregion
 
-        #region ImplementDelegates
+#region ImplementDelegates
         private static void ImplementDelegates(string assemblyName, ModuleBuilder moduleBuilder,
             IEnumerable<MethodItem> methods)
         {
             foreach (var method in methods)
                 method.DelegateType = ImplementMethodDelegate(assemblyName, moduleBuilder, method);
         }
-        #endregion
+#endregion
 
-        #region ImplementMethodDelegate
+#region ImplementMethodDelegate
         private static Type ImplementMethodDelegate(string assemblyName, ModuleBuilder moduleBuilder, MethodItem method)
         {
             // Const
@@ -161,9 +167,9 @@ namespace TesseractOCR.InteropDotNet
             // Create type
             return delegateBuilder.CreateType();
         }
-        #endregion
+#endregion
 
-        #region ImplementFields
+#region ImplementFields
         private static void ImplementFields(TypeBuilder typeBuilder, IEnumerable<MethodItem> methods)
         {
             foreach (var method in methods)
@@ -173,9 +179,9 @@ namespace TesseractOCR.InteropDotNet
                 method.FieldInfo = fieldBuilder;
             }
         }
-        #endregion
+#endregion
 
-        #region ImplementMethods
+#region ImplementMethods
         private static void ImplementMethods(TypeBuilder typeBuilder, IEnumerable<MethodItem> methods)
         {
             foreach (var method in methods)
@@ -204,9 +210,9 @@ namespace TesseractOCR.InteropDotNet
                 typeBuilder.DefineMethodOverride(methodBuilder, method.Info);
             }
         }
-        #endregion
+#endregion
 
-        #region ImplementConstructor
+#region ImplementConstructor
         private static void ImplementConstructor(TypeBuilder typeBuilder, MethodItem[] methods)
         {
             // Preparing
@@ -290,9 +296,9 @@ namespace TesseractOCR.InteropDotNet
             // Return
             ilGen.Emit(OpCodes.Ret);
         }
-        #endregion
+#endregion
 
-        #region GetRuntimeDllImportAttribute
+#region GetRuntimeDllImportAttribute
         private static RuntimeDllImportAttribute GetRuntimeDllImportAttribute(MethodInfo methodInfo)
         {
             var attributes = methodInfo.GetCustomAttributes(typeof(RuntimeDllImportAttribute), true);
@@ -300,9 +306,9 @@ namespace TesseractOCR.InteropDotNet
                 throw new Exception($"RuntimeDllImportAttribute for method '{methodInfo.Name}' not found");
             return (RuntimeDllImportAttribute)attributes[0];
         }
-        #endregion
+#endregion
 
-        #region LdArg
+#region LdArg
         private static void LdArg(ILGenerator ilGen, int index)
         {
             switch (index)
@@ -324,9 +330,9 @@ namespace TesseractOCR.InteropDotNet
                     break;
             }
         }
-        #endregion
+#endregion
 
-        #region DefineMethod
+#region DefineMethod
         private static MethodBuilder DefineMethod(TypeBuilder typeBuilder, string name,
             MethodAttributes attributes, Type returnType, LightParameterInfo[] infoArray)
         {
@@ -337,9 +343,9 @@ namespace TesseractOCR.InteropDotNet
                     infoArray[parameterIndex].Attributes, infoArray[parameterIndex].Name);
             return methodBuilder;
         }
-        #endregion
+#endregion
 
-        #region Method helpers
+#region Method helpers
         private class MethodItem
         {
             public MethodInfo Info { get; set; }
@@ -414,23 +420,23 @@ namespace TesseractOCR.InteropDotNet
                 typeArray[i] = infoArray[i].Type;
             return typeArray;
         }
-        #endregion
+#endregion
 
-        #region GetAssemblyName
+#region GetAssemblyName
         private static string GetAssemblyName(Type interfaceType)
         {
             return $"InteropRuntimeImplementer.{GetSubstantialName(interfaceType)}Instance";
         }
-        #endregion
+#endregion
 
-        #region GetImplementationTypeName
+#region GetImplementationTypeName
         private static string GetImplementationTypeName(string assemblyName, Type interfaceType)
         {
             return $"{assemblyName}.{GetSubstantialName(interfaceType)}Implementation";
         }
-        #endregion
+#endregion
 
-        #region GetSubstantialName
+#region GetSubstantialName
         private static string GetSubstantialName(Type interfaceType)
         {
             var name = interfaceType.Name;
@@ -438,13 +444,13 @@ namespace TesseractOCR.InteropDotNet
                 name = name.Substring(1);
             return name;
         }
-        #endregion
+#endregion
 
-        #region GetDelegateName
+#region GetDelegateName
         private static string GetDelegateName(string assemblyName, MethodInfo methodInfo)
         {
             return $"{assemblyName}.{methodInfo.Name}Delegate";
         }
-        #endregion
+#endregion
     }
 }
