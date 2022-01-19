@@ -38,5 +38,5 @@ limitations under the License.
 
 Core Team
 =========
-* [sicos1977](https://github.com/sicos1977) (Kees van Spelde)
+* [Sicos1977](https://github.com/sicos1977) (Kees van Spelde)
 * [charlesw](https://github.com/charlesw) (Charles Weld) - Copied repro from him
