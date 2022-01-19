@@ -63,86 +63,103 @@
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.danbloomberg.leptonica-1.82.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.facebook.zstd.zstd-1.5.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.gif-5.2.1.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.glennrp.png-1.6.37.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.gnu.iconv.libcharset-1.16.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.gnu.iconv.libiconv-1.16.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.jpeg-9.4.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.libarchive.libarchive-3.5.2.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.lz4-1.9.3.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.madler.zlib-1.2.11.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.oberhumer.lzo.lzo-2.10.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.tiff-4.3.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.uclouvain.openjpeg.openjp2-2.4.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.webmproject.webp-1.1.0.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.xmlsoft.libxml2-2.9.12.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\org.sw.demo.xz_utils.lzma-5.2.4.dll">
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x64\tesseract.exe">
       <PackagePath>x64;content</PackagePath>
@@ -158,86 +175,103 @@
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.danbloomberg.leptonica-1.82.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.facebook.zstd.zstd-1.5.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.gif-5.2.1.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.glennrp.png-1.6.37.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.gnu.iconv.libcharset-1.16.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.gnu.iconv.libiconv-1.16.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.jpeg-9.4.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.libarchive.libarchive-3.5.2.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.lz4-1.9.3.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.madler.zlib-1.2.11.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.oberhumer.lzo.lzo-2.10.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.tiff-4.3.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.uclouvain.openjpeg.openjp2-2.4.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.webmproject.webp-1.1.0.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.xmlsoft.libxml2-2.9.12.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.xz_utils.lzma-5.2.4.dll">
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\tesseract.exe">
       <PackagePath>x86;content</PackagePath>
