@@ -1,3 +1,6 @@
+![image](https://user-images.githubusercontent.com/6692947/150184680-1ae82d62-891e-4dbd-b52b-e975c57f9761.png)
+
+
 What is TesseractOCR
 =========
 
@@ -5,6 +8,10 @@ It is a .NET wrapper for Tesseract 5.0.0 that is originally copied from Charles 
 
 How to use
 ============
+
+You need trained data in tessdata by language
+You can get them at https://github.com/tesseract-ocr/tessdata or https://github.com/tesseract-ocr/tessdata_fast
+
 ```c#
 using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
 {
@@ -20,6 +27,8 @@ using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default
     }
 }
 ```
+
+For more examples see https://github.com/Sicos1977/TesseractOCR/wiki/examples.md
 
 Installing via NuGet
 ====================
