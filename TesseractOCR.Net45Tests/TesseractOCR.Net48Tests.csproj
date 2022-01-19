@@ -16,6 +16,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="x64\**" />
+    <Compile Remove="x86\**" />
+    <EmbeddedResource Remove="x64\**" />
+    <EmbeddedResource Remove="x86\**" />
+    <None Remove="x64\**" />
+    <None Remove="x86\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="..\TesseractOCR.Tests\AnalyseResultTests.cs" Link="AnalyseResultTests.cs" />
     <Compile Include="..\TesseractOCR.Tests\BaseApiTests.cs" Link="BaseApiTests.cs" />
     <Compile Include="..\TesseractOCR.Tests\EngineTests.cs" Link="EngineTests.cs" />
@@ -185,128 +194,6 @@
 
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="x64\" />
-    <Folder Include="x86\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="x64\org.sw.demo.bzip2-1.0.8.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.danbloomberg.leptonica-1.82.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.facebook.zstd.zstd-1.5.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.gif-5.2.1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.glennrp.png-1.6.37.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.gnu.iconv.libcharset-1.16.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.gnu.iconv.libiconv-1.16.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.jpeg-9.4.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.libarchive.libarchive-3.5.2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.lz4-1.9.3.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.madler.zlib-1.2.11.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.oberhumer.lzo.lzo-2.10.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.tiff-4.3.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.uclouvain.openjpeg.openjp2-2.4.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.webmproject.webp-1.1.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.xmlsoft.libxml2-2.9.12.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\org.sw.demo.xz_utils.lzma-5.2.4.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\tesseract.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\tesseract50.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.bzip2-1.0.8.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.danbloomberg.leptonica-1.82.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.facebook.zstd.zstd-1.5.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.gif-5.2.1.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.glennrp.png-1.6.37.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.gnu.iconv.libcharset-1.16.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.gnu.iconv.libiconv-1.16.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.jpeg-9.4.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.libarchive.libarchive-3.5.2.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.lz4-1.9.3.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.madler.zlib-1.2.11.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.oberhumer.lzo.lzo-2.10.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.tiff-4.3.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.uclouvain.openjpeg.openjp2-2.4.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.webmproject.webp-1.1.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.xmlsoft.libxml2-2.9.12.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\org.sw.demo.xz_utils.lzma-5.2.4.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\tesseract.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\tesseract50.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>

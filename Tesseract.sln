@@ -6,7 +6,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TesseractOCR", "TesseractOC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TesseractOCR.Net48Tests", "TesseractOCR.Net45Tests\TesseractOCR.Net48Tests.csproj", "{15692F72-AA54-426E-A47E-3798ACD57FBA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TesseractOCR.NetCore31Tests", "TesseractOCR.NetCore2Tests\TesseractOCR.NetCore31Tests.csproj", "{4C999BC1-9B98-453F-9B2B-9723BC573C88}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TesseractOCR.NetCore31Tests", "TesseractOCR.NetCore31Tests\TesseractOCR.NetCore31Tests.csproj", "{99094118-3CAB-4808-8DF2-115FC736C2BF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,18 +42,18 @@ Global
 		{15692F72-AA54-426E-A47E-3798ACD57FBA}.Release|x64.Build.0 = Release|Any CPU
 		{15692F72-AA54-426E-A47E-3798ACD57FBA}.Release|x86.ActiveCfg = Release|Any CPU
 		{15692F72-AA54-426E-A47E-3798ACD57FBA}.Release|x86.Build.0 = Release|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Debug|x64.Build.0 = Debug|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Debug|x86.Build.0 = Debug|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Release|x64.ActiveCfg = Release|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Release|x64.Build.0 = Release|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Release|x86.ActiveCfg = Release|Any CPU
-		{4C999BC1-9B98-453F-9B2B-9723BC573C88}.Release|x86.Build.0 = Release|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Debug|x64.Build.0 = Debug|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Debug|x86.Build.0 = Debug|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Release|x64.ActiveCfg = Release|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Release|x64.Build.0 = Release|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Release|x86.ActiveCfg = Release|Any CPU
+		{99094118-3CAB-4808-8DF2-115FC736C2BF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
