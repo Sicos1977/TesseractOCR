@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>TesseractOCR</PackageId>
+    <Authors>Charles Weld &amp; Kees van Spelde</Authors>
+    <Product>Tesseract</Product>
+    <Description>Tesseract 5 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files which support the legacy engine, for example those from the tessdata repository.</Description>
+    <Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021 Kees van Spelde</Copyright>
+    <PackageReleaseNotes>https://github.com/charlesw/tesseract/blob/master/ChangeLog.md</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Sicos1977/Tesseract</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/charlesw/tesseract/</RepositoryUrl>
+    <PackageTags>Tesseract Ocr</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <SignAssembly>false</SignAssembly>
+    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <FileVersion>5.0.0.0</FileVersion>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Version>5.0.4</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="x86\" />
+    <Folder Include="x64\" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="System.Drawing.Common">
+      <Version>6.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="x64/**/*.*" copyToOutput="true">
+			<IncludeInPackage>true</IncludeInPackage>
+			<PackagePath>x64;content</PackagePath>
+		</Content>
+		<Content Include="x86/**/*.*" copyToOutput="true">
+			<IncludeInPackage>true</IncludeInPackage>
+			<PackagePath>x86;content</PackagePath>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Helpers\**" />
+	  <EmbeddedResource Remove="Helpers\**" />
+	  <None Remove="Helpers\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="InteropDotNet" Version="0.1.0" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+	</ItemGroup>
+</Project>

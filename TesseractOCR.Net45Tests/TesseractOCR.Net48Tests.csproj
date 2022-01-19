@@ -1,0 +1,312 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+	  <RootNamespace>Tesseract.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\TesseractOCR.Tests\AnalyseResultTests.cs" Link="AnalyseResultTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\BaseApiTests.cs" Link="BaseApiTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\EngineTests.cs" Link="EngineTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\BitmapHelperTests.cs" Link="Leptonica\BitmapHelperTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\ColorTests.cs" Link="Leptonica\ColorTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\ConvertBitmapToPixTests.cs" Link="Leptonica\ConvertBitmapToPixTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\LeptonicaPerformanceTests.cs" Link="Leptonica\LeptonicaPerformanceTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\LoadFromFileTests.cs" Link="Leptonica\LoadFromFileTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\PixATests.cs" Link="Leptonica\PixATests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\PixTests\ImageManipulationTests.cs" Link="Leptonica\PixTests\ImageManipulationTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\Leptonica\PixTests\PixDataAccessTests.cs" Link="Leptonica\PixTests\PixDataAccessTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\PageSerializer.cs" Link="PageSerializer.cs" />
+    <Compile Include="..\TesseractOCR.Tests\ResultRendererTests.cs" Link="ResultRendererTests.cs" />
+    <Compile Include="..\TesseractOCR.Tests\TesseractResultSet.cs" Link="TesseractResultSet.cs" />
+    <Compile Include="..\TesseractOCR.Tests\TesseractTestBase.cs" Link="TesseractTestBase.cs" />
+    <Compile Include="..\TesseractOCR.Tests\TestDifferenceHandler.cs" Link="TestDifferenceHandler.cs" />
+    <Compile Include="..\TesseractOCR.Tests\TestRun.cs" Link="TestRun.cs" />
+    <Compile Include="..\TesseractOCR.Tests\TestUtils.cs" Link="TestUtils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\TesseractOCR.Tests\Data\Binarization\neo-32bit.png" Link="Data\Binarization\neo-32bit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Binarization\neo-8bit-grayscale.png" Link="Data\Binarization\neo-8bit-grayscale.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Binarization\neo-8bit.png" Link="Data\Binarization\neo-8bit.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_grayscale_1bpp.tif" Link="Data\Conversion\photo_grayscale_1bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_grayscale_4bpp.tif" Link="Data\Conversion\photo_grayscale_4bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_palette_1bpp.tif" Link="Data\Conversion\photo_palette_1bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_palette_4bpp.tif" Link="Data\Conversion\photo_palette_4bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_palette_8bpp.png" Link="Data\Conversion\photo_palette_8bpp.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_palette_8bpp.tif" Link="Data\Conversion\photo_palette_8bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_argb_32bpp.tif" Link="Data\Conversion\photo_argb_32bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_rgb_32bpp.tif" Link="Data\Conversion\photo_rgb_32bpp.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\blank.tif" Link="Data\Ocr\blank.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\empty.png" Link="Data\Ocr\empty.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\Fonts.tif" Link="Data\Ocr\Fonts.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\phototest.tif" Link="Data\Ocr\phototest.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\PSM_SingleBlock.png" Link="Data\Ocr\PSM_SingleBlock.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\PSM_SingleBlockVertText.png" Link="Data\Ocr\PSM_SingleBlockVertText.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\PSM_SingleChar.png" Link="Data\Ocr\PSM_SingleChar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\PSM_SingleColumn.png" Link="Data\Ocr\PSM_SingleColumn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\PSM_SingleLine.png" Link="Data\Ocr\PSM_SingleLine.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\PSM_SingleWord.png" Link="Data\Ocr\PSM_SingleWord.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\uzn-test.png" Link="Data\Ocr\uzn-test.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\uzn-test.uzn" Link="Data\Ocr\uzn-test.uzn">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\processing\dave-orig.png" Link="Data\processing\dave-orig.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\processing\multi-page.tif" Link="Data\processing\multi-page.tif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\processing\numbers.png" Link="Data\processing\numbers.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\processing\table.png" Link="Data\processing\table.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\processing\w91frag.jpg" Link="Data\processing\w91frag.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Scew\scewed-phototest.png" Link="Data\Scew\scewed-phototest.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateHOCROutput_False.txt" Link="Results\EngineTests\CanGenerateHOCROutput_False.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateHOCROutput_True.txt" Link="Results\EngineTests\CanGenerateHOCROutput_True.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateAltoOutput.txt" Link="Results\EngineTests\CanGenerateAltoOutput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateBoxOutput.txt" Link="Results\EngineTests\CanGenerateBoxOutput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateLSTMBoxOutput.txt" Link="Results\EngineTests\CanGenerateLSTMBoxOutput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateTsvOutput.txt" Link="Results\EngineTests\CanGenerateTsvOutput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateWordStrBoxOutput.txt" Link="Results\EngineTests\CanGenerateWordStrBoxOutput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateUNLVOutput.txt" Link="Results\EngineTests\CanGenerateUNLVOutput.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanPrintVariables.txt" Link="Results\EngineTests\CanPrintVariables.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanProcessPixUsingResultIterator.txt" Link="Results\EngineTests\CanProcessPixUsingResultIterator.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanProcessPixUsingResultIteratorAndChoiceIterator.txt" Link="Results\EngineTests\CanProcessPixUsingResultIteratorAndChoiceIterator.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\tessdata\Configs\bazzar" Link="tessdata\Configs\bazzar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\tessdata\eng.traineddata" Link="tessdata\eng.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\tessdata\eng.user-patterns" Link="tessdata\eng.user-patterns">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\tessdata\eng.user-words" Link="tessdata\eng.user-words">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\tessdata\osd.traineddata" Link="tessdata\osd.traineddata">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\tessdata\pdf.ttf" Link="tessdata\pdf.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="x64\" />
+    <Folder Include="x86\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="x64\org.sw.demo.bzip2-1.0.8.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.danbloomberg.leptonica-1.82.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.facebook.zstd.zstd-1.5.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.gif-5.2.1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.glennrp.png-1.6.37.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.gnu.iconv.libcharset-1.16.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.gnu.iconv.libiconv-1.16.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.jpeg-9.4.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.libarchive.libarchive-3.5.2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.lz4-1.9.3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.madler.zlib-1.2.11.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.oberhumer.lzo.lzo-2.10.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.tiff-4.3.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.uclouvain.openjpeg.openjp2-2.4.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.webmproject.webp-1.1.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.xmlsoft.libxml2-2.9.12.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\org.sw.demo.xz_utils.lzma-5.2.4.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\tesseract.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\tesseract50.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.bzip2-1.0.8.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.danbloomberg.leptonica-1.82.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.facebook.zstd.zstd-1.5.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.gif-5.2.1.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.glennrp.png-1.6.37.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.gnu.iconv.libcharset-1.16.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.gnu.iconv.libiconv-1.16.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.jpeg-9.4.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.libarchive.libarchive-3.5.2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.lz4-1.9.3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.madler.zlib-1.2.11.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.oberhumer.lzo.lzo-2.10.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.tiff-4.3.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.uclouvain.openjpeg.openjp2-2.4.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.webmproject.webp-1.1.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.xmlsoft.libxml2-2.9.12.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\org.sw.demo.xz_utils.lzma-5.2.4.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\tesseract.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\tesseract50.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
