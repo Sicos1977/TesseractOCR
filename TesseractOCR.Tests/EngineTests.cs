@@ -270,7 +270,9 @@ namespace Tesseract.Tests
             var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultPath));
             
             if (expectedResult == actualResult) return;
+
             var actualResultPath = TestResultRunFile(resultPath);
+            
             Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultPath, actualResultPath);
         }
 
@@ -281,7 +283,8 @@ namespace Tesseract.Tests
         {
             using (var engine = CreateEngine())
             {
-                var imagePath = TestFilePath(TestImagePath);
+                var imagePath = TestFilePath(TestImagePath)
+                    ;
                 using (var img = Image.FromFile(imagePath))
                 {
                     using (var scaledImg = new Bitmap(img, new Size(img.Width * 2, img.Height * 2)))
@@ -304,7 +307,7 @@ namespace Tesseract.Tests
         [DataTestMethod]
         [DataRow(true)]
         [DataRow(false)]
-        public void CanGenerateHOCROutput(bool useXHtml)
+        public void CanGenerateHOcrOutput(bool useXHtml)
         {
             string actualResult;
             using (var engine = CreateEngine())
@@ -320,6 +323,7 @@ namespace Tesseract.Tests
 
             var resultFilename = $"EngineTests/CanGenerateHOCROutput_{useXHtml}.txt";
             var expectedFilename = TestResultPath(resultFilename);
+
             if (File.Exists(expectedFilename))
             {
                 var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
@@ -423,20 +427,19 @@ namespace Tesseract.Tests
 
             var resultFilename = "EngineTests/CanGenerateBoxOutput.txt";
             var expectedFilename = TestResultPath(resultFilename);
+
             if (File.Exists(expectedFilename))
             {
                 var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
-                    //File.WriteAllText(actualFilename,actualResult);
                     Assert.Fail("Expected results to be {0} but was {1}", expectedFilename, actualFilename);
                 }
             }
             else
             {
                 var actualFilename = TestResultRunFile(resultFilename);
-                //File.WriteAllText(actualFilename,actualResult);
                 Assert.Fail("Expected result did not exist, actual results saved to {0}", actualFilename);
             }
         }
@@ -548,6 +551,7 @@ namespace Tesseract.Tests
         public void CanProcessPixUsingResultIteratorAndChoiceIterator()
         {
             string actualResult;
+            
             using (var engine = CreateEngine())
             {
                 using (var img = LoadTestPix(TestImagePath))
@@ -560,13 +564,13 @@ namespace Tesseract.Tests
             }
 
             const string resultFilename = @"EngineTests\CanProcessPixUsingResultIteratorAndChoiceIterator.txt";
+            
             var expectedResultFilename = TestResultPath(resultFilename);
             var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultFilename));
 
             if (expectedResult != actualResult)
             {
                 var actualResultPath = TestResultRunFile(resultFilename);
-                //File.WriteAllText(actualResultPath,actualResult);
                 Assert.Fail("Expected results to be {0} but was {1}", expectedResultFilename, actualResultPath);
             }
         }
@@ -621,9 +625,9 @@ namespace Tesseract.Tests
         }
 
         [TestMethod]
-        public void Initialise_ShouldStartEngine()
+        public void Initialize_ShouldStartEngine()
         {
-            const string dataPath = "DataPaths";
+            const string dataPath = "tessdata";
 
             using (new TesseractEngine(dataPath, "eng", EngineMode.Default))
             {
@@ -632,14 +636,11 @@ namespace Tesseract.Tests
 
         [TestMethod]
         [ExpectedException(typeof(TesseractException))]
-        public void Initialise_ShouldThrowErrorIfDatapathNotCorrect()
+        public void Initialize_ShouldThrowErrorIfDatapathNotCorrect()
         {
-            //Assert.That(() =>
-            //{
             using (new TesseractEngine(AbsolutePath(@"./IDontExist"), "eng", EngineMode.Default))
             {
             }
-            //}, Throws.InstanceOf(typeof(TesseractException)));
         }
 
         private static string WriteResultsToString(Page page, bool outputChoices)
@@ -886,6 +887,7 @@ namespace Tesseract.Tests
                 // Load the expected results and verify that they match
                 var expectedResultFilename = TestResultPath(resultFilename);
                 var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultFilename));
+
                 if (expectedResult != actualResult)
                     Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultFilename,
                         actualResultsFilename);

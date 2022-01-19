@@ -211,11 +211,11 @@ namespace Tesseract.Tests
             Assert.IsTrue(File.Exists(expectedOutputFilename),
                 $"Expected a TSV file \"{expectedOutputFilename}\" to have been created; but none was found.");
 
-            expectedOutputFilename = Path.ChangeExtension(resultPath, "lstmbox");
+            expectedOutputFilename = Path.ChangeExtension(resultPath, "box");
             Assert.IsTrue(File.Exists(expectedOutputFilename),
                 $"Expected a LSTMBOX file \"{expectedOutputFilename}\" to have been created; but none was found.");
 
-            expectedOutputFilename = Path.ChangeExtension(resultPath, "wordstrbox");
+            expectedOutputFilename = Path.ChangeExtension(resultPath, "box");
             Assert.IsTrue(File.Exists(expectedOutputFilename),
                 $"Expected a WORDSTRBOX file \"{expectedOutputFilename}\" to have been created; but none was found.");
         }

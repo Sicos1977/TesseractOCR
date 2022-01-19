@@ -277,7 +277,7 @@ namespace TesseractOCR.Renderers
 
         #region CreateLstmBoxRenderer
         /// <summary>
-        ///     Creates a <see cref="IResult">result renderer</see> that render that generates a unlv
+        ///     Creates a <see cref="IResult">result renderer</see> that render that generates a box
         ///     file from tesseract's output.
         /// </summary>
         /// <param name="outputFilename">The path to the unlv file to be created without the file extension.</param>
@@ -301,7 +301,7 @@ namespace TesseractOCR.Renderers
         }
         #endregion
 
-        #region Initialise
+        #region Initialize
         /// <summary>
         ///     Initialize the render to use the specified native result renderer.
         /// </summary>

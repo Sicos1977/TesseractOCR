@@ -76,7 +76,7 @@ namespace TesseractOCR.Interop
         int BaseApiGetDoubleVariable(HandleRef handle, string name, out double value);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetHOCRText")]
-        IntPtr BaseApiGetHOCRTextInternal(HandleRef handle, int pageNum);
+        IntPtr BaseApiGetHOcrTextInternal(HandleRef handle, int pageNum);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetAltoText")]
         IntPtr BaseApiGetAltoTextInternal(HandleRef handle, int pageNum);
@@ -94,7 +94,7 @@ namespace TesseractOCR.Interop
         IntPtr BaseApiGetWordStrBoxTextInternal(HandleRef handle, int pageNum);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUNLVText")]
-        IntPtr BaseApiGetUNLVTextInternal(HandleRef handle);
+        IntPtr BaseApiGetUnlvTextInternal(HandleRef handle);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetIntVariable")]
         int BaseApiGetIntVariable(HandleRef handle, string name, out int value);
@@ -430,7 +430,7 @@ namespace TesseractOCR.Interop
         #region BaseAPIGetHOCRText
         public static string BaseAPIGetHOCRText(HandleRef handle, int pageNum)
         {
-            var txtHandle = Native.BaseApiGetHOCRTextInternal(handle, pageNum);
+            var txtHandle = Native.BaseApiGetHOcrTextInternal(handle, pageNum);
             if (txtHandle == IntPtr.Zero) return null;
             var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
             Native.DeleteText(txtHandle);
@@ -441,12 +441,11 @@ namespace TesseractOCR.Interop
         #region BaseAPIGetHOCRText2
         public static string BaseAPIGetHOCRText2(HandleRef handle, int pageNum)
         {
-            var txtHandle = Native.BaseApiGetHOCRTextInternal(handle, pageNum);
+            var txtHandle = Native.BaseApiGetHOcrTextInternal(handle, pageNum);
             if (txtHandle == IntPtr.Zero) return null;
             var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
             Native.DeleteText(txtHandle);
             return xhtmlBeginTag + result + xhtmlEndTag;
-
         }
         #endregion
 
@@ -506,9 +505,9 @@ namespace TesseractOCR.Interop
         #endregion
 
         #region BaseAPIGetUNLVText
-        public static string BaseAPIGetUNLVText(HandleRef handle)
+        public static string BaseAPIGetUnlvText(HandleRef handle)
         {
-            var txtHandle = Native.BaseApiGetUNLVTextInternal(handle);
+            var txtHandle = Native.BaseApiGetUnlvTextInternal(handle);
             if (txtHandle == IntPtr.Zero) return null;
             var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
             Native.DeleteText(txtHandle);

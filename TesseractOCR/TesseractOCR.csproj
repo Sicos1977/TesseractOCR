@@ -9,7 +9,7 @@
     <PackageReleaseNotes>https://github.com/charlesw/tesseract/blob/master/ChangeLog.md</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/Sicos1977/Tesseract</PackageProjectUrl>
     <RepositoryUrl>https://github.com/charlesw/tesseract/</RepositoryUrl>
-    <PackageTags>Tesseract Ocr</PackageTags>
+    <PackageTags>Tesseract OCR</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <SignAssembly>false</SignAssembly>
     <TargetFrameworks>net48;net5.0</TargetFrameworks>

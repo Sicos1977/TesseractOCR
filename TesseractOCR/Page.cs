@@ -258,7 +258,7 @@ namespace TesseractOCR
         public string GetUNLVText()
         {
             Recognize();
-            return TessApi.BaseAPIGetUNLVText(Engine.Handle);
+            return TessApi.BaseAPIGetUnlvText(Engine.Handle);
         }
         #endregion
 
