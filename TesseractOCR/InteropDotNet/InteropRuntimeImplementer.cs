@@ -45,8 +45,10 @@ namespace TesseractOCR.InteropDotNet
                 throw new Exception($"The interface {interfaceType.Name} should be public");
 
             var assemblyName = GetAssemblyName(interfaceType);
-            var assemblyBuilder = Thread.GetDomain()
-                .DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
+            // TODO : Fix code to work with .NET 5 and higher
+            // Error CS1061  'AppDomain' does not contain a definition for 'DefineDynamicAssembly' and no accessible extension method 'DefineDynamicAssembly' accepting a first argument of type 'AppDomain' could be found(are you missing a using directive or an assembly reference ?)	TesseractOCR(net5.0)   D:\Progsoft\_GitHub_\TesseractOCR\TesseractOCR\InteropDotNet\InteropRuntimeImplementer.cs   49  Active
+
+            var assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
 
             var typeName = GetImplementationTypeName(assemblyName, interfaceType);

@@ -22,6 +22,7 @@
 using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
+using TesseractOCR.InteropDotNet;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
