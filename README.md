@@ -17,7 +17,7 @@ See [./docs/ReadMe.md](./docs/ReadMe.md)
 
 ## Getting started quickly
 
-1. Add the ``Tesseract`` NuGet Package by running ``Install-Package Tesseract`` from the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console).
+1. Add the ``TesseractOCR`` NuGet Package by running ``Install-Package Tesseract`` from the [Package Manager Console](http://docs.nuget.org/docs/start-here/using-the-package-manager-console).
 2. (Optional) Add the ``Tesseract.Drawing`` NuGet package to support interop with ``System.Drawing`` in .NET Core, for instance to allow passing Bitmap to Tesseract
 3. Ensure you have Visual Studio 2019 x86 & x64 runtimes installed (see note above).
 4. Download language data files for tesseract 4.00 from the [tessdata repository](https://github.com/tesseract-ocr/tessdata_fast) and add them to your project, 
