@@ -189,6 +189,7 @@
       <PackagePath>x64;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\org.sw.demo.bzip2-1.0.8.dll">
       <PackagePath>x86;content</PackagePath>
@@ -301,6 +302,7 @@
       <PackagePath>x86;content</PackagePath>
       <IncludeInPackage>true</IncludeInPackage>
       <copyToOutput>true</copyToOutput>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
 
