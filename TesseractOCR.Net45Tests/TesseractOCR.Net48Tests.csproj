@@ -51,7 +51,6 @@
     <Compile Include="..\TesseractOCR.Tests\Leptonica\PixTests\PixDataAccessTests.cs" Link="Leptonica\PixTests\PixDataAccessTests.cs" />
     <Compile Include="..\TesseractOCR.Tests\PageSerializer.cs" Link="PageSerializer.cs" />
     <Compile Include="..\TesseractOCR.Tests\ResultRendererTests.cs" Link="ResultRendererTests.cs" />
-    <Compile Include="..\TesseractOCR.Tests\TesseractResultSet.cs" Link="TesseractResultSet.cs" />
     <Compile Include="..\TesseractOCR.Tests\TesseractTestBase.cs" Link="TesseractTestBase.cs" />
     <Compile Include="..\TesseractOCR.Tests\TestDifferenceHandler.cs" Link="TestDifferenceHandler.cs" />
     <Compile Include="..\TesseractOCR.Tests\TestRun.cs" Link="TestRun.cs" />

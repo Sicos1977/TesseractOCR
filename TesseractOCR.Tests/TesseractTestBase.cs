@@ -38,8 +38,7 @@ namespace Tesseract.Tests
 
         protected static string TestResultRunDirectory(string path)
         {
-            var runPath = AbsolutePath(
-                string.Format("Runs/{0:yyyyMMddTHHmmss}", TestRun.Current.StartedAt)
+            var runPath = AbsolutePath($"Runs/{TestRun.Current.StartedAt:yyyyMMddTHHmmss}"
             );
             var testResultRunDirectory = Path.Combine(runPath, path);
             Directory.CreateDirectory(testResultRunDirectory);
@@ -62,11 +61,11 @@ namespace Tesseract.Tests
         }
 
         /// <summary>
-        ///     Normalise new line characters to unix (\n) so they are all the same.
+        ///     Normalize new line characters to unix (\n) so they are all the same.
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        protected static string NormaliseNewLine(string text)
+        protected static string NormalizeNewLine(string text)
         {
             return text
                 .Replace("\r\n", "\n")

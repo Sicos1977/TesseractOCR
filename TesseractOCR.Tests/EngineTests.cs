@@ -9,6 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
 using TesseractOCR.Exceptions;
+// ReSharper disable UnusedMember.Global
 
 namespace Tesseract.Tests
 {
@@ -18,7 +19,7 @@ namespace Tesseract.Tests
         private const string TestImagePath = "Ocr/phototest.tif";
 
         [TestMethod]
-        public void CanParseMultipageTif()
+        public void CanParseMultiPageTif()
         {
             using (var engine = CreateEngine())
             {
@@ -221,7 +222,7 @@ namespace Tesseract.Tests
             }
 
             Assert.AreEqual(actualResult,
-                NormaliseNewLine(@"</word></line>
+                NormalizeNewLine(@"</word></line>
 </para>
 </block>
 "));
@@ -260,13 +261,13 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(WriteResultsToString(page, false));
+                        actualResult = NormalizeNewLine(WriteResultsToString(page, false));
                     }
                 }
             }
 
             var expectedResultPath = TestResultPath(resultPath);
-            var expectedResult = NormaliseNewLine(File.ReadAllText(expectedResultPath));
+            var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultPath));
             
             if (expectedResult == actualResult) return;
             var actualResultPath = TestResultRunFile(resultPath);
@@ -312,7 +313,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetHOCRText(1, useXHtml));
+                        actualResult = NormalizeNewLine(page.GetHOCRText(1, useXHtml));
                     }
                 }
             }
@@ -321,7 +322,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
@@ -345,7 +346,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetAltoText(1));
+                        actualResult = NormalizeNewLine(page.GetAltoText(1));
                     }
                 }
             }
@@ -354,7 +355,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
@@ -380,7 +381,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetTsvText(1));
+                        actualResult = NormalizeNewLine(page.GetTsvText(1));
                     }
                 }
             }
@@ -389,7 +390,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
@@ -415,7 +416,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetBoxText(1));
+                        actualResult = NormalizeNewLine(page.GetBoxText(1));
                     }
                 }
             }
@@ -424,7 +425,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
@@ -450,7 +451,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetLSTMBoxText(1));
+                        actualResult = NormalizeNewLine(page.GetLSTMBoxText(1));
                     }
                 }
             }
@@ -459,7 +460,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
@@ -485,7 +486,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetWordStrBoxText(1));
+                        actualResult = NormalizeNewLine(page.GetWordStrBoxText(1));
                     }
                 }
             }
@@ -494,7 +495,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult != actualResult)
                 {
                     var actualFilename = TestResultRunFile(resultFilename);
@@ -520,7 +521,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormaliseNewLine(page.GetUNLVText());
+                        actualResult = NormalizeNewLine(page.GetUNLVText());
                     }
                 }
             }
@@ -529,7 +530,7 @@ namespace Tesseract.Tests
             var expectedFilename = TestResultPath(resultFilename);
             if (File.Exists(expectedFilename))
             {
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedFilename));
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
                 if (expectedResult == actualResult) return;
                 var actualFilename = TestResultRunFile(resultFilename);
                 //File.WriteAllText(actualFilename,actualResult);
@@ -560,7 +561,7 @@ namespace Tesseract.Tests
 
             const string resultFilename = @"EngineTests\CanProcessPixUsingResultIteratorAndChoiceIterator.txt";
             var expectedResultFilename = TestResultPath(resultFilename);
-            var expectedResult = NormaliseNewLine(File.ReadAllText(expectedResultFilename));
+            var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultFilename));
 
             if (expectedResult != actualResult)
             {
@@ -614,20 +615,17 @@ namespace Tesseract.Tests
         [Ignore("Missing russian language data")]
         public static void Initialise_Rus_ShouldStartEngine()
         {
-            using (var engine = new TesseractEngine(DataPath, "rus", EngineMode.Default))
+            using (new TesseractEngine(DataPath, "rus", EngineMode.Default))
             {
             }
         }
 
         [TestMethod]
-        public void Initialise_ShouldStartEngine(
-            //[ValueSource("DataPaths")] string datapath
-        )
+        public void Initialise_ShouldStartEngine()
         {
-            var datapath = "DataPaths";
+            const string dataPath = "DataPaths";
 
-
-            using (var engine = new TesseractEngine(datapath, "eng", EngineMode.Default))
+            using (new TesseractEngine(dataPath, "eng", EngineMode.Default))
             {
             }
         }
@@ -638,20 +636,10 @@ namespace Tesseract.Tests
         {
             //Assert.That(() =>
             //{
-            using (var engine = new TesseractEngine(AbsolutePath(@"./IDontExist"), "eng", EngineMode.Default))
+            using (new TesseractEngine(AbsolutePath(@"./IDontExist"), "eng", EngineMode.Default))
             {
             }
             //}, Throws.InstanceOf(typeof(TesseractException)));
-        }
-
-        private static IEnumerable<string> DataPaths()
-        {
-            return new[]
-            {
-                AbsolutePath(@"./tessdata"),
-                AbsolutePath(@"./tessdata/"),
-                AbsolutePath(@".\tessdata\")
-            };
         }
 
         private static string WriteResultsToString(Page page, bool outputChoices)
@@ -769,7 +757,7 @@ namespace Tesseract.Tests
                 } while (iterator.Next(PageIteratorLevel.Block));
             }
 
-            return NormaliseNewLine(output.ToString());
+            return NormalizeNewLine(output.ToString());
         }
 
         #region Variable set\get
@@ -778,16 +766,16 @@ namespace Tesseract.Tests
         [DataRow(true)]
         public void CanSetBooleanVariable(bool variableValue)
         {
-            const string VariableName = "classify_enable_learning";
+            const string variableName = "classify_enable_learning";
             using (var engine = CreateEngine())
             {
-                var variableWasSet = engine.SetVariable(VariableName, variableValue);
-                Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", VariableName);
-                bool result;
-                if (engine.TryGetBoolVariable(VariableName, out result))
+                var variableWasSet = engine.SetVariable(variableName, variableValue);
+                Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
+                
+                if (engine.TryGetBoolVariable(variableName, out var result))
                     Assert.AreEqual(result, variableValue);
                 else
-                    Assert.Fail("Failed to retrieve value for '{0}'.", VariableName);
+                    Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
             }
         }
 
@@ -825,8 +813,8 @@ namespace Tesseract.Tests
             {
                 var variableWasSet = engine.SetVariable(variableName, variableValue);
                 Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                double result;
-                if (engine.TryGetDoubleVariable(variableName, out result))
+                
+                if (engine.TryGetDoubleVariable(variableName, out var result))
                     Assert.AreEqual(result, variableValue);
                 else
                     Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
@@ -844,8 +832,8 @@ namespace Tesseract.Tests
             {
                 var variableWasSet = engine.SetVariable(variableName, variableValue);
                 Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                int result;
-                if (engine.TryGetIntVariable(variableName, out result))
+                
+                if (engine.TryGetIntVariable(variableName, out var result))
                     Assert.AreEqual(result, variableValue);
                 else
                     Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
@@ -863,8 +851,8 @@ namespace Tesseract.Tests
             {
                 var variableWasSet = engine.SetVariable(variableName, variableValue);
                 Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                string result;
-                if (engine.TryGetStringVariable(variableName, out result))
+                
+                if (engine.TryGetStringVariable(variableName, out var result))
                     Assert.AreEqual(result, variableValue);
                 else
                     Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
@@ -876,8 +864,7 @@ namespace Tesseract.Tests
         {
             using (var engine = CreateEngine())
             {
-                string result;
-                var success = engine.TryGetStringVariable("illegal-variable", out result);
+                var success = engine.TryGetStringVariable("illegal-variable", out var result);
                 Assert.IsFalse(success);
                 Assert.IsNull(result);
             }
@@ -888,16 +875,17 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanPrintVariables()
         {
-            const string ResultFilename = @"EngineTests\CanPrintVariables.txt";
+            const string resultFilename = @"EngineTests\CanPrintVariables.txt";
+
             using (var engine = CreateEngine())
             {
-                var actualResultsFilename = TestResultRunFile(ResultFilename);
+                var actualResultsFilename = TestResultRunFile(resultFilename);
                 Assert.IsTrue(engine.TryPrintVariablesToFile(actualResultsFilename));
-                var actualResult = NormaliseNewLine(File.ReadAllText(actualResultsFilename));
+                var actualResult = NormalizeNewLine(File.ReadAllText(actualResultsFilename));
 
                 // Load the expected results and verify that they match
-                var expectedResultFilename = TestResultPath(ResultFilename);
-                var expectedResult = NormaliseNewLine(File.ReadAllText(expectedResultFilename));
+                var expectedResultFilename = TestResultPath(resultFilename);
+                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultFilename));
                 if (expectedResult != actualResult)
                     Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultFilename,
                         actualResultsFilename);

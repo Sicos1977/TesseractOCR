@@ -6,7 +6,7 @@ using TesseractOCR.Enums;
 namespace Tesseract.Tests
 {
     /// <summary>
-    ///     Serialise the OCR results to a string using the iterator api
+    ///     Serialize the OCR results to a string using the iterator api
     /// </summary>
     internal class PageSerializer
     {

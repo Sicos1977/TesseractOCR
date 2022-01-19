@@ -22,11 +22,9 @@ namespace Tesseract.Tests
         [TestCleanup]
         public void Dispose()
         {
-            if (_engine != null)
-            {
-                _engine.Dispose();
-                _engine = null;
-            }
+            if (_engine == null) return;
+            _engine.Dispose();
+            _engine = null;
         }
         #endregion Test setup and teardown
 
@@ -88,7 +86,7 @@ namespace Tesseract.Tests
             using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("processing/multi-page.tif");
-                ProcessMultipageTiff(renderer, examplePixPath);
+                ProcessMultiPageTiff(renderer, examplePixPath);
             }
 
             var expectedOutputFilename = Path.ChangeExtension(resultPath, "pdf");
@@ -231,7 +229,7 @@ namespace Tesseract.Tests
                        Result.CreateTextRenderer(resultPath)))
             {
                 var examplePixPath = TestFilePath("processing/multi-page.tif");
-                ProcessMultipageTiff(renderer, examplePixPath);
+                ProcessMultiPageTiff(renderer, examplePixPath);
             }
 
             var expectedPdfOutputFilename = Path.ChangeExtension(resultPath, "pdf");
@@ -243,7 +241,7 @@ namespace Tesseract.Tests
                 $"Expected a Text file \"{expectedTxtOutputFilename}\" to have been created; but none was found.");
         }
 
-        private void ProcessMultipageTiff(IResult renderer, string filename)
+        private void ProcessMultiPageTiff(IResult renderer, string filename)
         {
             var imageName = Path.GetFileNameWithoutExtension(filename);
             using (var pixA = PixArray.LoadMultiPageTiffFromFile(filename))
