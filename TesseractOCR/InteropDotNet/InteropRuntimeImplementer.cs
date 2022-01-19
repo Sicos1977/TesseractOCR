@@ -45,15 +45,7 @@ namespace TesseractOCR.InteropDotNet
                 throw new Exception($"The interface {interfaceType.Name} should be public");
 
             var assemblyName = GetAssemblyName(interfaceType);
-
-#if (NET48)
-            var assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
-#endif
-
-#if (NET5_0)
             var assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName), AssemblyBuilderAccess.Run);
-#endif
-
             var moduleBuilder = assemblyBuilder.DefineDynamicModule(assemblyName);
 
             var typeName = GetImplementationTypeName(assemblyName, interfaceType);
