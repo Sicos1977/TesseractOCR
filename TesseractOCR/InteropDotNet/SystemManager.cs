@@ -28,13 +28,26 @@ using System;
 
 namespace TesseractOCR.InteropDotNet
 {
+    #region Internal enum OperatingSystem
+    internal enum OperatingSystem
+    {
+        Windows,
+        Unix,
+        MacOSX,
+        Unknown
+    }
+    #endregion
+
     internal static class SystemManager
     {
+        #region GetPlatformName
         public static string GetPlatformName()
         {
             return IntPtr.Size == sizeof(int) ? "x86" : "x64";
         }
+        #endregion
 
+        #region GetOperatingSystem
         public static OperatingSystem GetOperatingSystem()
         {
             var pid = (int)Environment.OSVersion.Platform;
@@ -54,13 +67,6 @@ namespace TesseractOCR.InteropDotNet
                     return OperatingSystem.Unknown;
             }
         }
-    }
-
-    internal enum OperatingSystem
-    {
-        Windows,
-        Unix,
-        MacOSX,
-        Unknown
+        #endregion
     }
 }

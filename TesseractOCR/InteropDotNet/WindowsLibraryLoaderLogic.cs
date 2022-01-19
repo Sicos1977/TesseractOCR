@@ -31,6 +31,7 @@ namespace TesseractOCR.InteropDotNet
 {
     internal class WindowsLibraryLoaderLogic : ILibraryLoaderLogic
     {
+        #region LoadLibrary
         public IntPtr LoadLibrary(string fileName)
         {
             var libraryHandle = IntPtr.Zero;
@@ -40,19 +41,25 @@ namespace TesseractOCR.InteropDotNet
                 LibraryLoaderTrace.TraceInformation("Trying to load native library \"{0}\"...", fileName);
                 libraryHandle = WindowsLoadLibrary(fileName);
                 if (libraryHandle != IntPtr.Zero)
-                    LibraryLoaderTrace.TraceInformation("Successfully loaded native library \"{0}\", handle = {1}.", fileName, libraryHandle);
+                    LibraryLoaderTrace.TraceInformation("Successfully loaded native library \"{0}\", handle = {1}.",
+                        fileName, libraryHandle);
                 else
-                    LibraryLoaderTrace.TraceError("Failed to load native library \"{0}\".\r\nCheck windows event log.", fileName);
+                    LibraryLoaderTrace.TraceError("Failed to load native library \"{0}\".\r\nCheck windows event log.",
+                        fileName);
             }
             catch (Exception e)
             {
                 var lastError = WindowsGetLastError();
-                LibraryLoaderTrace.TraceError("Failed to load native library \"{0}\".\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}", fileName, lastError, e.ToString());
+                LibraryLoaderTrace.TraceError(
+                    "Failed to load native library \"{0}\".\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}",
+                    fileName, lastError, e.ToString());
             }
 
             return libraryHandle;
         }
+        #endregion
 
+        #region FreeLibrary
         public bool FreeLibrary(IntPtr libraryHandle)
         {
             try
@@ -60,28 +67,36 @@ namespace TesseractOCR.InteropDotNet
                 LibraryLoaderTrace.TraceInformation("Trying to free native library with handle {0} ...", libraryHandle);
                 var isSuccess = WindowsFreeLibrary(libraryHandle);
                 if (isSuccess)
-                    LibraryLoaderTrace.TraceInformation("Successfully freed native library with handle {0}.", libraryHandle);
+                    LibraryLoaderTrace.TraceInformation("Successfully freed native library with handle {0}.",
+                        libraryHandle);
                 else
-                    LibraryLoaderTrace.TraceError("Failed to free native library with handle {0}.\r\nCheck windows event log.", libraryHandle);
+                    LibraryLoaderTrace.TraceError(
+                        "Failed to free native library with handle {0}.\r\nCheck windows event log.", libraryHandle);
                 return isSuccess;
             }
             catch (Exception e)
             {
                 var lastError = WindowsGetLastError();
-                LibraryLoaderTrace.TraceError("Failed to free native library with handle {0}.\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}", libraryHandle, lastError, e.ToString());
+                LibraryLoaderTrace.TraceError(
+                    "Failed to free native library with handle {0}.\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}",
+                    libraryHandle, lastError, e.ToString());
                 return false;
             }
         }
+        #endregion
 
+        #region GetProcAddress
         public IntPtr GetProcAddress(IntPtr libraryHandle, string functionName)
         {
             try
             {
-                LibraryLoaderTrace.TraceInformation("Trying to load native function \"{0}\" from the library with handle {1}...",
+                LibraryLoaderTrace.TraceInformation(
+                    "Trying to load native function \"{0}\" from the library with handle {1}...",
                     functionName, libraryHandle);
                 var functionHandle = WindowsGetProcAddress(libraryHandle, functionName);
                 if (functionHandle != IntPtr.Zero)
-                    LibraryLoaderTrace.TraceInformation("Successfully loaded native function \"{0}\", function handle = {1}.",
+                    LibraryLoaderTrace.TraceInformation(
+                        "Successfully loaded native function \"{0}\", function handle = {1}.",
                         functionName, functionHandle);
                 else
                     LibraryLoaderTrace.TraceError("Failed to load native function \"{0}\", function handle = {1}",
@@ -91,18 +106,24 @@ namespace TesseractOCR.InteropDotNet
             catch (Exception e)
             {
                 var lastError = WindowsGetLastError();
-                LibraryLoaderTrace.TraceError("Failed to free native library with handle {0}.\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}", libraryHandle, lastError, e.ToString());
+                LibraryLoaderTrace.TraceError(
+                    "Failed to free native library with handle {0}.\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}",
+                    libraryHandle, lastError, e.ToString());
                 return IntPtr.Zero;
             }
         }
+        #endregion
 
+        #region FixUpLibraryName
         public string FixUpLibraryName(string fileName)
         {
-            if (!String.IsNullOrEmpty(fileName) && !fileName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(fileName) && !fileName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
                 return fileName + ".dll";
             return fileName;
         }
+        #endregion
 
+        #region Native methods
         [DllImport("kernel32", EntryPoint = "LoadLibrary", CallingConvention = CallingConvention.Winapi,
             SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         private static extern IntPtr WindowsLoadLibrary(string dllPath);
@@ -114,10 +135,13 @@ namespace TesseractOCR.InteropDotNet
         [DllImport("kernel32", EntryPoint = "GetProcAddress", CallingConvention = CallingConvention.Winapi,
             SetLastError = true)]
         private static extern IntPtr WindowsGetProcAddress(IntPtr handle, string procedureName);
+        #endregion
 
+        #region WindowsGetLastError
         private static int WindowsGetLastError()
         {
             return Marshal.GetLastWin32Error();
         }
+        #endregion
     }
 }

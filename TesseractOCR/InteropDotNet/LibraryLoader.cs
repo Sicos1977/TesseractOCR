@@ -33,41 +33,53 @@ namespace TesseractOCR.InteropDotNet
 {
     public class LibraryLoader
     {
-        private readonly ILibraryLoaderLogic logic;
+        #region Fields
+        private readonly ILibraryLoaderLogic _logic;
+        private readonly object _syncLock = new object();
+        private readonly Dictionary<string, IntPtr> _loadedAssemblies = new Dictionary<string, IntPtr>();
+        private static LibraryLoader _instance;
+        #endregion
 
+        #region Constructor
         private LibraryLoader(ILibraryLoaderLogic logic)
         {
-            this.logic = logic;
+            _logic = logic;
         }
+        #endregion
 
-        private readonly object syncLock = new object();
-        private readonly Dictionary<string, IntPtr> loadedAssemblies = new Dictionary<string, IntPtr>();
-
+        #region LoadLibrary
         public IntPtr LoadLibrary(string fileName, string platformName = null)
         {
             fileName = FixUpLibraryName(fileName);
-            lock (syncLock)
+            lock (_syncLock)
             {
-                if (!loadedAssemblies.ContainsKey(fileName))
-                {
-                    if (platformName == null)
-                        platformName = SystemManager.GetPlatformName();
-                    LibraryLoaderTrace.TraceInformation("Current platform: " + platformName);
-                    IntPtr dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
-                    if (dllHandle == IntPtr.Zero)
-                        dllHandle = CheckCurrentAppDomain(fileName, platformName);
-                    if (dllHandle == IntPtr.Zero)
-                        dllHandle = CheckWorkingDirectory(fileName, platformName);
+                if (_loadedAssemblies.ContainsKey(fileName)) return _loadedAssemblies[fileName];
+                
+                if (platformName == null)
+                    platformName = SystemManager.GetPlatformName();
+                
+                LibraryLoaderTrace.TraceInformation("Current platform: " + platformName);
+                
+                var dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
+                
+                if (dllHandle == IntPtr.Zero)
+                    dllHandle = CheckCurrentAppDomain(fileName, platformName);
+                
+                if (dllHandle == IntPtr.Zero)
+                    dllHandle = CheckWorkingDirectory(fileName, platformName);
 
-                    if (dllHandle != IntPtr.Zero)
-                        loadedAssemblies[fileName] = dllHandle;
-                    else
-                        throw new DllNotFoundException(string.Format("Failed to find library \"{0}\" for platform {1}.", fileName, platformName));
-                }
-                return loadedAssemblies[fileName];
+                if (dllHandle != IntPtr.Zero)
+                    _loadedAssemblies[fileName] = dllHandle;
+                else
+                    throw new DllNotFoundException(
+                        $"Failed to find library \"{fileName}\" for platform {platformName}.");
+
+                return _loadedAssemblies[fileName];
             }
         }
+        #endregion
 
+        #region CheckExecutingAssemblyDomain
         private IntPtr CheckExecutingAssemblyDomain(string fileName, string platformName)
         {
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;
@@ -76,10 +88,13 @@ namespace TesseractOCR.InteropDotNet
                 LibraryLoaderTrace.TraceInformation("Executing assembly location was empty");
                 return IntPtr.Zero;
             }
+
             var baseDirectory = Path.GetDirectoryName(assemblyLocation);
             return InternalLoadLibrary(baseDirectory, platformName, fileName);
         }
+        #endregion
 
+        #region CheckCurrentAppDomain
         private IntPtr CheckCurrentAppDomain(string fileName, string platformName)
         {
             var appBase = AppDomain.CurrentDomain.BaseDirectory;
@@ -88,10 +103,13 @@ namespace TesseractOCR.InteropDotNet
                 LibraryLoaderTrace.TraceInformation("App domain current domain base was empty");
                 return IntPtr.Zero;
             }
+
             var baseDirectory = Path.GetFullPath(appBase);
             return InternalLoadLibrary(baseDirectory, platformName, fileName);
         }
+        #endregion
 
+        #region CheckWorkingDirectory
         private IntPtr CheckWorkingDirectory(string fileName, string platformName)
         {
             var currentDirectory = Environment.CurrentDirectory;
@@ -100,84 +118,96 @@ namespace TesseractOCR.InteropDotNet
                 LibraryLoaderTrace.TraceInformation("Current directory was empty");
                 return IntPtr.Zero;
             }
+
             var baseDirectory = Path.GetFullPath(currentDirectory);
             return InternalLoadLibrary(baseDirectory, platformName, fileName);
         }
+        #endregion
 
+        #region InternalLoadLibrary
         private IntPtr InternalLoadLibrary(string baseDirectory, string platformName, string fileName)
         {
             var fullPath = Path.Combine(baseDirectory, Path.Combine(platformName, fileName));
-            return File.Exists(fullPath) ? logic.LoadLibrary(fullPath) : IntPtr.Zero;
+            return File.Exists(fullPath) ? _logic.LoadLibrary(fullPath) : IntPtr.Zero;
         }
+        #endregion
 
+        #region FreeLibrary
         public bool FreeLibrary(string fileName)
         {
             fileName = FixUpLibraryName(fileName);
-            lock (syncLock)
+            lock (_syncLock)
             {
                 if (!IsLibraryLoaded(fileName))
                 {
-                    LibraryLoaderTrace.TraceWarning("Failed to free library \"{0}\" because it is not loaded", fileName);
+                    LibraryLoaderTrace.TraceWarning("Failed to free library \"{0}\" because it is not loaded",
+                        fileName);
                     return false;
                 }
-                if (logic.FreeLibrary(loadedAssemblies[fileName]))
+
+                if (_logic.FreeLibrary(_loadedAssemblies[fileName]))
                 {
-                    loadedAssemblies.Remove(fileName);
+                    _loadedAssemblies.Remove(fileName);
                     return true;
                 }
+
                 return false;
             }
         }
+        #endregion
 
+        #region GetProcAddress
         public IntPtr GetProcAddress(IntPtr dllHandle, string name)
         {
-            return logic.GetProcAddress(dllHandle, name);
+            return _logic.GetProcAddress(dllHandle, name);
         }
+        #endregion
 
+        #region IsLibraryLoaded
         public bool IsLibraryLoaded(string fileName)
         {
             fileName = FixUpLibraryName(fileName);
-            lock (syncLock)
-                return loadedAssemblies.ContainsKey(fileName);
+            lock (_syncLock)
+            {
+                return _loadedAssemblies.ContainsKey(fileName);
+            }
         }
+        #endregion
 
+        #region FixUpLibraryName
         private string FixUpLibraryName(string fileName)
         {
-            return logic.FixUpLibraryName(fileName);
-
+            return _logic.FixUpLibraryName(fileName);
         }
+        #endregion
 
-        #region Singleton
-
-        private static LibraryLoader instance;
-
+        #region Instance
         public static LibraryLoader Instance
         {
             get
             {
-                if (instance == null)
+                if (_instance != null) return _instance;
+                var operatingSystem = SystemManager.GetOperatingSystem();
+                switch (operatingSystem)
                 {
-                    var operatingSystem = SystemManager.GetOperatingSystem();
-                    switch (operatingSystem)
-                    {
-                        case OperatingSystem.Windows:
-                            LibraryLoaderTrace.TraceInformation("Current OS: Windows");
-                            instance = new LibraryLoader(new WindowsLibraryLoaderLogic());
-                            break;
-                        case OperatingSystem.Unix:
-                            LibraryLoaderTrace.TraceInformation("Current OS: Unix");
-                            instance = new LibraryLoader(new UnixLibraryLoaderLogic());
-                            break;
-                        case OperatingSystem.MacOSX:
-                            throw new Exception("Unsupported operation system");
-                        default:
-                            throw new Exception("Unsupported operation system");
-                    }
+                    case OperatingSystem.Windows:
+                        LibraryLoaderTrace.TraceInformation("Current OS: Windows");
+                        _instance = new LibraryLoader(new WindowsLibraryLoaderLogic());
+                        break;
+                    case OperatingSystem.Unix:
+                        LibraryLoaderTrace.TraceInformation("Current OS: Unix");
+                        _instance = new LibraryLoader(new UnixLibraryLoaderLogic());
+                        break;
+                    case OperatingSystem.MacOSX:
+                        throw new Exception("Unsupported operation system");
+                    case OperatingSystem.Unknown:
+                    default:
+                        throw new Exception("Unsupported operation system");
                 }
-                return instance;
+
+                return _instance;
             }
         }
-
         #endregion
     }
 }

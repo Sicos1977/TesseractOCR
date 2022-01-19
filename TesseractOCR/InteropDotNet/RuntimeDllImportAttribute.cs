@@ -30,9 +30,10 @@ using System.Runtime.InteropServices;
 namespace TesseractOCR.InteropDotNet
 {
     [ComVisible(true)]
-    [AttributeUsage(AttributeTargets.Method, Inherited = false, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
     public sealed class RuntimeDllImportAttribute : Attribute
     {
+        #region Fields
         public string EntryPoint;
 
         public CallingConvention CallingConvention;
@@ -44,12 +45,17 @@ namespace TesseractOCR.InteropDotNet
         public bool BestFitMapping;
 
         public bool ThrowOnUnmappableChar;
+        #endregion
 
+        #region Properties
         public string LibraryFileName { get; private set; }
+        #endregion
 
+        #region Constructor
         public RuntimeDllImportAttribute(string libraryFileName)
         {
             LibraryFileName = libraryFileName;
         }
+        #endregion
     }
 }

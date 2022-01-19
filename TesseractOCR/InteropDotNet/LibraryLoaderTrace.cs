@@ -32,7 +32,7 @@ namespace TesseractOCR.InteropDotNet
 {
     internal static class LibraryLoaderTrace
     {
-        private static bool printToConsole = false;
+        private static readonly bool printToConsole = false;
 
         private static void Print(string message)
         {
