@@ -28,6 +28,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using TesseractOCR.Loggers;
+using File = System.IO.File;
+
 // ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR.InteropDotNet
@@ -59,7 +62,7 @@ namespace TesseractOCR.InteropDotNet
                 if (platformName == null)
                     platformName = SystemManager.GetPlatformName();
                 
-                LibraryLoaderTrace.TraceInformation($"Current platform: {platformName}");
+                Logger.LogInformation($"Current platform: {platformName}");
                 
                 var dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
                 
@@ -72,7 +75,11 @@ namespace TesseractOCR.InteropDotNet
                 if (dllHandle != IntPtr.Zero)
                     _loadedAssemblies[fileName] = dllHandle;
                 else
-                    throw new DllNotFoundException($"Failed to find library \"{fileName}\" for platform {platformName}.");
+                {
+                    var error = $"Failed to find library \"{fileName}\" for platform {platformName}";
+                    Logger.LogError(error);
+                    throw new DllNotFoundException(error);
+                }
 
                 return _loadedAssemblies[fileName];
             }
@@ -83,9 +90,10 @@ namespace TesseractOCR.InteropDotNet
         private IntPtr CheckExecutingAssemblyDomain(string fileName, string platformName)
         {
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;
+
             if (string.IsNullOrEmpty(assemblyLocation))
             {
-                LibraryLoaderTrace.TraceInformation("Executing assembly location was empty");
+                Logger.LogInformation("Executing assembly location was empty");
                 return IntPtr.Zero;
             }
 
@@ -98,9 +106,10 @@ namespace TesseractOCR.InteropDotNet
         private IntPtr CheckCurrentAppDomain(string fileName, string platformName)
         {
             var appBase = AppDomain.CurrentDomain.BaseDirectory;
+
             if (string.IsNullOrEmpty(appBase))
             {
-                LibraryLoaderTrace.TraceInformation("App domain current domain base was empty");
+                Logger.LogInformation("App domain current domain base was empty");
                 return IntPtr.Zero;
             }
 
@@ -113,9 +122,10 @@ namespace TesseractOCR.InteropDotNet
         private IntPtr CheckWorkingDirectory(string fileName, string platformName)
         {
             var currentDirectory = Environment.CurrentDirectory;
+
             if (string.IsNullOrEmpty(currentDirectory))
             {
-                LibraryLoaderTrace.TraceInformation("Current directory was empty");
+                Logger.LogInformation("Current directory was empty");
                 return IntPtr.Zero;
             }
 
@@ -136,22 +146,18 @@ namespace TesseractOCR.InteropDotNet
         public bool FreeLibrary(string fileName)
         {
             fileName = FixUpLibraryName(fileName);
+
             lock (_syncLock)
             {
                 if (!IsLibraryLoaded(fileName))
                 {
-                    LibraryLoaderTrace.TraceWarning("Failed to free library \"{0}\" because it is not loaded",
-                        fileName);
+                    Logger.LogError($"Failed to free library '{fileName}' because it is not loaded");
                     return false;
                 }
 
-                if (_logic.FreeLibrary(_loadedAssemblies[fileName]))
-                {
-                    _loadedAssemblies.Remove(fileName);
-                    return true;
-                }
-
-                return false;
+                if (!_logic.FreeLibrary(_loadedAssemblies[fileName])) return false;
+                _loadedAssemblies.Remove(fileName);
+                return true;
             }
         }
         #endregion
@@ -187,22 +193,31 @@ namespace TesseractOCR.InteropDotNet
             get
             {
                 if (_instance != null) return _instance;
+
                 var operatingSystem = SystemManager.GetOperatingSystem();
+
+                const string notSupported = "Unsupported operation system";
+
                 switch (operatingSystem)
                 {
                     case OperatingSystem.Windows:
-                        LibraryLoaderTrace.TraceInformation("Current OS: Windows");
+                        Logger.LogInformation("Current OS: Windows");
                         _instance = new LibraryLoader(new WindowsLibraryLoaderLogic());
                         break;
+
                     case OperatingSystem.Unix:
-                        LibraryLoaderTrace.TraceInformation("Current OS: Unix");
+                        Logger.LogInformation("Current OS: Unix");
                         _instance = new LibraryLoader(new UnixLibraryLoaderLogic());
                         break;
+
                     case OperatingSystem.MacOSX:
-                        throw new Exception("Unsupported operation system");
+                        Logger.LogError(notSupported);
+                        throw new NotSupportedException(notSupported);
+
                     case OperatingSystem.Unknown:
                     default:
-                        throw new Exception("Unsupported operation system");
+                        Logger.LogError(notSupported);
+                        throw new NotSupportedException(notSupported);
                 }
 
                 return _instance;

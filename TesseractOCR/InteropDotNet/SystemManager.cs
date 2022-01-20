@@ -32,8 +32,11 @@ namespace TesseractOCR.InteropDotNet
     internal enum OperatingSystem
     {
         Windows,
+
         Unix,
+
         MacOSX,
+
         Unknown
     }
     #endregion

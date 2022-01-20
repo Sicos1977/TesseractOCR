@@ -26,6 +26,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.InteropDotNet
 {
@@ -46,19 +47,19 @@ namespace TesseractOCR.InteropDotNet
 
             try
             {
-                LibraryLoaderTrace.TraceInformation("Trying to load native library \"{0}\"...", fileName);
+                Logger.LogInformation($"Trying to load native library '{fileName}'");
                 
                 libraryHandle = UnixLoadLibrary(fileName, RtldNow);
                 
                 if (libraryHandle != IntPtr.Zero)
-                    LibraryLoaderTrace.TraceInformation("Successfully loaded native library \"{0}\", handle = {1}.", fileName, libraryHandle);
+                    Logger.LogInformation($"Successfully loaded native library '{fileName}' with handle '{libraryHandle}'");
                 else
-                    LibraryLoaderTrace.TraceError("Failed to load native library \"{0}\".\r\nCheck windows event log.", fileName);
+                    Logger.LogError($"Failed to load native library '{fileName}', check logging");
             }
-            catch (Exception e)
+            catch (Exception exception)
             {
                 var lastError = UnixGetLastError();
-                LibraryLoaderTrace.TraceError("Failed to load native library \"{0}\".\r\nLast Error:{1}\r\nCheck inner exception and\\or windows event log.\r\nInner Exception: {2}", fileName, lastError, e.ToString());
+                Logger.LogError($"Failed to load native library '{fileName}', last error '{lastError}', inner Exception: {exception}");
             }
 
             return libraryHandle;
@@ -76,8 +77,8 @@ namespace TesseractOCR.InteropDotNet
         public IntPtr GetProcAddress(IntPtr libraryHandle, string functionName)
         {
             UnixGetLastError(); // Clearing previous errors
-            
-            LibraryLoaderTrace.TraceInformation("Trying to load native function \"{0}\" from the library with handle {1}...", functionName, libraryHandle);
+
+            Logger.LogInformation($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
             
             var functionHandle = UnixGetProcAddress(libraryHandle, functionName);
             var errorPointer = UnixGetLastError();
@@ -86,9 +87,9 @@ namespace TesseractOCR.InteropDotNet
                 throw new Exception($"dlsym: {Marshal.PtrToStringAnsi(errorPointer)}");
             
             if (functionHandle != IntPtr.Zero && errorPointer == IntPtr.Zero)
-                LibraryLoaderTrace.TraceInformation("Successfully loaded native function \"{0}\", function handle = {1}.", functionName, functionHandle);
+                Logger.LogInformation($"Successfully loaded native function '{functionName}' with handle '{libraryHandle}'");
             else
-                LibraryLoaderTrace.TraceError("Failed to load native function \"{0}\", function handle = {1}, error pointer = {2}", functionName, functionHandle, errorPointer);
+                Logger.LogError($"Failed to load native function '{functionName}', function handle '{libraryHandle}', error pointer '{errorPointer}'");
             
             return functionHandle;
         }
