@@ -12,7 +12,7 @@
     <PackageTags>Tesseract OCR text readable PDF</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <SignAssembly>false</SignAssembly>
-    <TargetFrameworks>net48;net5.0</TargetFrameworks>
+    <TargetFrameworks>net48;net5.0;net6.0</TargetFrameworks>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <FileVersion>5.0.0.0</FileVersion>
     <AssemblyVersion>5.0.0.0</AssemblyVersion>
