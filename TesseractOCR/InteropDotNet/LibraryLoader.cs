@@ -28,10 +28,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+// ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR.InteropDotNet
 {
-    public class LibraryLoader
+    internal class LibraryLoader
     {
         #region Fields
         private readonly ILibraryLoaderLogic _logic;
@@ -58,7 +59,7 @@ namespace TesseractOCR.InteropDotNet
                 if (platformName == null)
                     platformName = SystemManager.GetPlatformName();
                 
-                LibraryLoaderTrace.TraceInformation("Current platform: " + platformName);
+                LibraryLoaderTrace.TraceInformation($"Current platform: {platformName}");
                 
                 var dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
                 
@@ -71,8 +72,7 @@ namespace TesseractOCR.InteropDotNet
                 if (dllHandle != IntPtr.Zero)
                     _loadedAssemblies[fileName] = dllHandle;
                 else
-                    throw new DllNotFoundException(
-                        $"Failed to find library \"{fileName}\" for platform {platformName}.");
+                    throw new DllNotFoundException($"Failed to find library \"{fileName}\" for platform {platformName}.");
 
                 return _loadedAssemblies[fileName];
             }

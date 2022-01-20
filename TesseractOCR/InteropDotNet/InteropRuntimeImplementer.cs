@@ -33,7 +33,7 @@ using System.Runtime.InteropServices;
 
 namespace TesseractOCR.InteropDotNet
 {
-    public static class InteropRuntimeImplementer
+    internal static class InteropRuntimeImplementer
     {
         #region CreateInstance
         public static T CreateInstance<T>() where T : class

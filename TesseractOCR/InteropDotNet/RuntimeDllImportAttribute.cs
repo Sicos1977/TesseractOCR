@@ -31,7 +31,7 @@ namespace TesseractOCR.InteropDotNet
 {
     [ComVisible(true)]
     [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    public sealed class RuntimeDllImportAttribute : Attribute
+    internal sealed class RuntimeDllImportAttribute : Attribute
     {
         #region Fields
         public string EntryPoint;
