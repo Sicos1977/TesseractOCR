@@ -26,6 +26,10 @@ namespace TesseractOCR
     public readonly struct Rect : IEquatable<Rect>
     {
         #region Fields
+        /// <summary>
+        ///     Returns an empty <see cref="Rect"/>
+        /// </summary>
+        // ReSharper disable once UnusedMember.Global
         public static readonly Rect Empty = new Rect();
         #endregion
 
@@ -61,11 +65,21 @@ namespace TesseractOCR
         #endregion
 
         #region Equals
+        /// <summary>
+        ///     Returns <c>true</c> when this object equals the given <paramref name="obj"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             return obj is Rect rect && Equals(rect);
         }
 
+        /// <summary>
+        ///     Returns <c>true</c> when this object equals the <paramref name="other"/>
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public bool Equals(Rect other)
         {
             return X1 == other.X1 && Y1 == other.Y1 && Width == other.Width && Height == other.Height;
@@ -73,6 +87,10 @@ namespace TesseractOCR
         #endregion
 
         #region GetHashCode
+        /// <summary>
+        ///     Returns a hash code for this object
+        /// </summary>
+        /// <returns></returns>
         public override int GetHashCode()
         {
             var hashCode = 0;
@@ -89,11 +107,23 @@ namespace TesseractOCR
         #endregion
 
         #region Operators
+        /// <summary>
+        ///     Returns <c>true</c> when equal
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         public static bool operator ==(Rect lhs, Rect rhs)
         {
             return lhs.Equals(rhs);
         }
 
+        /// <summary>
+        ///     Returns <c>true</c> when not equal
+        /// </summary>
+        /// <param name="lhs"></param>
+        /// <param name="rhs"></param>
+        /// <returns></returns>
         public static bool operator !=(Rect lhs, Rect rhs)
         {
             return !(lhs == rhs);
@@ -101,6 +131,10 @@ namespace TesseractOCR
         #endregion
 
         #region ToString
+        /// <summary>
+        ///     Returns a string interpretation of this object
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"[Rect X={X1}, Y={Y1}, Width={Width}, Height={Height}]";

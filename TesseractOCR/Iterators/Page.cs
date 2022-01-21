@@ -27,7 +27,7 @@ using TesseractOCR.Pix;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Iterators
 {
     /// <summary>
     ///     Represents an object that can iterate over Tesseract's page structure.
@@ -36,11 +36,18 @@ namespace TesseractOCR
     ///     The iterator points to Tesseract's internal page structure and is only valid while the Engine instance that created
     ///     it exists and has not been subjected to a call to Recognize since the iterator was created.
     /// </remarks>
-    public class PageIterator : DisposableBase
+    public class Page : DisposableBase
     {
         #region Fields
-        protected readonly HandleRef Handle;
-        protected readonly Page Page;
+        /// <summary>
+        ///     <see cref="HandleRef"/>
+        /// </summary>
+        protected readonly HandleRef HandleRef;
+
+        /// <summary>
+        ///     <see cref="Page"/>
+        /// </summary>
+        protected readonly TesseractOCR.Page PageRef;
         #endregion
 
         #region Properties 
@@ -67,10 +74,10 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                if (Handle.Handle == IntPtr.Zero)
+                if (HandleRef.Handle == IntPtr.Zero)
                     return false;
 
-                return TessApi.Native.PageIteratorIsAtBeginningOf(Handle, Level) != 0;
+                return TessApi.Native.PageIteratorIsAtBeginningOf(HandleRef, Level) != 0;
             }
         }
 
@@ -84,9 +91,9 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                if (Handle.Handle == IntPtr.Zero)
+                if (HandleRef.Handle == IntPtr.Zero)
                     return false;
-                return TessApi.Native.PageIteratorIsAtFinalElement(Handle, Level, Element) != 0;
+                return TessApi.Native.PageIteratorIsAtFinalElement(HandleRef, Level, Element) != 0;
 
             }
         }
@@ -100,8 +107,8 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                return Handle.Handle != IntPtr.Zero
-                    ? TessApi.Native.PageIteratorBlockType(Handle)
+                return HandleRef.Handle != IntPtr.Zero
+                    ? TessApi.Native.PageIteratorBlockType(HandleRef)
                     : PolyBlockType.Unknown;
             }
         }
@@ -116,8 +123,8 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                return Handle.Handle != IntPtr.Zero
-                    ? Image.Create(TessApi.Native.PageIteratorGetBinaryImage(Handle, Level))
+                return HandleRef.Handle != IntPtr.Zero
+                    ? Image.Create(TessApi.Native.PageIteratorGetBinaryImage(HandleRef, Level))
                     : null;
             }
         }
@@ -132,8 +139,8 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                return Handle.Handle != IntPtr.Zero
-                    ? Image.Create(TessApi.Native.PageIteratorGetImage(Handle, Level, 0, Page.Image.Handle, out _, out _))
+                return HandleRef.Handle != IntPtr.Zero
+                    ? Image.Create(TessApi.Native.PageIteratorGetImage(HandleRef, Level, 0, PageRef.Image.Handle, out _, out _))
                     : null;
             }
         }
@@ -148,8 +155,8 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                if (Handle.Handle != IntPtr.Zero &&
-                    TessApi.Native.PageIteratorBoundingBox(Handle, Level, out var x1, out var y1, out var x2, out var y2) != 0)
+                if (HandleRef.Handle != IntPtr.Zero &&
+                    TessApi.Native.PageIteratorBoundingBox(HandleRef, Level, out var x1, out var y1, out var x2, out var y2) != 0)
                     return Rect.FromCoords(x1, y1, x2, y2);
 
                 return null;
@@ -169,7 +176,7 @@ namespace TesseractOCR
         {
             VerifyNotDisposed();
 
-            if (Handle.Handle != IntPtr.Zero && TessApi.Native.PageIteratorBaseline(Handle, level, out var x1, out var y1, out var x2, out var y2) != 0)
+            if (HandleRef.Handle != IntPtr.Zero && TessApi.Native.PageIteratorBaseline(HandleRef, level, out var x1, out var y1, out var x2, out var y2) != 0)
                 return Rect.FromCoords(x1, y1, x2, y2);
 
             return null;
@@ -184,11 +191,11 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                if (Handle.Handle == IntPtr.Zero)
+                if (HandleRef.Handle == IntPtr.Zero)
                     return new ElementProperties(Orientation.PageUp, TextLineOrder.TopToBottom,
                         WritingDirection.LeftToRight, 0f);
 
-                TessApi.Native.PageIteratorOrientation(Handle, out var orientation, out var writingDirection,
+                TessApi.Native.PageIteratorOrientation(HandleRef, out var orientation, out var writingDirection,
                     out var textLineOrder,
                     out var deskewAngle);
 
@@ -198,10 +205,10 @@ namespace TesseractOCR
         #endregion
 
         #region Constructor
-        internal PageIterator(Page page, IntPtr handle)
+        internal Page(TesseractOCR.Page page, IntPtr handle)
         {
-            Page = page;
-            Handle = new HandleRef(this, handle);
+            PageRef = page;
+            HandleRef = new HandleRef(this, handle);
         }
         #endregion
 
@@ -212,7 +219,7 @@ namespace TesseractOCR
         public void Begin()
         {
             VerifyNotDisposed();
-            if (Handle.Handle != IntPtr.Zero) TessApi.Native.PageIteratorBegin(Handle);
+            if (HandleRef.Handle != IntPtr.Zero) TessApi.Native.PageIteratorBegin(HandleRef);
         }
         #endregion
 
@@ -228,10 +235,10 @@ namespace TesseractOCR
         {
             VerifyNotDisposed();
 
-            if (Handle.Handle == IntPtr.Zero)
+            if (HandleRef.Handle == IntPtr.Zero)
                 return false;
 
-            var result = TessApi.Native.PageIteratorNext(Handle, level) != 0;
+            var result = TessApi.Native.PageIteratorNext(HandleRef, level) != 0;
             
             if (result)
             {
@@ -278,7 +285,7 @@ namespace TesseractOCR
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
-            if (Handle.Handle != IntPtr.Zero) TessApi.Native.PageIteratorDelete(Handle);
+            if (HandleRef.Handle != IntPtr.Zero) TessApi.Native.PageIteratorDelete(HandleRef);
         }
         #endregion
     }

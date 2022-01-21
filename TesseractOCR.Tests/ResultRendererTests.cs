@@ -32,7 +32,7 @@ namespace Tesseract.Tests
         public void CanRenderResultsIntoTextFile()
         {
             var resultPath = TestResultRunFile(@"Results\Text\phototest");
-            using (var renderer = Result.CreateTextRenderer(resultPath))
+            using (var renderer = TesseractOCR.Renderers.Result.CreateTextRenderer(resultPath))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessFile(renderer, examplePixPath);
@@ -47,14 +47,14 @@ namespace Tesseract.Tests
         public void CanRenderResultsIntoPdfFile()
         {
             var resultPath = TestResultRunFile(@"Results\PDF\phototest");
-            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            using (var renderer = TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessFile(renderer, examplePixPath);
             }
 
             var expectedOutputFilename = Path.ChangeExtension(resultPath, "pdf");
-            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            using (var renderer = TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessImageFile(renderer, examplePixPath);
@@ -68,7 +68,7 @@ namespace Tesseract.Tests
         public void CanRenderResultsIntoPdfFile1()
         {
             var resultPath = TestResultRunFile(@"Results\PDF\phototest");
-            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            using (var renderer = TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessImageFile(renderer, examplePixPath);
@@ -83,14 +83,14 @@ namespace Tesseract.Tests
         public void CanRenderMultiplePageDocumentToPdfFile()
         {
             var resultPath = TestResultRunFile(@"Results\PDF\multi-page");
-            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            using (var renderer = TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("processing/multi-page.tif");
                 ProcessMultiPageTiff(renderer, examplePixPath);
             }
 
             var expectedOutputFilename = Path.ChangeExtension(resultPath, "pdf");
-            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            using (var renderer = TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("processing/multi-page.tif");
                 ProcessImageFile(renderer, examplePixPath);
@@ -104,7 +104,7 @@ namespace Tesseract.Tests
         public void CanRenderMultiplePageDocumentToPdfFile1()
         {
             var resultPath = TestResultRunFile(@"Results\PDF\multi-page");
-            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            using (var renderer = TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false))
             {
                 var examplePixPath = TestFilePath("processing/multi-page.tif");
                 ProcessImageFile(renderer, examplePixPath);
@@ -119,7 +119,7 @@ namespace Tesseract.Tests
         public void CanRenderResultsIntoHOcrFile()
         {
             var resultPath = TestResultRunFile(@"Results\HOCR\phototest");
-            using (var renderer = Result.CreateHOcrRenderer(resultPath))
+            using (var renderer = TesseractOCR.Renderers.Result.CreateHOcrRenderer(resultPath))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessFile(renderer, examplePixPath);
@@ -134,7 +134,7 @@ namespace Tesseract.Tests
         public void CanRenderResultsIntoUnlvFile()
         {
             var resultPath = TestResultRunFile(@"Results\UNLV\phototest");
-            using (var renderer = Result.CreateUnlvRenderer(resultPath))
+            using (var renderer = TesseractOCR.Renderers.Result.CreateUnlvRenderer(resultPath))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessFile(renderer, examplePixPath);
@@ -149,7 +149,7 @@ namespace Tesseract.Tests
         public void CanRenderResultsIntoBoxFile()
         {
             var resultPath = TestResultRunFile(@"Results\Box\phototest");
-            using (var renderer = Result.CreateBoxRenderer(resultPath))
+            using (var renderer = TesseractOCR.Renderers.Result.CreateBoxRenderer(resultPath))
             {
                 var examplePixPath = TestFilePath("Ocr/phototest.tif");
                 ProcessFile(renderer, examplePixPath);
@@ -180,7 +180,7 @@ namespace Tesseract.Tests
 
             // TODO: Find out why Alto rendering fails
 
-            var renderers = Result.CreateRenderers(resultPath, DataPath, formats);
+            var renderers = TesseractOCR.Renderers.Result.CreateRenderers(resultPath, DataPath, formats);
 
             foreach (var renderer in renderers)
             {
@@ -227,8 +227,8 @@ namespace Tesseract.Tests
         {
             var resultPath = TestResultRunFile(@"Results\Aggregate\multi-page");
             using (var renderer = new AggregateResult(
-                       Result.CreatePdfRenderer(resultPath, DataPath, false),
-                       Result.CreateTextRenderer(resultPath)))
+                       TesseractOCR.Renderers.Result.CreatePdfRenderer(resultPath, DataPath, false),
+                       TesseractOCR.Renderers.Result.CreateTextRenderer(resultPath)))
             {
                 var examplePixPath = TestFilePath("processing/multi-page.tif");
                 ProcessMultiPageTiff(renderer, examplePixPath);

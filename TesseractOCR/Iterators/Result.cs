@@ -26,9 +26,9 @@ using TesseractOCR.Interop;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Iterators
 {
-    public sealed class ResultIterator : PageIterator
+    public sealed class Result : Page
     {
         #region Fields
         private readonly Dictionary<int, FontInfo> _fontInfoCache = new Dictionary<int, FontInfo>();
@@ -36,7 +36,7 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     Returns the confidence for the given <see cref="PageIterator.Level"/>
+        ///     Returns the confidence for the given <see cref="Page.Level"/>
         /// </summary>
         /// <returns></returns>
         public float Confidence
@@ -44,12 +44,12 @@ namespace TesseractOCR
             get
             {
                 VerifyNotDisposed();
-                return Handle.Handle == IntPtr.Zero ? 0f : TessApi.Native.ResultIteratorGetConfidence(Handle, Level);
+                return HandleRef.Handle == IntPtr.Zero ? 0f : TessApi.Native.ResultIteratorGetConfidence(HandleRef, Level);
             }
         }
 
         /// <summary>
-        ///     Returns the text for the current <see cref="PageIterator.Level"/>
+        ///     Returns the text for the current <see cref="Page.Level"/>
         /// </summary>
         public string Text
         {
@@ -57,7 +57,7 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                return Handle.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(Handle, Level);
+                return HandleRef.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(HandleRef, Level);
             }
         }
 
@@ -70,7 +70,7 @@ namespace TesseractOCR
             get
             {
                 VerifyNotDisposed();
-                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsFromDictionary(Handle);
+                return HandleRef.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsFromDictionary(HandleRef);
             }
         }
 
@@ -83,14 +83,14 @@ namespace TesseractOCR
             {
                 VerifyNotDisposed();
 
-                if (Handle.Handle == IntPtr.Zero)
+                if (HandleRef.Handle == IntPtr.Zero)
                     return null;
 
                 // Per docs (ltrresultiterator.h:104 as of 4897796 in github:tesseract-ocr/tesseract)
                 // this return value points to an internal table and should not be deleted.
                 var nameHandle =
                     TessApi.Native.ResultIteratorWordFontAttributes(
-                        Handle,
+                        HandleRef,
                         out var isBold, out var isItalic, out var isUnderlined,
                         out var isMonospace, out var isSerif, out var isSmallCaps,
                         out var pointSize, out var fontId);
@@ -119,7 +119,7 @@ namespace TesseractOCR
             get
             {
                 VerifyNotDisposed();
-                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsNumeric(Handle);
+                return HandleRef.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsNumeric(HandleRef);
             }
         }
 
@@ -132,7 +132,7 @@ namespace TesseractOCR
             get
             {
                 VerifyNotDisposed();
-                return Handle.Handle == IntPtr.Zero ? null : TessApi.ResultIteratorWordRecognitionLanguage(Handle);
+                return HandleRef.Handle == IntPtr.Zero ? null : TessApi.ResultIteratorWordRecognitionLanguage(HandleRef);
             }
         }
 
@@ -152,7 +152,7 @@ namespace TesseractOCR
             get
             {
                 VerifyNotDisposed();
-                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsSuperscript(Handle);
+                return HandleRef.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsSuperscript(HandleRef);
             }
         }
 
@@ -168,7 +168,7 @@ namespace TesseractOCR
             get
             {
                 VerifyNotDisposed();
-                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsDropcap(Handle);
+                return HandleRef.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsDropcap(HandleRef);
             }
         }
 
@@ -177,18 +177,18 @@ namespace TesseractOCR
         ///     allows a one-shot iteration over the choices for this symbol and after that is is useless
         /// </summary>
         /// <returns>An instance of a <see cref="ChoiceIterator"/></returns>
-        public ChoiceIterator ChoiceIterator
+        public Choice ChoiceIterator
         {
             get
             {
-                var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
-                return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
+                var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(HandleRef);
+                return choiceIteratorHandle == IntPtr.Zero ? null : new Choice(choiceIteratorHandle);
             }
         }
         #endregion
 
         #region Constructor
-        internal ResultIterator(Page page, IntPtr handle) : base(page, handle)
+        internal Result(TesseractOCR.Page page, IntPtr handle) : base(page, handle)
         {
         }
         #endregion

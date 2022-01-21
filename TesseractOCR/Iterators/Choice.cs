@@ -25,12 +25,12 @@ using TesseractOCR.Interop;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Iterators
 {
     /// <summary>
     ///     Class to iterate over the classifier choices for a single symbol
     /// </summary>
-    public sealed class ChoiceIterator : DisposableBase
+    public sealed class Choice : DisposableBase
     {
         #region Fields
         private readonly HandleRef _handleRef;
@@ -38,7 +38,7 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     Returns the confidence of the current symbol (letter)
+        ///     Returns the confidence of the current choice (symbol)
         /// </summary>
         /// <remarks>
         ///     The number should be interpreted as a percent probability (0.0f - 100.0f)
@@ -54,7 +54,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the text string for the current symbol (letter)
+        ///     Returns the text string for the current choice (symbol)
         /// </summary>
         /// <returns>string</returns>
         public string Text
@@ -68,7 +68,7 @@ namespace TesseractOCR
         #endregion
 
         #region Constructor
-        internal ChoiceIterator(IntPtr handle)
+        internal Choice(IntPtr handle)
         {
             _handleRef = new HandleRef(this, handle);
         }

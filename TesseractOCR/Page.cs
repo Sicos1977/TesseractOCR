@@ -154,11 +154,11 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns a <see cref="PageIterator" /> object that is used to iterate over the page's layout as defined by the
+        ///     Returns a <see cref="Page" /> object that is used to iterate over the page's layout as defined by the
         ///     current <see cref="RegionOfInterest" />.
         /// </summary>
         /// <returns></returns>
-        public PageIterator Layout
+        public Page Layout
         {
             get
             {
@@ -166,7 +166,7 @@ namespace TesseractOCR
                     "Cannot analyse image layout when using OSD only page segmentation, please use DetectBestOrientation instead");
 
                 var resultIteratorHandle = TessApi.Native.BaseApiAnalyseLayout(Engine.Handle);
-                return new PageIterator(this, resultIteratorHandle);
+                return new Page(this, resultIteratorHandle);
             }
         }
 
@@ -175,13 +175,13 @@ namespace TesseractOCR
         ///     <see cref="RegionOfInterest" />
         /// </summary>
         /// <returns></returns>
-        public ResultIterator ResultIterator
+        public Result ResultIterator
         {
             get
             {
                 Recognize();
                 var resultIteratorHandle = TessApi.Native.BaseApiGetIterator(Engine.Handle);
-                return new ResultIterator(this, resultIteratorHandle);
+                return new Result(this, resultIteratorHandle);
             }
         }
 
