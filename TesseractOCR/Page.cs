@@ -29,6 +29,7 @@ using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
+using TesseractOCR.Iterators;
 using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
@@ -158,7 +159,7 @@ namespace TesseractOCR
         ///     current <see cref="RegionOfInterest" />.
         /// </summary>
         /// <returns></returns>
-        public Page Layout
+        public Iterators.Page Layout
         {
             get
             {
@@ -166,7 +167,7 @@ namespace TesseractOCR
                     "Cannot analyse image layout when using OSD only page segmentation, please use DetectBestOrientation instead");
 
                 var resultIteratorHandle = TessApi.Native.BaseApiAnalyseLayout(Engine.Handle);
-                return new Page(this, resultIteratorHandle);
+                return new Iterators.Page(this, resultIteratorHandle);
             }
         }
 

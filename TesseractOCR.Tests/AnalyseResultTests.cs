@@ -55,7 +55,7 @@ namespace Tesseract.Tests
                             pageLayout.Begin();
                             do
                             {
-                                var result = pageLayout.GetProperties();
+                                var result = pageLayout.Properties;
 
                                 ExpectedOrientation(angle ?? 0, out var orient);
                                 Assert.AreEqual(result.Orientation, orient);
@@ -206,31 +206,32 @@ namespace Tesseract.Tests
         {
             foreach (var level in new[]
                      {
-                         PageIteratorLevel.Block, PageIteratorLevel.Para, PageIteratorLevel.TextLine,
+                         PageIteratorLevel.Block,
+                         PageIteratorLevel.Para,
+                         PageIteratorLevel.TextLine,
                          PageIteratorLevel.Word,
                          PageIteratorLevel.Symbol
-                     })
-            foreach (var padding in new[] { 0, 3 })
-
-                using (var img = LoadTestImage(ExampleImagePath))
+                     }
+                    )
+            
+            using (var img = LoadTestImage(ExampleImagePath))
+            {
+                using (var page = _engine.Process(img))
                 {
-                    using (var page = _engine.Process(img))
+                    using (var pageLayout = page.Layout)
                     {
-                        using (var pageLayout = page.Layout)
+                        pageLayout.Begin();
+                        using (var elementImg = pageLayout.Image)
                         {
-                            pageLayout.Begin();
-                            using (var elementImg = pageLayout.GetImage(level, padding, out var x, out var y))
-                            {
-                                var elementImgFilename =
-                                    $@"AnalyseResult\GetImage\ResultIterator_Image_{level}_{padding}_at_({x},{y}).png";
+                            var elementImgFilename =
+                                $@"AnalyseResult\GetImage\ResultIterator_Image_{level}.png";
 
-                                // TODO: Ensure generated pix is equal to expected pix, only saving it if it's not.
-                                var destFilename = TestResultRunFile(elementImgFilename);
-                                elementImg.Save(destFilename, ImageFormat.Png);
-                            }
+                            var destFilename = TestResultRunFile(elementImgFilename);
+                            elementImg.Save(destFilename, ImageFormat.Png);
                         }
                     }
                 }
+            }
         }
         #endregion Tests
 

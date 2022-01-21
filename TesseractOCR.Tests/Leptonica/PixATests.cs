@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TesseractOCR;
 
 namespace Tesseract.Tests.Leptonica.PixTests
 {
@@ -9,7 +8,7 @@ namespace Tesseract.Tests.Leptonica.PixTests
         [TestMethod]
         public void CanCreatePixArray()
         {
-            using (var pixA = PixArray.Create(0))
+            using (var pixA = TesseractOCR.Pix.Array.Create(0))
             {
                 Assert.AreEqual(pixA.Count, 0);
             }
@@ -19,9 +18,9 @@ namespace Tesseract.Tests.Leptonica.PixTests
         public void CanAddPixToPixArray()
         {
             var sourcePixPath = TestFilePath(@"Ocr\phototest.tif");
-            using (var pixA = PixArray.Create(0))
+            using (var pixA = TesseractOCR.Pix.Array.Create(0))
             {
-                using (var sourcePix = Pix.LoadFromFile(sourcePixPath))
+                using (var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixPath))
                 {
                     pixA.Add(sourcePix);
                     Assert.AreEqual(pixA.Count, 1);
@@ -37,9 +36,9 @@ namespace Tesseract.Tests.Leptonica.PixTests
         public void CanRemovePixFromArray()
         {
             var sourcePixPath = TestFilePath(@"Ocr\phototest.tif");
-            using (var pixA = PixArray.Create(0))
+            using (var pixA = TesseractOCR.Pix.Array.Create(0))
             {
-                using (var sourcePix = Pix.LoadFromFile(sourcePixPath))
+                using (var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixPath))
                 {
                     pixA.Add(sourcePix);
                 }
@@ -53,9 +52,9 @@ namespace Tesseract.Tests.Leptonica.PixTests
         public void CanClearPixArray()
         {
             var sourcePixPath = TestFilePath(@"Ocr\phototest.tif");
-            using (var pixA = PixArray.Create(0))
+            using (var pixA = TesseractOCR.Pix.Array.Create(0))
             {
-                using (var sourcePix = Pix.LoadFromFile(sourcePixPath))
+                using (var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixPath))
                 {
                     pixA.Add(sourcePix);
                 }

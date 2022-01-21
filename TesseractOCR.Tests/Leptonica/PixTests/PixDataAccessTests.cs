@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TesseractOCR;
 
 namespace Tesseract.Tests.Leptonica.PixTests
 {
@@ -19,46 +18,46 @@ namespace Tesseract.Tests.Leptonica.PixTests
         [DataRow(32)]
         public void CanReadAndWriteData(int depth)
         {
-            using (var pix = Pix.Create(Width, Height, depth))
+            using (var pix = TesseractOCR.Pix.Image.Create(Width, Height, depth))
             {
-                var pixData = pix.GetData();
+                var data = pix.GetData();
 
                 for (var y = 0; y < Height; y++)
                 {
-                    var line = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                    var line = (uint*)data.PixData + y * data.WordsPerLine;
                     for (var x = 0; x < Width; x++)
                     {
                         var val = (uint)((y * Width + x) % (1 << depth));
                         uint readVal;
                         if (depth == 1)
                         {
-                            PixData.SetDataBit(line, x, val);
-                            readVal = PixData.GetDataBit(line, x);
+                            TesseractOCR.Pix.Data.SetDataBit(line, x, val);
+                            readVal = TesseractOCR.Pix.Data.GetDataBit(line, x);
                         }
                         else if (depth == 2)
                         {
-                            PixData.SetDataDIBit(line, x, val);
-                            readVal = PixData.GetDataDIBit(line, x);
+                            TesseractOCR.Pix.Data.SetDataDIBit(line, x, val);
+                            readVal = TesseractOCR.Pix.Data.GetDataDIBit(line, x);
                         }
                         else if (depth == 4)
                         {
-                            PixData.SetDataQBit(line, x, val);
-                            readVal = PixData.GetDataQBit(line, x);
+                            TesseractOCR.Pix.Data.SetDataQBit(line, x, val);
+                            readVal = TesseractOCR.Pix.Data.GetDataQBit(line, x);
                         }
                         else if (depth == 8)
                         {
-                            PixData.SetDataByte(line, x, val);
-                            readVal = PixData.GetDataByte(line, x);
+                            TesseractOCR.Pix.Data.SetDataByte(line, x, val);
+                            readVal = TesseractOCR.Pix.Data.GetDataByte(line, x);
                         }
                         else if (depth == 16)
                         {
-                            PixData.SetDataTwoByte(line, x, val);
-                            readVal = PixData.GetDataTwoByte(line, x);
+                            TesseractOCR.Pix.Data.SetDataTwoByte(line, x, val);
+                            readVal = TesseractOCR.Pix.Data.GetDataTwoByte(line, x);
                         }
                         else if (depth == 32)
                         {
-                            PixData.SetDataFourByte(line, x, val);
-                            readVal = PixData.GetDataFourByte(line, x);
+                            TesseractOCR.Pix.Data.SetDataFourByte(line, x, val);
+                            readVal = TesseractOCR.Pix.Data.GetDataFourByte(line, x);
                         }
                         else
                         {

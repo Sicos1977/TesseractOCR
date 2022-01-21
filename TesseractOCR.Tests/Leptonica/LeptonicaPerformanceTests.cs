@@ -3,13 +3,11 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TesseractOCR;
 
 namespace Tesseract.Tests
 {
     [TestClass]
-    [Ignore(
-        "Performance tests are disabled by default, there's probably a better way of doing this but for now it's ok")]
+    [Ignore("Performance tests are disabled by default, there's probably a better way of doing this but for now it's ok")]
     public class LeptonicaPerformanceTests
     {
         [TestMethod]
@@ -22,13 +20,13 @@ namespace Tesseract.Tests
             using (var bmp = new Bitmap(sourceFilePath))
             {
                 // Don't include the first conversion since it will also handle loading the library etc (upfront costs).
-                using (PixConverter.ToPix(bmp)) { }
+                using (TesseractOCR.Pix.Converter.ToPix(bmp)) { }
 
                 // copy 100 times take the average
                 var watch = new Stopwatch();
                 watch.Start();
                 for (var i = 0; i < runs; i++)
-                    using (PixConverter.ToPix(bmp)) { }
+                    using (TesseractOCR.Pix.Converter.ToPix(bmp)) { }
 
                 watch.Stop();
 

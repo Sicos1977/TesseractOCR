@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TesseractOCR;
+using TesseractOCR.Pix;
 
 namespace Tesseract.Tests.Leptonica
 {
@@ -10,8 +10,8 @@ namespace Tesseract.Tests.Leptonica
         [TestMethod]
         public void Color_CastColorToNetColor()
         {
-            var color = new PixColor(100, 150, 200);
-            var castColor = (Color)color;
+            var color = new TesseractOCR.Pix.Color(100, 150, 200);
+            var castColor = (System.Drawing.Color)color;
             Assert.AreEqual(castColor.R, color.Red);
             Assert.AreEqual(castColor.G, color.Green);
             Assert.AreEqual(castColor.B, color.Blue);
@@ -21,7 +21,7 @@ namespace Tesseract.Tests.Leptonica
         [TestMethod]
         public void Color_ConvertColorToNetColor()
         {
-            var color = new PixColor(100, 150, 200);
+            var color = new TesseractOCR.Pix.Color(100, 150, 200);
             var castColor = color.ToColor();
             Assert.AreEqual(castColor.R, color.Red);
             Assert.AreEqual(castColor.G, color.Green);
