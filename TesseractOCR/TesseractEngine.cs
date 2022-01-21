@@ -346,10 +346,10 @@ namespace TesseractOCR
             _processCount++;
 
             var actualPageSegmentMode = pageSegMode ?? DefaultPageSegMode;
-            TessApi.Native.BaseAPISetPageSegMode(_handle, actualPageSegmentMode);
+            TessApi.Native.BaseApiSetPageSegMode(_handle, actualPageSegmentMode);
             TessApi.Native.BaseApiSetImage(_handle, image.Handle);
             if (!string.IsNullOrEmpty(inputName)) TessApi.Native.BaseApiSetInputName(_handle, inputName);
-            var page = new Page(this, image, inputName, region, actualPageSegmentMode);
+            var page = new Page(this, image, inputName, region, actualPageSegmentMode, 1);
             page.Disposed += OnIteratorDisposed;
             return page;
         }

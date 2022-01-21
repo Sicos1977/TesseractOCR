@@ -30,7 +30,7 @@ namespace TesseractOCR.Pix
     /// <summary>
     ///     Converts a <see cref="Bitmap" /> to a <see cref="Image" />.
     /// </summary>
-    public class ToPixConverter
+    public class BitmapToPixConverter
     {
         #region Convert
         /// <summary>

@@ -246,7 +246,7 @@ namespace Tesseract.Tests
         private void ProcessMultiPageTiff(IResult renderer, string filename)
         {
             var imageName = Path.GetFileNameWithoutExtension(filename);
-            using (var pixA = PixArray.LoadMultiPageTiffFromFile(filename))
+            using (var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(filename))
             {
                 var expectedPageNumber = -1;
                 using (renderer.BeginDocument(imageName))
@@ -270,7 +270,7 @@ namespace Tesseract.Tests
         private void ProcessFile(IResult renderer, string filename)
         {
             var imageName = Path.GetFileNameWithoutExtension(filename);
-            using (var pix = Pix.LoadFromFile(filename))
+            using (var pix = TesseractOCR.Pix.Image.LoadFromFile(filename))
             {
                 using (renderer.BeginDocument(imageName))
                 {
@@ -312,13 +312,13 @@ namespace Tesseract.Tests
             }
         }
 
-        private static PixArray ReadImageFileIntoPixArray(string filename)
+        private static TesseractOCR.Pix.Array ReadImageFileIntoPixArray(string filename)
         {
             if (filename.ToLower().EndsWith(".tif") || filename.ToLower().EndsWith(".tiff"))
-                return PixArray.LoadMultiPageTiffFromFile(filename);
+                return TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(filename);
 
-            var pa = PixArray.Create(0);
-            pa.Add(Pix.LoadFromFile(filename));
+            var pa = TesseractOCR.Pix.Array.Create(0);
+            pa.Add(TesseractOCR.Pix.Image.LoadFromFile(filename));
             return pa;
         }
     }

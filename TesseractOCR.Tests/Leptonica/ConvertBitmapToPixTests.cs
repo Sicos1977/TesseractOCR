@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using TesseractOCR.Pix;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TesseractOCR;
 using ImageFormat = TesseractOCR.Enums.ImageFormat;
 
 namespace Tesseract.Tests.Leptonica
@@ -39,11 +39,11 @@ namespace Tesseract.Tests.Leptonica
         [DataRow(PixelFormat.Format32bppArgb)]
         public void Convert_BitmapToPix(PixelFormat pixelFormat)
         {
-            var depth = Image.GetPixelFormatSize(pixelFormat);
+            var depth = System.Drawing.Image.GetPixelFormatSize(pixelFormat);
             string pixType;
             if (depth < 16) pixType = "palette";
             else if (depth == 16) pixType = "grayscale";
-            else pixType = Image.IsAlphaPixelFormat(pixelFormat) ? "argb" : "rgb";
+            else pixType = System.Drawing.Image.IsAlphaPixelFormat(pixelFormat) ? "argb" : "rgb";
 
             var sourceFile = $"Conversion/photo_{pixType}_{depth}bpp.tif";
             var sourceFilePath = TestFilePath(sourceFile);
@@ -103,7 +103,7 @@ namespace Tesseract.Tests.Leptonica
 
             var sourceFile = TestFilePath($"Conversion/photo_{pixType}_{depth}bpp.tif");
             var converter = new PixToBitmapConverter();
-            using (var source = Pix.LoadFromFile(sourceFile))
+            using (var source = TesseractOCR.Pix.Image.LoadFromFile(sourceFile))
             {
                 Assert.AreEqual(source.Depth, depth);
                 if (hasPalette)
@@ -121,7 +121,7 @@ namespace Tesseract.Tests.Leptonica
             }
         }
 
-        private void AssertAreEquivalent(Bitmap bmp, Pix pix, bool checkAlpha)
+        private void AssertAreEquivalent(Bitmap bmp, TesseractOCR.Pix.Image pix, bool checkAlpha)
         {
             // verify img metadata
             Assert.AreEqual(pix.Width, bmp.Width);
@@ -138,25 +138,24 @@ namespace Tesseract.Tests.Leptonica
                 var sourcePixel = bmp.GetPixel(x, y).ToPixColor();
                 var destPixel = GetPixel(pix, x, y);
                 if (checkAlpha)
-                    Assert.AreEqual(destPixel, sourcePixel,
-                        "Expected pixel at <{0},{1}> to be same in both source and dest.", x, y);
+                    Assert.AreEqual(destPixel, sourcePixel, "Expected pixel at <{0},{1}> to be same in both source and dest.", x, y);
             }
         }
 
-        private static unsafe PixColor GetPixel(Pix pix, int x, int y)
+        private static unsafe TesseractOCR.Pix.Color GetPixel(TesseractOCR.Pix.Image pix, int x, int y)
         {
             var pixDepth = pix.Depth;
             var pixData = pix.GetData();
-            var pixLine = (uint*)pixData.Data + pixData.WordsPerLine * y;
+            var pixLine = (uint*)pixData.PixData + pixData.WordsPerLine * y;
             uint pixValue;
             if (pixDepth == 1)
-                pixValue = PixData.GetDataBit(pixLine, x);
+                pixValue = Data.GetDataBit(pixLine, x);
             else if (pixDepth == 4)
-                pixValue = PixData.GetDataQBit(pixLine, x);
+                pixValue = Data.GetDataQBit(pixLine, x);
             else if (pixDepth == 8)
-                pixValue = PixData.GetDataByte(pixLine, x);
+                pixValue = Data.GetDataByte(pixLine, x);
             else if (pixDepth == 32)
-                pixValue = PixData.GetDataFourByte(pixLine, x);
+                pixValue = Data.GetDataFourByte(pixLine, x);
             else
                 throw new ArgumentException($"Bit depth of {pix.Depth} is not supported.",
                     nameof(pix));
@@ -164,12 +163,10 @@ namespace Tesseract.Tests.Leptonica
             if (pix.Colormap != null) return pix.Colormap[(int)pixValue];
 
             if (pixDepth == 32)
-            {
-                return PixColor.FromRgba(pixValue);
-            }
+                return TesseractOCR.Pix.Color.FromRgba(pixValue);
 
             var grayscale = (byte)(pixValue * 255 / ((1 << 16) - 1));
-            return new PixColor(grayscale, grayscale, grayscale);
+            return new TesseractOCR.Pix.Color(grayscale, grayscale, grayscale);
         }
     }
 }

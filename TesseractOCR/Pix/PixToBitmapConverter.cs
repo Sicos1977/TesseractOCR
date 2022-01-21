@@ -27,7 +27,7 @@ using System.Drawing.Imaging;
 
 namespace TesseractOCR.Pix
 {
-    public class ToBitmapConverter
+    public class PixToBitmapConverter
     {
         #region Convert
         public Bitmap Convert(Image pix, bool includeAlpha = false)

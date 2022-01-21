@@ -31,9 +31,9 @@ namespace TesseractOCR.Pix
     public static class Converter
     {
         #region Fields
-        private static readonly ToPixConverter BitmapConverter = new ToPixConverter();
+        private static readonly BitmapToPixConverter BitmapConverter = new BitmapToPixConverter();
         // ReSharper disable once InconsistentNaming
-        private static readonly ToBitmapConverter PixConverter_ = new ToBitmapConverter();
+        private static readonly PixToBitmapConverter PixConverter_ = new PixToBitmapConverter();
         #endregion
 
         #region ToBitmap

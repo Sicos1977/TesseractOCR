@@ -23,14 +23,14 @@ namespace Tesseract.Tests
         {
             using (var engine = CreateEngine())
             {
-                using (var pixA = PixArray.LoadMultiPageTiffFromFile(TestFilePath("./processing/multi-page.tif")))
+                using (var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(TestFilePath("./processing/multi-page.tif")))
                 {
                     var i = 1;
                     foreach (var pix in pixA)
                     {
                         using (var page = engine.Process(pix))
                         {
-                            var text = page.GetText().Trim();
+                            var text = page.Text.Trim();
 
                             var expectedText = $"Page {i}";
                             Assert.AreEqual(text, expectedText);
@@ -57,7 +57,7 @@ namespace Tesseract.Tests
                 using (var pix = LoadTestPix(demoFilename))
                 using (var page = engine.Process(pix, mode))
                 {
-                    var text = page.GetText().Trim();
+                    var text = page.Text.Trim();
                     Assert.AreEqual(text, expectedText);
                 }
             }
@@ -72,7 +72,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        var text = page.GetText();
+                        var text = page.Text;
 
                         const string expectedText =
                             "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
@@ -89,11 +89,11 @@ namespace Tesseract.Tests
             using (var engine = CreateEngine())
             {
                 var inputFilename = TestFilePath(@"Ocr\uzn-test.png");
-                using (var img = Pix.LoadFromFile(inputFilename))
+                using (var img = TesseractOCR.Pix.Image.LoadFromFile(inputFilename))
                 {
                     using (var page = engine.Process(img, PageSegMode.AutoOnly))
                     {
-                        var text = page.GetText();
+                        var text = page.Text;
 
                         const string expectedText =
                             "This is another test\n";
@@ -115,7 +115,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        var text = page.GetText();
+                        var text = page.Text;
 
                         const string expectedText =
                             "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
@@ -136,7 +136,7 @@ namespace Tesseract.Tests
                     // See other tests about this bug on coords 0,0
                     using (var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188)))
                     {
-                        var region1Text = page.GetText();
+                        var region1Text = page.Text;
 
                         const string expectedTextRegion1 =
                             "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n";
@@ -160,7 +160,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188)))
                     {
-                        var region1Text = page.GetText();
+                        var region1Text = page.Text;
 
                         const string expectedTextRegion1 =
                             "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n";
@@ -169,7 +169,7 @@ namespace Tesseract.Tests
 
                         page.RegionOfInterest = Rect.FromCoords(0, 188, img.Width, img.Height);
 
-                        var region2Text = page.GetText();
+                        var region2Text = page.Text;
                         const string expectedTextRegion2 =
                             "The quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
 
@@ -187,7 +187,7 @@ namespace Tesseract.Tests
             using (var engine = CreateEngine())
             {
                 var imgPath = TestFilePath(TestImagePath);
-                using (var img = Pix.LoadFromFile(imgPath))
+                using (var img = TesseractOCR.Pix.Image.LoadFromFile(imgPath))
                 {
                     using (var page = engine.Process(img))
                     {
@@ -238,7 +238,7 @@ namespace Tesseract.Tests
                     {
                         using (var page = engine.Process(img))
                         {
-                            var text = page.GetText();
+                            var text = page.Text;
 
                             const string expectedText =
                                 "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
@@ -291,7 +291,7 @@ namespace Tesseract.Tests
                     {
                         using (var page = engine.Process(scaledImg))
                         {
-                            var text = page.GetText().Trim();
+                            var text = page.Text.Trim();
 
                             const string expectedText =
                                 "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.";
@@ -316,7 +316,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetHOcrText(1, useXHtml));
+                        actualResult = NormalizeNewLine(page.HOcrText(useXHtml));
                     }
                 }
             }
@@ -350,7 +350,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetAltoText(1));
+                        actualResult = NormalizeNewLine(page.AltoText);
                     }
                 }
             }
@@ -385,7 +385,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetTsvText(1));
+                        actualResult = NormalizeNewLine(page.TsvText);
                     }
                 }
             }
@@ -420,7 +420,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetBoxText(1));
+                        actualResult = NormalizeNewLine(page.BoxText);
                     }
                 }
             }
@@ -454,7 +454,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetLstmBoxText(1));
+                        actualResult = NormalizeNewLine(page.LstmBoxText);
                     }
                 }
             }
@@ -489,7 +489,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetWordStrBoxText(1));
+                        actualResult = NormalizeNewLine(page.WordStrBoxText);
                     }
                 }
             }
@@ -524,7 +524,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        actualResult = NormalizeNewLine(page.GetUnlvText());
+                        actualResult = NormalizeNewLine(page.UnlvText);
                     }
                 }
             }
@@ -590,7 +590,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
-                        var text = page.GetText();
+                        var text = page.Text;
 
                         const string expectedText =
                             "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
@@ -646,7 +646,7 @@ namespace Tesseract.Tests
         private static string WriteResultsToString(Page page, bool outputChoices)
         {
             var output = new StringBuilder();
-            using (var iterator = page.GetIterator())
+            using (var iterator = page.ResultIterator)
             {
                 iterator.Begin();
                 do
@@ -722,10 +722,10 @@ namespace Tesseract.Tests
                                                 output.Append("<choices>");
                                                 do
                                                 {
-                                                    var choiceConfidence = choiceIterator.GetConfidence() / 100;
+                                                    var choiceConfidence = choiceIterator.Confidence / 100;
                                                     output.AppendFormat(CultureInfo.InvariantCulture,
                                                         "<choice text=\"{0}\" confidence\"{1:P}\"/>",
-                                                        choiceIterator.GetText(), choiceConfidence);
+                                                        choiceIterator.Text, choiceConfidence);
                                                 } while (choiceIterator.Next());
 
                                                 output.Append("</choices>");
@@ -790,11 +790,11 @@ namespace Tesseract.Tests
             {
                 engine.SetVariable("classify_bln_numeric_mode", 1);
 
-                using (var img = Pix.LoadFromFile(TestFilePath("./processing/numbers.png")))
+                using (var img = TesseractOCR.Pix.Image.LoadFromFile(TestFilePath("./processing/numbers.png")))
                 {
                     using (var page = engine.Process(img))
                     {
-                        var text = page.GetText();
+                        var text = page.Text;
 
                         const string expectedText = "1234567890\n";
 

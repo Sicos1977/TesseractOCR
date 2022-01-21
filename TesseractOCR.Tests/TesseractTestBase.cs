@@ -54,10 +54,10 @@ namespace Tesseract.Tests
             return Path.Combine(testRunDirectory, testFileName);
         }
 
-        protected static Pix LoadTestPix(string filename)
+        protected static TesseractOCR.Pix.Image LoadTestPix(string filename)
         {
             var testFilename = TestFilePath(filename);
-            return Pix.LoadFromFile(testFilename);
+            return TesseractOCR.Pix.Image.LoadFromFile(testFilename);
         }
 
         /// <summary>

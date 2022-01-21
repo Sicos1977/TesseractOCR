@@ -50,7 +50,7 @@ namespace Tesseract.Tests
                     _engine.DefaultPageSegMode = PageSegMode.AutoOsd;
                     using (var page = _engine.Process(rotatedImage))
                     {
-                        using (var pageLayout = page.GetIterator())
+                        using (var pageLayout = page.PageIterator)
                         {
                             pageLayout.Begin();
                             do
@@ -216,7 +216,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = _engine.Process(img))
                     {
-                        using (var pageLayout = page.GetIterator())
+                        using (var pageLayout = page.PageIterator)
                         {
                             pageLayout.Begin();
                             using (var elementImg = pageLayout.GetImage(level, padding, out var x, out var y))
@@ -252,10 +252,10 @@ namespace Tesseract.Tests
                 throw new ArgumentOutOfRangeException(nameof(rotation));
         }
 
-        private static Pix LoadTestImage(string path)
+        private static TesseractOCR.Pix.Image LoadTestImage(string path)
         {
             var fullExampleImagePath = TestFilePath(path);
-            return Pix.LoadFromFile(fullExampleImagePath);
+            return TesseractOCR.Pix.Image.LoadFromFile(fullExampleImagePath);
         }
         #endregion
     }
