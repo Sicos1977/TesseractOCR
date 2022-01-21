@@ -50,7 +50,7 @@ namespace Tesseract.Tests
                     _engine.DefaultPageSegMode = PageSegMode.AutoOsd;
                     using (var page = _engine.Process(rotatedImage))
                     {
-                        using (var pageLayout = page.PageIterator)
+                        using (var pageLayout = page.Layout)
                         {
                             pageLayout.Begin();
                             do
@@ -85,7 +85,7 @@ namespace Tesseract.Tests
                                     Assert.AreEqual(result.WritingDirection, WritingDirection.LeftToRight);
                                     Assert.AreEqual(result.TextLineOrder, TextLineOrder.TopToBottom);
                                 }
-                            } while (pageLayout.Next(PageIteratorLevel.Block));
+                            } while (pageLayout.NextLevel(PageIteratorLevel.Block));
                         }
                     }
                 }
@@ -216,7 +216,7 @@ namespace Tesseract.Tests
                 {
                     using (var page = _engine.Process(img))
                     {
-                        using (var pageLayout = page.PageIterator)
+                        using (var pageLayout = page.Layout)
                         {
                             pageLayout.Begin();
                             using (var elementImg = pageLayout.GetImage(level, padding, out var x, out var y))

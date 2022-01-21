@@ -22,7 +22,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using TesseractOCR.Enums;
 using TesseractOCR.Interop;
 
 // ReSharper disable UnusedMember.Global
@@ -37,7 +36,33 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     Returns <c>true</c> when the word is found is a Tesseract dictionary
+        ///     Returns the confidence for the given <see cref="PageIterator.Level"/>
+        /// </summary>
+        /// <returns></returns>
+        public float Confidence
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return Handle.Handle == IntPtr.Zero ? 0f : TessApi.Native.ResultIteratorGetConfidence(Handle, Level);
+            }
+        }
+
+        /// <summary>
+        ///     Returns the text for the current <see cref="PageIterator.Level"/>
+        /// </summary>
+        public string Text
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                return Handle.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(Handle, Level);
+            }
+        }
+
+        /// <summary>
+        ///     Returns <c>true</c> when the word is returned from a Tesseract dictionary
         /// </summary>
         /// <returns></returns>
         public bool WordIsFromDictionary
@@ -146,51 +171,25 @@ namespace TesseractOCR
                 return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsDropcap(Handle);
             }
         }
+
+        /// <summary>
+        ///     Returns an instance of a choice iterator using the current symbol of interest. The <see cref="ChoiceIterator"/>
+        ///     allows a one-shot iteration over the choices for this symbol and after that is is useless
+        /// </summary>
+        /// <returns>An instance of a <see cref="ChoiceIterator"/></returns>
+        public ChoiceIterator ChoiceIterator
+        {
+            get
+            {
+                var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
+                return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
+            }
+        }
         #endregion
 
         #region Constructor
         internal ResultIterator(Page page, IntPtr handle) : base(page, handle)
         {
-        }
-        #endregion
-
-        #region GetConfidence
-        /// <summary>
-        ///     Returns the confidence for the given <paramref name="pageIteratorLevel"/>
-        /// </summary>
-        /// <param name="pageIteratorLevel"></param>
-        /// <returns></returns>
-        public float GetConfidence(PageIteratorLevel pageIteratorLevel)
-        {
-            VerifyNotDisposed();
-            return Handle.Handle == IntPtr.Zero ? 0f : TessApi.Native.ResultIteratorGetConfidence(Handle, pageIteratorLevel);
-        }
-        #endregion
-
-        #region GetText
-        /// <summary>
-        ///     Returns the text for the given <paramref name="pageIteratorLevel"/>
-        /// </summary>
-        /// <param name="pageIteratorLevel"></param>
-        public string GetText(PageIteratorLevel pageIteratorLevel)
-        {
-            VerifyNotDisposed();
-
-            return Handle.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(Handle, pageIteratorLevel);
-        }
-        #endregion
-
-        #region GetChoiceIterator
-        /// <summary>
-        ///     Gets an instance of a choice iterator using the current symbol of interest. The ChoiceIterator allows a one-shot
-        ///     iteration over the
-        ///     choices for this symbol and after that is is useless.
-        /// </summary>
-        /// <returns>an instance of a Choice Iterator</returns>
-        public ChoiceIterator GetChoiceIterator()
-        {
-            var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
-            return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
         }
         #endregion
     }

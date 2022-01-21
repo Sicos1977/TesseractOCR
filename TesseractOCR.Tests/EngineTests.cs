@@ -651,6 +651,19 @@ namespace Tesseract.Tests
                 iterator.Begin();
                 do
                 {
+                    if (iterator.IsAtBeginning)
+                    {
+                        var confidence = iterator.GetConfidence(PageIteratorLevel.Block) / 100;
+                        var bounds = iterator.BoundingBox;
+                        if (bounds.HasValue)
+                            output.AppendFormat(CultureInfo.InvariantCulture, "<block confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">", confidence, bounds.Value.X1, bounds.Value.Y1, bounds.Value.X2, bounds.Value.Y2);
+                        else
+                            output.AppendFormat(CultureInfo.InvariantCulture, "<block confidence=\"{0:P}\">", confidence);
+                        output.AppendLine();
+                    }
+                    else if (iterator.IsAtFinal)
+                        output.AppendLine("</block>");
+
                     do
                     {
                         do
@@ -659,18 +672,6 @@ namespace Tesseract.Tests
                             {
                                 do
                                 {
-                                    if (iterator.IsAtBeginningOf(PageIteratorLevel.Block))
-                                    {
-                                        var confidence = iterator.GetConfidence(PageIteratorLevel.Block) / 100;
-                                        if (iterator.TryGetBoundingBox(PageIteratorLevel.Block, out var bounds))
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<block confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">",
-                                                confidence, bounds.X1, bounds.Y1, bounds.X2, bounds.Y2);
-                                        else
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<block confidence=\"{0:P}\">", confidence);
-                                        output.AppendLine();
-                                    }
 
                                     if (iterator.IsAtBeginningOf(PageIteratorLevel.Para))
                                     {
@@ -743,19 +744,19 @@ namespace Tesseract.Tests
 
                                     if (iterator.IsAtFinalOf(PageIteratorLevel.Word, PageIteratorLevel.Symbol))
                                         output.Append("</word>");
-                                } while (iterator.Next(PageIteratorLevel.Word, PageIteratorLevel.Symbol));
+                                } while (iterator.NextElement(PageIteratorLevel.Word, PageIteratorLevel.Symbol));
 
                                 if (iterator.IsAtFinalOf(PageIteratorLevel.TextLine, PageIteratorLevel.Word))
                                     output.AppendLine("</line>");
-                            } while (iterator.Next(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
+                            } while (iterator.NextElement(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
 
                             if (iterator.IsAtFinalOf(PageIteratorLevel.Para, PageIteratorLevel.TextLine))
                                 output.AppendLine("</para>");
-                        } while (iterator.Next(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
-                    } while (iterator.Next(PageIteratorLevel.Block, PageIteratorLevel.Para));
+                        } while (iterator.NextElement(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
+                    } while (iterator.NextElement(PageIteratorLevel.Block, PageIteratorLevel.Para));
 
-                    output.AppendLine("</block>");
-                } while (iterator.Next(PageIteratorLevel.Block));
+                    
+                } while (iterator.NextLevel(PageIteratorLevel.Block));
             }
 
             return NormalizeNewLine(output.ToString());

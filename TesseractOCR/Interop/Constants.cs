@@ -33,7 +33,7 @@ namespace TesseractOCR.Interop
         public const string TesseractDllName = "tesseract50.dll";
 
         // Tesseract uses an int to represent true false values.
-        public const int TRUE = 1;
-        public const int FALSE = 0;
+        public const int True = 1;
+        public const int False = 0;
     }
 }

@@ -28,7 +28,7 @@ using TesseractOCR.Interop;
 namespace TesseractOCR
 {
     /// <summary>
-    ///     Class to iterate over the classifier choices for a single symbol.
+    ///     Class to iterate over the classifier choices for a single symbol
     /// </summary>
     public sealed class ChoiceIterator : DisposableBase
     {
@@ -38,7 +38,7 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     Returns the confidence of the current choice
+        ///     Returns the confidence of the current symbol (letter)
         /// </summary>
         /// <remarks>
         ///     The number should be interpreted as a percent probability (0.0f - 100.0f)
@@ -54,7 +54,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the text string for the current choice
+        ///     Returns the text string for the current symbol (letter)
         /// </summary>
         /// <returns>string</returns>
         public string Text
@@ -86,11 +86,20 @@ namespace TesseractOCR
             if (_handleRef.Handle == IntPtr.Zero)
                 return false;
 
-            return TessApi.Native.ChoiceIteratorNext(_handleRef) != 0;
+            var result = TessApi.Native.ChoiceIteratorNext(_handleRef) != 0;
+
+            Loggers.Logger.LogInformation(result
+                ? "Moved to the next single symbol"
+                : "There is no next single symbol");
+
+            return result;
         }
         #endregion
 
         #region Dispose
+        /// <summary>
+        ///     Disposes this object
+        /// </summary>
         protected override void Dispose(bool disposing)
         {
             if (_handleRef.Handle != IntPtr.Zero) 

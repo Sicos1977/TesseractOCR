@@ -137,7 +137,7 @@ namespace TesseractOCR
         public int Number { get; internal set; }
 
         /// <summary>
-        ///     Gets the thresholded image that was OCR'd.
+        ///     Returns the thresholded image that was OCR'd
         /// </summary>
         /// <returns></returns>
         public Pix.Image ThresholdedImage
@@ -158,7 +158,7 @@ namespace TesseractOCR
         ///     current <see cref="RegionOfInterest" />.
         /// </summary>
         /// <returns></returns>
-        public PageIterator PageIterator
+        public PageIterator Layout
         {
             get
             {
@@ -172,7 +172,7 @@ namespace TesseractOCR
 
         /// <summary>
         ///     Returns a <see cref="ResultIterator" /> object that is used to iterate over the page as defined by the current
-        ///     <see cref="RegionOfInterest" />.
+        ///     <see cref="RegionOfInterest" />
         /// </summary>
         /// <returns></returns>
         public ResultIterator ResultIterator
@@ -186,9 +186,9 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Gets the page's content as plain text.
+        ///     Returns the page's content as plain text
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The OCR'd output as text string</returns>
         public string Text
         {
             get
@@ -199,10 +199,10 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the page's content as an HOCR text
+        ///     Returns the page's content as HOCR text
         /// </summary>
         /// <param name="useXHtml">True to use XHTML Output, False to HTML Output</param>
-        /// <returns>The OCR'd output as an HOCR text string.</returns>
+        /// <returns>The OCR'd output as an HOCR text string</returns>
         public string HOcrText(bool useXHtml = false)
         {
             Recognize();
@@ -215,7 +215,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Return the page's content as an Alto text.
+        ///     Return the page's content as an Alto text
         /// </summary>
         /// <returns>The OCR'd output as an Alto text string.</returns>
         public string AltoText
@@ -228,7 +228,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Return the page's content as a TSV text.
+        ///     Return the page's content as TSV text.
         /// </summary>
         /// <returns>The OCR'd output as a Tsv text string</returns>
         public string TsvText
@@ -241,9 +241,9 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the page's content as a box text
+        ///     Returns the page's content as box text
         /// </summary>
-        /// <returns>The OCR'd output as a Box text string</returns>
+        /// <returns>The OCR'd output as a box text string</returns>
         public string BoxText
         {
             get
@@ -254,7 +254,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the page's content as a LSTM box text
+        ///     Returns the page's content as LSTM box text
         /// </summary>
         /// <returns>The OCR'd output as a LSTMBox text string</returns>
         public string LstmBoxText
@@ -280,7 +280,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the page's content as an UNLV text
+        ///     Returns the page's content as UNLV text
         /// </summary>
         /// <returns>The OCR'd output as an UNLV text string</returns>
         public string UnlvText
@@ -293,7 +293,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Get's the mean confidence that as a percentage of the recognized text.
+        ///     Returns the mean confidence as a percentage of the recognized text
         /// </summary>
         /// <returns></returns>
         public float MeanConfidence
@@ -341,7 +341,7 @@ namespace TesseractOCR
         /// <returns></returns>
         public List<Rectangle> GetSegmentedRegions(PageIteratorLevel pageIteratorLevel)
         {
-            var boxArray = TessApi.Native.BaseApiGetComponentImages(Engine.Handle, pageIteratorLevel, Constants.TRUE, IntPtr.Zero, IntPtr.Zero);
+            var boxArray = TessApi.Native.BaseApiGetComponentImages(Engine.Handle, pageIteratorLevel, Constants.True, IntPtr.Zero, IntPtr.Zero);
             var boxCount = LeptonicaApi.Native.boxaGetCount(new HandleRef(this, boxArray));
             var boxList = new List<Rectangle>();
 
@@ -365,15 +365,14 @@ namespace TesseractOCR
 
         #region DetectBestOrientation
         /// <summary>
-        ///     Detects the page orientation, with corresponding confidence when using <see cref="PageSegMode.OsdOnly" />.
+        ///     Detects the page orientation, with corresponding confidence when using <see cref="PageSegMode.OsdOnly" />
         /// </summary>
         /// <remarks>
-        ///     If using full page segmentation mode (i.e. AutoOsd) then consider using <see cref="AnalyseLayout" /> instead as
-        ///     this also provides a
-        ///     deskew angle which isn't available when just performing orientation detection.
+        ///     If using full page segmentation mode (i.e. AutoOsd) then consider using <see cref="Layout" /> instead as
+        ///     this also provides a deskew angle which isn't available when just performing orientation detection.
         /// </remarks>
-        /// <param name="orientation">The detected clockwise page rotation in degrees (0, 90, 180, or 270).</param>
-        /// <param name="confidence">The confidence level of the orientation (15 is reasonably confident).</param>
+        /// <param name="orientation">The detected clockwise page rotation in degrees (0, 90, 180, or 270)</param>
+        /// <param name="confidence">The confidence level of the orientation (15 is reasonably confident)</param>
         public void DetectBestOrientation(out int orientation, out float confidence)
         {
             DetectBestOrientationAndScript(out orientation, out confidence, out _, out _);
@@ -385,7 +384,7 @@ namespace TesseractOCR
         ///     Detects the page orientation, with corresponding confidence when using <see cref="PageSegMode.OsdOnly" />.
         /// </summary>
         /// <remarks>
-        ///     If using full page segmentation mode (i.e. AutoOsd) then consider using <see cref="AnalyseLayout" /> instead as
+        ///     If using full page segmentation mode (i.e. AutoOsd) then consider using <see cref="Layout" /> instead as
         ///     this also provides a
         ///     deskew angle which isn't available when just performing orientation detection.
         /// </remarks>
@@ -412,13 +411,13 @@ namespace TesseractOCR
         #region Recognize
         internal void Recognize()
         {
-            Guard.Verify(SegmentMode != PageSegMode.OsdOnly, "Cannot OCR image when using OSD only page segmentation, please use DetectBestOrientation instead.");
+            Guard.Verify(SegmentMode != PageSegMode.OsdOnly, "Cannot OCR image when using OSD only page segmentation, please use DetectBestOrientation instead");
 
             if (_runRecognitionPhase)
                 return;
 
             if (TessApi.Native.BaseApiRecognize(Engine.Handle, new HandleRef(this, IntPtr.Zero)) != 0)
-                throw new InvalidOperationException("Recognition of image failed.");
+                throw new InvalidOperationException("Recognition of image failed");
 
             _runRecognitionPhase = true;
 

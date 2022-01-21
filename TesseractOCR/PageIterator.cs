@@ -34,14 +34,167 @@ namespace TesseractOCR
     /// </summary>
     /// <remarks>
     ///     The iterator points to Tesseract's internal page structure and is only valid while the Engine instance that created
-    ///     it exists
-    ///     and has not been subjected to a call to Recognize since the iterator was created.
+    ///     it exists and has not been subjected to a call to Recognize since the iterator was created.
     /// </remarks>
     public class PageIterator : DisposableBase
     {
         #region Fields
         protected readonly HandleRef Handle;
         protected readonly Page Page;
+        #endregion
+
+        #region Properties 
+        /// <summary>
+        ///     Returns the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        public PageIteratorLevel Level { get; private set; }
+
+        /// <summary>
+        ///     Returns the current element <see cref="PageIteratorLevel"/>
+        /// </summary>
+        public PageIteratorLevel Element { get; private set; }
+
+        /// <summary>
+        ///     Returns <c>true</c> if the iterator is at the first <see cref="Element"/> at the given <see cref="Level"/>.
+        /// </summary>
+        /// <remarks>
+        ///     A possible use is to determine if a call to next(word) moved to the start of a new paragraph.
+        /// </remarks>
+        /// <returns></returns>
+        public bool IsAtBeginning
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                if (Handle.Handle == IntPtr.Zero)
+                    return false;
+
+                return TessApi.Native.PageIteratorIsAtBeginningOf(Handle, Level) != 0;
+            }
+        }
+
+        /// <summary>
+        ///     Returns <c>true</c> if the iterator is positioned at the last element at the given level
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAtFinal
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                if (Handle.Handle == IntPtr.Zero)
+                    return false;
+                return TessApi.Native.PageIteratorIsAtFinalElement(Handle, Level, Element) != 0;
+
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="PolyBlockType"/>
+        /// </summary>
+        public PolyBlockType BlockType
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                return Handle.Handle != IntPtr.Zero
+                    ? TessApi.Native.PageIteratorBlockType(Handle)
+                    : PolyBlockType.Unknown;
+            }
+        }
+
+        /// <summary>
+        ///     Returns a binary (gray) <see cref="Pix.Image"/> at the current <see cref="Level"/>
+        /// </summary>
+        /// <returns>The <see cref="Pix.Image"/> or <c>null</c> when it fails</returns>
+        public Image BinaryImage
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                return Handle.Handle != IntPtr.Zero
+                    ? Image.Create(TessApi.Native.PageIteratorGetBinaryImage(Handle, Level))
+                    : null;
+            }
+        }
+
+        /// <summary>
+        ///     Returns an <see cref="Pix.Image"/> at the current <see cref="Level"/>
+        /// </summary>
+        /// <returns>The <see cref="Pix.Image"/> or <c>null</c> when it fails</returns>
+        public Image Image
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                return Handle.Handle != IntPtr.Zero
+                    ? Image.Create(TessApi.Native.PageIteratorGetImage(Handle, Level, 0, Page.Image.Handle, out _, out _))
+                    : null;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the bounding <see cref="Rect"/> of the current <see cref="Element"/> at the given <see cref="Level"/>
+        /// </summary>
+        /// <returns>The <see cref="Rect"/> or <c>null</c> returns when it fails</returns>
+        public Rect? BoundingBox
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                if (Handle.Handle != IntPtr.Zero &&
+                    TessApi.Native.PageIteratorBoundingBox(Handle, Level, out var x1, out var y1, out var x2, out var y2) != 0)
+                    return Rect.FromCoords(x1, y1, x2, y2);
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the baseline of the current <see cref="Element"/> at the current <see cref="Level"/>
+        /// </summary>
+        /// <remarks>
+        ///     The baseline is the line that passes through (x1, y1) and (x2, y2).
+        ///     WARNING: with vertical text, baselines may be vertical! Returns false if there is no baseline at the current
+        ///     position.
+        /// </remarks>
+        /// <returns>The <see cref="Rect"/> or <c>null</c> when it fails</returns>
+        public Rect? Baseline(PageIteratorLevel level)
+        {
+            VerifyNotDisposed();
+
+            if (Handle.Handle != IntPtr.Zero && TessApi.Native.PageIteratorBaseline(Handle, level, out var x1, out var y1, out var x2, out var y2) != 0)
+                return Rect.FromCoords(x1, y1, x2, y2);
+
+            return null;
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="Element"/> orientation information that the iterator currently points too
+        /// </summary>
+        public ElementProperties Properties
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                if (Handle.Handle == IntPtr.Zero)
+                    return new ElementProperties(Orientation.PageUp, TextLineOrder.TopToBottom,
+                        WritingDirection.LeftToRight, 0f);
+
+                TessApi.Native.PageIteratorOrientation(Handle, out var orientation, out var writingDirection,
+                    out var textLineOrder,
+                    out var deskewAngle);
+
+                return new ElementProperties(orientation, textLineOrder, writingDirection, deskewAngle);
+            }
+        }
         #endregion
 
         #region Constructor
@@ -52,23 +205,9 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region BlockType
-        public PolyBlockType BlockType
-        {
-            get
-            {
-                VerifyNotDisposed();
-
-                return Handle.Handle == IntPtr.Zero
-                    ? PolyBlockType.Unknown
-                    : TessApi.Native.PageIteratorBlockType(Handle);
-            }
-        }
-        #endregion
-
         #region Begin
         /// <summary>
-        ///     Moves the iterator to the start of the page.
+        ///     Moves the iterator to the start of the page
         /// </summary>
         public void Begin()
         {
@@ -79,174 +218,64 @@ namespace TesseractOCR
 
         #region Next
         /// <summary>
-        ///     Moves to the start of the next element at the given level.
+        ///     Moves to the start of the next element at the given <see cref="PageIteratorLevel"/>.
         /// </summary>
         /// <remarks>
         /// </remarks>
         /// <param name="level"></param>
         /// <returns></returns>
-        public bool Next(PageIteratorLevel level)
+        public bool NextLevel(PageIteratorLevel level)
         {
             VerifyNotDisposed();
 
             if (Handle.Handle == IntPtr.Zero)
                 return false;
 
-            return TessApi.Native.PageIteratorNext(Handle, level) != 0;
+            var result = TessApi.Native.PageIteratorNext(Handle, level) != 0;
+            
+            if (result)
+            {
+                Loggers.Logger.LogInformation($"Moved to the next '{level}' level");
+                Level = level;
+            }
+            else
+                Loggers.Logger.LogInformation($"There is no next '{level}' level");
+
+            return result;
         }
 
         /// <summary>
-        ///     Moves the iterator to the next <paramref name="element" /> iff the iterator is not currently pointing to the last
-        ///     <paramref name="element" /> in the specified <paramref name="level" /> (i.e. the last word in the paragraph).
+        ///     Moves the iterator to the next <paramref name="element" />. If the iterator is not currently pointing to the last
+        ///     <paramref name="element" /> in the current <see cref="Level"/> (i.e. the last word in the paragraph).
         /// </summary>
-        /// <param name="level">The iterator level.</param>
-        /// <param name="element">The page level.</param>
+        /// <param name="element">The <see cref="PageIteratorLevel"/></param>
         /// <returns>
-        ///     <c>True</c> iff there is another <paramref name="element" /> to advance too and the current element is not the
-        ///     last element at the given level; otherwise returns <c>False</c>.
+        ///     Returns <c>true</c> if there is another <paramref name="element" /> to advance too and the current element is not the
+        ///     last element at the given level, otherwise returns <c>false</c>.
         /// </returns>
-        public bool Next(PageIteratorLevel level, PageIteratorLevel element)
+        public bool NextElement(PageIteratorLevel element)
         {
             VerifyNotDisposed();
 
-            var isAtFinalElement = IsAtFinalOf(level, element);
-            return !isAtFinalElement && Next(element);
-        }
-        #endregion
-
-        #region IsAtBeginningOf
-        /// <summary>
-        ///     Returns <c>True</c> if the iterator is at the first element at the given level.
-        /// </summary>
-        /// <remarks>
-        ///     A possible use is to determine if a call to next(word) moved to the start of a new paragraph.
-        /// </remarks>
-        /// <param name="level"></param>
-        /// <returns></returns>
-        public bool IsAtBeginningOf(PageIteratorLevel level)
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle == IntPtr.Zero)
-                return false;
-
-            return TessApi.Native.PageIteratorIsAtBeginningOf(Handle, level) != 0;
-        }
-        #endregion
-
-        #region IsAtFinalOf
-        /// <summary>
-        ///     Returns <c>True</c> if the iterator is positioned at the last element at the given level.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="element"></param>
-        /// <returns></returns>
-        public bool IsAtFinalOf(PageIteratorLevel level, PageIteratorLevel element)
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle == IntPtr.Zero)
-                return false;
-            return TessApi.Native.PageIteratorIsAtFinalElement(Handle, level, element) != 0;
-        }
-        #endregion
-
-        #region GetBinaryImage
-        public Image GetBinaryImage(PageIteratorLevel level)
-        {
-            VerifyNotDisposed();
-
-            return Handle.Handle == IntPtr.Zero
-                ? null
-                : Image.Create(TessApi.Native.PageIteratorGetBinaryImage(Handle, level));
-        }
-        #endregion
-
-        #region GetImage
-        public Image GetImage(PageIteratorLevel level, int padding, out int x, out int y)
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle != IntPtr.Zero)
-                return Image.Create(TessApi.Native.PageIteratorGetImage(Handle, level, padding, Page.Image.Handle, out x, out y));
-
-            x = 0;
-            y = 0;
-
-            return null;
-        }
-        #endregion
-
-        #region TryGetBoundingBox
-        /// <summary>
-        ///     Gets the bounding rectangle of the current element at the given level.
-        /// </summary>
-        /// <param name="level"></param>
-        /// <param name="bounds"></param>
-        /// <returns></returns>
-        public bool TryGetBoundingBox(PageIteratorLevel level, out Rect bounds)
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle != IntPtr.Zero && TessApi.Native.PageIteratorBoundingBox(Handle, level, out var x1, out var y1, out var x2, out var y2) != 0)
+            var result = !IsAtFinal && NextLevel(element);
+            
+            if (result)
             {
-                bounds = Rect.FromCoords(x1, y1, x2, y2);
-                return true;
+                Loggers.Logger.LogInformation($"Moved to the next '{element}' element");
+                Element = element;
             }
+            else
+                Loggers.Logger.LogInformation($"There is no next '{element}' element");
 
-            bounds = Rect.Empty;
-            return false;
-        }
-        #endregion
-
-        #region TryGetBaseline
-        /// <summary>
-        ///     Gets the baseline of the current element at the given level.
-        /// </summary>
-        /// <remarks>
-        ///     The baseline is the line that passes through (x1, y1) and (x2, y2).
-        ///     WARNING: with vertical text, baselines may be vertical! Returns false if there is no baseline at the current
-        ///     position.
-        /// </remarks>
-        /// <param name="level"></param>
-        /// <param name="bounds"></param>
-        /// <returns></returns>
-        public bool TryGetBaseline(PageIteratorLevel level, out Rect bounds)
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle != IntPtr.Zero && TessApi.Native.PageIteratorBaseline(Handle, level, out var x1, out var y1, out var x2, out var y2) != 0)
-            {
-                bounds = Rect.FromCoords(x1, y1, x2, y2);
-                return true;
-            }
-
-            bounds = Rect.Empty;
-            return false;
-        }
-        #endregion
-
-        #region GetProperties
-        /// <summary>
-        ///     Gets the element orientation information that the iterator currently points too.
-        /// </summary>
-        public ElementProperties GetProperties()
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle == IntPtr.Zero)
-                return new ElementProperties(Orientation.PageUp, TextLineOrder.TopToBottom,
-                    WritingDirection.LeftToRight, 0f);
-
-            TessApi.Native.PageIteratorOrientation(Handle, out var orientation, out var writingDirection,
-                out var textLineOrder,
-                out var deskewAngle);
-
-            return new ElementProperties(orientation, textLineOrder, writingDirection, deskewAngle);
+            return result;
         }
         #endregion
 
         #region Dispose
+        /// <summary>
+        ///     Disposes this object
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (Handle.Handle != IntPtr.Zero) TessApi.Native.PageIteratorDelete(Handle);

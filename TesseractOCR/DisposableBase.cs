@@ -60,7 +60,8 @@ namespace TesseractOCR
         #region VerifyNotDisposed
         protected virtual void VerifyNotDisposed()
         {
-            if (IsDisposed) throw new ObjectDisposedException(ToString());
+            if (IsDisposed) 
+                throw new ObjectDisposedException(ToString());
         }
         #endregion
 
