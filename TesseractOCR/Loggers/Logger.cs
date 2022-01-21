@@ -3,7 +3,7 @@
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
-// Copyright (c) 2019 Magic-Sessions. (www.magic-sessions.com)
+// Copyright (c) 2022 Magic-Sessions. (www.magic-sessions.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
 //
 
 using System;
-using System.Text;
 using Microsoft.Extensions.Logging;
 
 namespace TesseractOCR.Loggers
@@ -88,5 +87,24 @@ namespace TesseractOCR.Loggers
         }
         #endregion
 
+        #region LogInformation
+        /// <summary>
+        ///     Writes a debug line to the <see cref="_logger" />
+        /// </summary>
+        /// <param name="message">The message to write</param>
+        internal static void LogDebug(string message)
+        {
+            try
+            {
+                if (_logger == null) return;
+                using (_logger.BeginScope(InstanceId))
+                    _logger.LogDebug(message);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore
+            }
+        }
+        #endregion
     }
 }

@@ -3,8 +3,7 @@
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
-// Copyright 2012-2019 Charles Weld
-// Copyright 2021-2022 Kees van Spelde
+// Copyright (c) 2022 Magic-Sessions. (www.magic-sessions.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 //
@@ -26,8 +25,12 @@ using Microsoft.Extensions.Logging;
 namespace TesseractOCR.Loggers
 {
     /// <summary>
-    ///     Writes log information to a stream
+    ///     Writes log information to a stream at the <see cref="LogLevel.Debug"/>, <see cref="LogLevel.Error"/>
+    ///     and <see cref="LogLevel.Information"/> <see cref="LogLevel"/>
     /// </summary>
+    /// <remarks>
+    ///     Other levels are ignored
+    /// </remarks>
     public class Stream : ILogger, IDisposable
     {
         #region Fields
@@ -69,6 +72,20 @@ namespace TesseractOCR.Loggers
         #region Log
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
+            switch (logLevel)
+            {
+                case LogLevel.Trace:
+                case LogLevel.Warning:
+                case LogLevel.Critical:
+                case LogLevel.None:
+                    return;
+
+                case LogLevel.Debug:
+                case LogLevel.Information:
+                case LogLevel.Error:
+                    break;
+            }
+
             var message = $"{formatter(state, exception)}";
 
             if (_stream == null || !_stream.CanWrite) return;

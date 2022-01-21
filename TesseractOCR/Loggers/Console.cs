@@ -2,7 +2,8 @@
 // Console.cs
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
-// Copyright 2021-2022 Kees van Spelde
+//
+// Copyright (c) 2022 Magic-Sessions. (www.magic-sessions.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 //
@@ -17,11 +18,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Microsoft.Extensions.Logging;
+
 namespace TesseractOCR.Loggers
 {
     /// <summary>
-    ///     Writes log information to the console
+    ///     Writes log information to console at the <see cref="LogLevel.Debug"/>, <see cref="LogLevel.Error"/>
+    ///     and <see cref="LogLevel.Information"/> <see cref="LogLevel"/>
     /// </summary>
+    /// <remarks>
+    ///     Other levels are ignored
+    /// </remarks>
     public class Console : Stream
     {
         public Console() : base(System.Console.OpenStandardOutput())
