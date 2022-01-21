@@ -39,10 +39,10 @@ namespace Tesseract.Tests
                                         output.AppendLine();
                                     }
 
-                                    if (iterator.IsAtBeginningOf(PageIteratorLevel.Para))
+                                    if (iterator.IsAtBeginningOf(PageIteratorLevel.Paragraph))
                                     {
-                                        var confidence = iterator.GetConfidence(PageIteratorLevel.Para) / 100;
-                                        if (iterator.TryGetBoundingBox(PageIteratorLevel.Para, out var bounds))
+                                        var confidence = iterator.GetConfidence(PageIteratorLevel.Paragraph) / 100;
+                                        if (iterator.TryGetBoundingBox(PageIteratorLevel.Paragraph, out var bounds))
                                             output.AppendFormat(CultureInfo.InvariantCulture,
                                                 "<para confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">", confidence,
                                                 bounds.X1, bounds.Y1, bounds.X2, bounds.Y2);
@@ -116,10 +116,10 @@ namespace Tesseract.Tests
                                     output.AppendLine("</line>");
                             } while (iterator.Next(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
 
-                            if (iterator.IsAtFinalOf(PageIteratorLevel.Para, PageIteratorLevel.TextLine))
+                            if (iterator.IsAtFinalOf(PageIteratorLevel.Paragraph, PageIteratorLevel.TextLine))
                                 output.AppendLine("</para>");
-                        } while (iterator.Next(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
-                    } while (iterator.Next(PageIteratorLevel.Block, PageIteratorLevel.Para));
+                        } while (iterator.Next(PageIteratorLevel.Paragraph, PageIteratorLevel.TextLine));
+                    } while (iterator.Next(PageIteratorLevel.Block, PageIteratorLevel.Paragraph));
 
                     output.AppendLine("</block>");
                 } while (iterator.Next(PageIteratorLevel.Block));

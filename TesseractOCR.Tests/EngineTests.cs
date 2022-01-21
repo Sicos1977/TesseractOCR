@@ -9,6 +9,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
 using TesseractOCR.Exceptions;
+using TesseractOCR.Iterators;
+using Page = TesseractOCR.Page;
+
 // ReSharper disable UnusedMember.Global
 
 namespace Tesseract.Tests
@@ -643,6 +646,50 @@ namespace Tesseract.Tests
             }
         }
 
+        private static void WriteResultToString(StringBuilder output, Result iterator)
+        {
+            var tag = string.Empty;
+
+            switch (iterator.Element)
+            {
+                case PageIteratorLevel.Block:
+                    tag = "block";
+                    break;
+
+                case PageIteratorLevel.Paragraph:
+                    tag = "para";
+                    break;
+
+                case PageIteratorLevel.TextLine:
+                    tag = "line";
+                    break;
+
+                case PageIteratorLevel.Word:
+                    tag = "word";
+                    break;
+
+                case PageIteratorLevel.Symbol:
+                    tag = "symbol";
+                    break;
+            }
+
+            if (iterator.IsAtBeginning)
+            {
+                var confidence = iterator.Confidence / 100;
+                var bounds = iterator.BoundingBox;
+                if (bounds.HasValue)
+                    output.AppendFormat(CultureInfo.InvariantCulture, "<{0} confidence=\"{1:P}\" bounds=\"{2}, {3}, {4}, {5}\">", tag,
+                        confidence, bounds.Value.X1, bounds.Value.Y1, bounds.Value.X2, bounds.Value.Y2);
+                else
+                    output.AppendFormat(CultureInfo.InvariantCulture, "<{0} confidence=\"{1:P}\">", tag, confidence);
+
+            }
+            else 
+                output.AppendFormat("</{0}>", tag);
+
+            output.AppendLine();
+        }
+
         private static string WriteResultsToString(Page page, bool outputChoices)
         {
             var output = new StringBuilder();
@@ -651,112 +698,55 @@ namespace Tesseract.Tests
                 iterator.Begin();
                 do
                 {
-                    if (iterator.IsAtBeginning)
-                    {
-                        var confidence = iterator.GetConfidence(PageIteratorLevel.Block) / 100;
-                        var bounds = iterator.BoundingBox;
-                        if (bounds.HasValue)
-                            output.AppendFormat(CultureInfo.InvariantCulture, "<block confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">", confidence, bounds.Value.X1, bounds.Value.Y1, bounds.Value.X2, bounds.Value.Y2);
-                        else
-                            output.AppendFormat(CultureInfo.InvariantCulture, "<block confidence=\"{0:P}\">", confidence);
-                        output.AppendLine();
-                    }
-                    else if (iterator.IsAtFinal)
-                        output.AppendLine("</block>");
-
+                    WriteResultToString(output, iterator);
                     do
                     {
+                        WriteResultToString(output, iterator);
                         do
                         {
+                            WriteResultToString(output, iterator);
                             do
                             {
+                                WriteResultToString(output, iterator);
                                 do
                                 {
-
-                                    if (iterator.IsAtBeginningOf(PageIteratorLevel.Para))
-                                    {
-                                        var confidence = iterator.GetConfidence(PageIteratorLevel.Para) / 100;
-                                        if (iterator.TryGetBoundingBox(PageIteratorLevel.Para, out var bounds))
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<para confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">", confidence,
-                                                bounds.X1, bounds.Y1, bounds.X2, bounds.Y2);
-                                        else
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<para confidence=\"{0:P}\">", confidence);
-                                        output.AppendLine();
-                                    }
-
-                                    if (iterator.IsAtBeginningOf(PageIteratorLevel.TextLine))
-                                    {
-                                        var confidence = iterator.GetConfidence(PageIteratorLevel.TextLine) / 100;
-                                        if (iterator.TryGetBoundingBox(PageIteratorLevel.TextLine, out var bounds))
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<line confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">", confidence,
-                                                bounds.X1, bounds.Y1, bounds.X2, bounds.Y2);
-                                        else
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<line confidence=\"{0:P}\">", confidence);
-                                    }
-
-                                    if (iterator.IsAtBeginningOf(PageIteratorLevel.Word))
-                                    {
-                                        var confidence = iterator.GetConfidence(PageIteratorLevel.Word) / 100;
-                                        if (iterator.TryGetBoundingBox(PageIteratorLevel.Word, out var bounds))
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<word confidence=\"{0:P}\" bounds=\"{1}, {2}, {3}, {4}\">", confidence,
-                                                bounds.X1, bounds.Y1, bounds.X2, bounds.Y2);
-                                        else
-                                            output.AppendFormat(CultureInfo.InvariantCulture,
-                                                "<word confidence=\"{0:P}\">", confidence);
-                                    }
-
                                     // Symbol and choices
                                     if (outputChoices)
-                                        using (var choiceIterator = iterator.GetChoiceIterator())
+                                        using (var choiceIterator = iterator.ChoiceIterator)
                                         {
-                                            var symbolConfidence = iterator.GetConfidence(PageIteratorLevel.Symbol) / 100;
+                                            var symbolConfidence = iterator.Confidence;
                                             if (choiceIterator != null)
                                             {
-                                                output.AppendFormat(CultureInfo.InvariantCulture,
-                                                    "<symbol text=\"{0}\" confidence=\"{1:P}\">",
-                                                    iterator.GetText(PageIteratorLevel.Symbol), symbolConfidence);
+                                                output.AppendFormat(CultureInfo.InvariantCulture, "<symbol text=\"{0}\" confidence=\"{1:P}\">", iterator.Text, symbolConfidence);
                                                 output.Append("<choices>");
+                                                
                                                 do
                                                 {
                                                     var choiceConfidence = choiceIterator.Confidence / 100;
-                                                    output.AppendFormat(CultureInfo.InvariantCulture,
-                                                        "<choice text=\"{0}\" confidence\"{1:P}\"/>",
-                                                        choiceIterator.Text, choiceConfidence);
-                                                } while (choiceIterator.Next());
+                                                    output.AppendFormat(CultureInfo.InvariantCulture, "<choice text=\"{0}\" confidence\"{1:P}\"/>", choiceIterator.Text, choiceConfidence);
+                                                } 
+                                                while (choiceIterator.Next());
 
                                                 output.Append("</choices>");
                                                 output.Append("</symbol>");
                                             }
                                             else
-                                            {
-                                                output.AppendFormat(CultureInfo.InvariantCulture,
-                                                    "<symbol text=\"{0}\" confidence=\"{1:P}\"/>",
-                                                    iterator.GetText(PageIteratorLevel.Symbol), symbolConfidence);
-                                            }
+                                                output.AppendFormat(CultureInfo.InvariantCulture, "<symbol text=\"{0}\" confidence=\"{1:P}\"/>", iterator.Text, symbolConfidence);
                                         }
                                     else
-                                        output.Append(iterator.GetText(PageIteratorLevel.Symbol));
+                                        output.Append(iterator.Text);
 
-                                    if (iterator.IsAtFinalOf(PageIteratorLevel.Word, PageIteratorLevel.Symbol))
-                                        output.Append("</word>");
-                                } while (iterator.NextElement(PageIteratorLevel.Word, PageIteratorLevel.Symbol));
+                                } 
+                                while (iterator.NextElement(PageIteratorLevel.Symbol));
 
-                                if (iterator.IsAtFinalOf(PageIteratorLevel.TextLine, PageIteratorLevel.Word))
-                                    output.AppendLine("</line>");
-                            } while (iterator.NextElement(PageIteratorLevel.TextLine, PageIteratorLevel.Word));
-
-                            if (iterator.IsAtFinalOf(PageIteratorLevel.Para, PageIteratorLevel.TextLine))
-                                output.AppendLine("</para>");
-                        } while (iterator.NextElement(PageIteratorLevel.Para, PageIteratorLevel.TextLine));
-                    } while (iterator.NextElement(PageIteratorLevel.Block, PageIteratorLevel.Para));
-
-                    
-                } while (iterator.NextLevel(PageIteratorLevel.Block));
+                            } 
+                            while (iterator.NextElement(PageIteratorLevel.Word));
+                        } 
+                        while (iterator.NextElement(PageIteratorLevel.TextLine));
+                    } 
+                    while (iterator.NextElement(PageIteratorLevel.Paragraph));
+                } 
+                while (iterator.NextLevel(PageIteratorLevel.Block));
             }
 
             return NormalizeNewLine(output.ToString());

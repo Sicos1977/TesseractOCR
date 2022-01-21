@@ -207,7 +207,7 @@ namespace Tesseract.Tests
             foreach (var level in new[]
                      {
                          PageIteratorLevel.Block,
-                         PageIteratorLevel.Para,
+                         PageIteratorLevel.Paragraph,
                          PageIteratorLevel.TextLine,
                          PageIteratorLevel.Word,
                          PageIteratorLevel.Symbol

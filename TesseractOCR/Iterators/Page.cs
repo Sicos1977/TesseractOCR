@@ -223,7 +223,7 @@ namespace TesseractOCR.Iterators
         }
         #endregion
 
-        #region Next
+        #region NextLevel
         /// <summary>
         ///     Moves to the start of the next element at the given <see cref="PageIteratorLevel"/>.
         /// </summary>
@@ -244,13 +244,16 @@ namespace TesseractOCR.Iterators
             {
                 Loggers.Logger.LogInformation($"Moved to the next '{level}' level");
                 Level = level;
+                Element = level;
             }
             else
                 Loggers.Logger.LogInformation($"There is no next '{level}' level");
 
             return result;
         }
+        #endregion
 
+        #region NextElement
         /// <summary>
         ///     Moves the iterator to the next <paramref name="element" />. If the iterator is not currently pointing to the last
         ///     <paramref name="element" /> in the current <see cref="Level"/> (i.e. the last word in the paragraph).

@@ -34,7 +34,7 @@ namespace TesseractOCR.Enums
         /// <summary>
         ///		Paragraph
         /// </summary>
-        Para,
+        Paragraph,
 
         /// <summary>
         ///		Text line
