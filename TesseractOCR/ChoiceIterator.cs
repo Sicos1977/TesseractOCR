@@ -36,6 +36,37 @@ namespace TesseractOCR
         private readonly HandleRef _handleRef;
         #endregion
 
+        #region Properties
+        /// <summary>
+        ///     Returns the confidence of the current choice
+        /// </summary>
+        /// <remarks>
+        ///     The number should be interpreted as a percent probability (0.0f - 100.0f)
+        /// </remarks>
+        /// <returns>float</returns>
+        public float Confidence
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return _handleRef.Handle == IntPtr.Zero ? 0f : TessApi.Native.ChoiceIteratorGetConfidence(_handleRef);
+            }
+        }
+
+        /// <summary>
+        ///     Returns the text string for the current choice
+        /// </summary>
+        /// <returns>string</returns>
+        public string Text
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return _handleRef.Handle == IntPtr.Zero ? string.Empty : TessApi.ChoiceIteratorGetUTF8Text(_handleRef);
+            }
+        }
+        #endregion
+
         #region Constructor
         internal ChoiceIterator(IntPtr handle)
         {
@@ -56,35 +87,6 @@ namespace TesseractOCR
                 return false;
 
             return TessApi.Native.ChoiceIteratorNext(_handleRef) != 0;
-        }
-        #endregion
-
-        #region GetConfidence
-        /// <summary>
-        ///     Returns the confidence of the current choice.
-        /// </summary>
-        /// <remarks>
-        ///     The number should be interpreted as a percent probability (0.0f - 100.0f)
-        /// </remarks>
-        /// <returns>float</returns>
-        public float GetConfidence()
-        {
-            VerifyNotDisposed();
-
-            return _handleRef.Handle == IntPtr.Zero ? 0f : TessApi.Native.ChoiceIteratorGetConfidence(_handleRef);
-        }
-        #endregion
-
-        #region GetText
-        /// <summary>
-        ///     Returns the text string for the current choice
-        /// </summary>
-        /// <returns>string</returns>
-        public string GetText()
-        {
-            VerifyNotDisposed();
-
-            return _handleRef.Handle == IntPtr.Zero ? string.Empty : TessApi.ChoiceIteratorGetUTF8Text(_handleRef);
         }
         #endregion
 

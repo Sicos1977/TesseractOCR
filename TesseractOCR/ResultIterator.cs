@@ -146,21 +146,6 @@ namespace TesseractOCR
                 return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsDropcap(Handle);
             }
         }
-
-        /// <summary>
-        ///     Gets an instance of a choice iterator using the current symbol of interest. The ChoiceIterator allows a one-shot
-        ///     iteration over the
-        ///     choices for this symbol and after that is is useless.
-        /// </summary>
-        /// <returns>an instance of a Choice Iterator</returns>
-        public ChoiceIterator ChoiceIterator
-        {
-            get
-            {
-                var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
-                return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
-            }
-        }
         #endregion
 
         #region Constructor
@@ -192,6 +177,20 @@ namespace TesseractOCR
             VerifyNotDisposed();
 
             return Handle.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(Handle, pageIteratorLevel);
+        }
+        #endregion
+
+        #region GetChoiceIterator
+        /// <summary>
+        ///     Gets an instance of a choice iterator using the current symbol of interest. The ChoiceIterator allows a one-shot
+        ///     iteration over the
+        ///     choices for this symbol and after that is is useless.
+        /// </summary>
+        /// <returns>an instance of a Choice Iterator</returns>
+        public ChoiceIterator GetChoiceIterator()
+        {
+            var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
+            return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
         }
         #endregion
     }

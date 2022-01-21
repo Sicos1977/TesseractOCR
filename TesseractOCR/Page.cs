@@ -37,6 +37,46 @@ namespace TesseractOCR
 {
     public sealed class Page : DisposableBase
     {
+        #region Consts
+        /// <summary>
+        ///     XHTML begin Tag
+        /// </summary>
+        public const string XhtmlBeginTag =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n"
+            + "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
+            + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" "
+            + "lang=\"en\">\n <head>\n  <title></title>\n"
+            + "<meta http-equiv=\"Content-Type\" content=\"text/html;"
+            + "charset=utf-8\" />\n"
+            + "  <meta name='ocr-system' content='tesseract' />\n"
+            + "  <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par"
+            + " ocr_line ocrx_word"
+            + "'/>\n"
+            + "</head>\n<body>\n";
+
+        /// <summary>
+        ///     XHTML end Tag
+        /// </summary>
+        public const string XhtmlEndTag = " </body>\n</html>\n";
+
+        /// <summary>
+        ///     HTML begin tag
+        /// </summary>
+        public const string HtmlBeginTag =
+            "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""
+            + " \"http://www.w3.org/TR/html4/loose.dtd\">\n"
+            + "<html>\n<head>\n<title></title>\n"
+            + "<meta http-equiv=\"Content-Type\" content=\"text/html;"
+            + "charset=utf-8\" />\n<meta name='ocr-system' content='tesseract'/>\n"
+            + "</head>\n<body>\n";
+
+        /// <summary>
+        ///     HTML end tag
+        /// </summary>
+        public const string HtmlEndTag = "</body>\n</html>\n";
+        #endregion
+
         #region Fields
         private bool _runRecognitionPhase;
         private Rect _regionOfInterest;
@@ -49,26 +89,21 @@ namespace TesseractOCR
         public TesseractEngine Engine { get; }
 
         /// <summary>
-        ///     Gets the <see cref="Pix" /> that is being ocr'd.
+        ///     Returns the <see cref="Pix"/> <see cref="Image" /> that is being ocr'd
         /// </summary>
         public Pix.Image Image { get; }
 
         /// <summary>
-        ///     Gets the name of the image being ocr'd.
+        ///     Returns the name of the image being ocr'd
         /// </summary>
         /// <remarks>
         ///     This is also used for some of the more advanced functionality such as identifying the associated UZN file if
-        ///     present.
+        ///     present
         /// </remarks>
         public string ImageName { get; }
 
         /// <summary>
-        ///     Gets the page segmentation mode used to OCR the specified image.
-        /// </summary>
-        public PageSegMode PageSegmentMode { get; }
-
-        /// <summary>
-        ///     The current region of interest being parsed.
+        ///     Returns the current region of interest being parsed
         /// </summary>
         public Rect RegionOfInterest
         {
@@ -76,8 +111,7 @@ namespace TesseractOCR
             set
             {
                 if (value.X1 < 0 || value.Y1 < 0 || value.X2 > Image.Width || value.Y2 > Image.Height)
-                    throw new ArgumentException(
-                        "The region of interest to be processed must be within the image bounds.", nameof(value));
+                    throw new ArgumentException("The region of interest to be processed must be within the image bounds", nameof(value));
 
                 if (_regionOfInterest == value) return;
                 _regionOfInterest = value;
@@ -86,20 +120,47 @@ namespace TesseractOCR
                 TessApi.Native.BaseApiSetRectangle(Engine.Handle, _regionOfInterest.X1, _regionOfInterest.Y1,
                     _regionOfInterest.Width, _regionOfInterest.Height);
 
-                // request rerun of recognition on the next call that requires recognition
+                // Request rerun of recognition on the next call that requires recognition
                 _runRecognitionPhase = false;
             }
         }
+
+        /// <summary>
+        ///     Returns the segmentation mode used to OCR the specified image
+        /// </summary>
+        public PageSegMode SegmentMode { get; }
+
+
+        /// <summary>
+        ///     Returns the page number
+        /// </summary>
+        public int Number { get; internal set; }
         #endregion
 
         #region Constructor
-        internal Page(TesseractEngine engine, Pix.Image image, string imageName, Rect regionOfInterest, PageSegMode pageSegmentMode)
+        /// <summary>
+        ///     Creates the <see cref="Page"/> object
+        /// </summary>
+        /// <param name="engine"><see cref="TesseractEngine"/></param>
+        /// <param name="image"></param>
+        /// <param name="imageName"></param>
+        /// <param name="regionOfInterest"></param>
+        /// <param name="segmentMode">The segmentation mode used to OCR the specified image</param>
+        /// <param name="number"></param>
+        internal Page(
+            TesseractEngine engine, 
+            Pix.Image image, 
+            string imageName, 
+            Rect regionOfInterest, 
+            PageSegMode segmentMode,
+            int number)
         {
             Engine = engine;
             Image = image;
             ImageName = imageName;
             RegionOfInterest = regionOfInterest;
-            PageSegmentMode = pageSegmentMode;
+            SegmentMode = segmentMode;
+            Number = number;
         }
         #endregion
 
@@ -127,7 +188,7 @@ namespace TesseractOCR
         /// <returns></returns>
         public PageIterator AnalyseLayout()
         {
-            Guard.Verify(PageSegmentMode != PageSegMode.OsdOnly,
+            Guard.Verify(SegmentMode != PageSegMode.OsdOnly,
                 "Cannot analyse image layout when using OSD only page segmentation, please use DetectBestOrientation instead.");
 
             var resultIteratorHandle = TessApi.Native.BaseAPIAnalyseLayout(Engine.Handle);
@@ -165,17 +226,17 @@ namespace TesseractOCR
         /// <summary>
         ///     Gets the page's content as an HOCR text.
         /// </summary>
-        /// <param name="pageNum">The page number (zero based).</param>
         /// <param name="useXHtml">True to use XHTML Output, False to HTML Output</param>
         /// <returns>The OCR'd output as an HOCR text string.</returns>
-        public string GetHOcrText(int pageNum, bool useXHtml = false)
+        public string GetHOcrText(bool useXHtml = false)
         {
-            // Why Not Use 'nameof(pageNum)' instead of '"pageNum"'
-            Guard.Require("pageNum", pageNum >= 0, "Page number must be greater than or equal to zero (0).");
             Recognize();
+
+            var result = TessApi.BaseAPIGetHOCRText(Engine.Handle, Number);
+
             return useXHtml
-                ? TessApi.BaseAPIGetHOCRText2(Engine.Handle, pageNum)
-                : TessApi.BaseAPIGetHOCRText(Engine.Handle, pageNum);
+                ? XhtmlBeginTag + result + XhtmlEndTag
+                : HtmlBeginTag + result + HtmlEndTag;
         }
         #endregion
 
@@ -387,7 +448,7 @@ namespace TesseractOCR
         #region Recognize
         internal void Recognize()
         {
-            Guard.Verify(PageSegmentMode != PageSegMode.OsdOnly, "Cannot OCR image when using OSD only page segmentation, please use DetectBestOrientation instead.");
+            Guard.Verify(SegmentMode != PageSegMode.OsdOnly, "Cannot OCR image when using OSD only page segmentation, please use DetectBestOrientation instead.");
 
             if (_runRecognitionPhase)
                 return;

@@ -35,7 +35,7 @@ namespace TesseractOCR
     {
         #region Properties
         /// <summary>
-        ///     Returns font information
+        ///     Returns the font information
         /// </summary>
         public FontInfo FontInfo { get; }
 

@@ -31,7 +31,7 @@ namespace TesseractOCR
     {
         #region ToRadians
         /// <summary>
-        ///     Convert a degrees to radians.
+        ///     Convert a degrees to radians
         /// </summary>
         /// <param name="angleInDegrees"></param>
         /// <returns></returns>

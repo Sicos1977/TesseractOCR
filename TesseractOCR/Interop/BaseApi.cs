@@ -361,46 +361,6 @@ namespace TesseractOCR.Interop
 
     internal static class TessApi
     {
-        #region Consts
-        /// <summary>
-        ///     XHTML begin Tag
-        /// </summary>
-        public const string xhtmlBeginTag =
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            + "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n"
-            + "    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n"
-            + "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" "
-            + "lang=\"en\">\n <head>\n  <title></title>\n"
-            + "<meta http-equiv=\"Content-Type\" content=\"text/html;"
-            + "charset=utf-8\" />\n"
-            + "  <meta name='ocr-system' content='tesseract' />\n"
-            + "  <meta name='ocr-capabilities' content='ocr_page ocr_carea ocr_par"
-            + " ocr_line ocrx_word"
-            + "'/>\n"
-            + "</head>\n<body>\n";
-
-        /// <summary>
-        ///     XHTML end Tag
-        /// </summary>
-        public const string xhtmlEndTag = " </body>\n</html>\n";
-
-        /// <summary>
-        ///     HTML begin tag
-        /// </summary>
-        public const string htmlBeginTag =
-            "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\""
-            + " \"http://www.w3.org/TR/html4/loose.dtd\">\n"
-            + "<html>\n<head>\n<title></title>\n"
-            + "<meta http-equiv=\"Content-Type\" content=\"text/html;"
-            + "charset=utf-8\" />\n<meta name='ocr-system' content='tesseract'/>\n"
-            + "</head>\n<body>\n";
-
-        /// <summary>
-        ///     HTML end tag
-        /// </summary>
-        public const string htmlEndTag = "</body>\n</html>\n";
-        #endregion
-
         #region Fields
         private static ITessApiSignatures native;
         #endregion
@@ -434,18 +394,7 @@ namespace TesseractOCR.Interop
             if (txtHandle == IntPtr.Zero) return null;
             var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
             Native.DeleteText(txtHandle);
-            return htmlBeginTag + result + htmlEndTag;
-        }
-        #endregion
-
-        #region BaseAPIGetHOCRText2
-        public static string BaseAPIGetHOCRText2(HandleRef handle, int pageNum)
-        {
-            var txtHandle = Native.BaseApiGetHOcrTextInternal(handle, pageNum);
-            if (txtHandle == IntPtr.Zero) return null;
-            var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
-            Native.DeleteText(txtHandle);
-            return xhtmlBeginTag + result + xhtmlEndTag;
+            return result;
         }
         #endregion
 
