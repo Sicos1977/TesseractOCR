@@ -19,9 +19,8 @@ using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default
      {
          using (var page = engine.Process(img))
          {
-             var text = page.Text;
              Console.WriteLine("Mean confidence: {0}", page.MeanConfidence);
-             Console.WriteLine("Text (GetText): \r\n{0}", text);
+             Console.WriteLine("Text (GetText): \r\n{0}", page.Text);
              Console.WriteLine("Text (iterator):");
          }
     }
