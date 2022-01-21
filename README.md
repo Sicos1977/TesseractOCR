@@ -15,12 +15,12 @@ You can get them at https://github.com/tesseract-ocr/tessdata or https://github.
 ```c#
 using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
 {
-     using (var img = Pix.LoadFromFile(testImagePath))
+     using (var img = Pix.Image.LoadFromFile(testImagePath))
      {
          using (var page = engine.Process(img))
          {
-             var text = page.GetText();
-             Console.WriteLine("Mean confidence: {0}", page.GetMeanConfidence());
+             var text = page.Text;
+             Console.WriteLine("Mean confidence: {0}", page.MeanConfidence);
              Console.WriteLine("Text (GetText): \r\n{0}", text);
              Console.WriteLine("Text (iterator):");
          }
