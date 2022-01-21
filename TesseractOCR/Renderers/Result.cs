@@ -308,8 +308,8 @@ namespace TesseractOCR.Renderers
         /// <param name="handle"></param>
         protected void Initialize(IntPtr handle)
         {
-            Guard.Require("handle", handle != IntPtr.Zero, "Handle must be initialized.");
-            Guard.Verify(_handle.Handle == IntPtr.Zero, "Result renderer has already been initialized.");
+            Guard.Require("handle", handle != IntPtr.Zero, "Handle must be initialized");
+            Guard.Verify(_handle.Handle == IntPtr.Zero, "Result renderer has already been initialized");
 
             _handle = new HandleRef(this, handle);
         }

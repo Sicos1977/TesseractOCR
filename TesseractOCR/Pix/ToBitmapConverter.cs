@@ -25,12 +25,12 @@ using System.Drawing.Imaging;
 
 // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
-    public class PixToBitmapConverter
+    public class ToBitmapConverter
     {
         #region Convert
-        public Bitmap Convert(Pix pix, bool includeAlpha = false)
+        public Bitmap Convert(Image pix, bool includeAlpha = false)
         {
             var pixelFormat = GetPixelFormat(pix);
             var depth = pix.Depth;
@@ -85,7 +85,7 @@ namespace TesseractOCR
         #endregion
 
         #region TransferData32
-        private static unsafe void TransferData32(PixData pixData, BitmapData imgData, int alphaMask)
+        private static unsafe void TransferData32(Data pixData, BitmapData imgData, int alphaMask)
         {
             var height = imgData.Height;
             var width = imgData.Width;
@@ -93,11 +93,11 @@ namespace TesseractOCR
             for (var y = 0; y < height; y++)
             {
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
 
                 for (var x = 0; x < width; x++)
                 {
-                    var pixVal = PixColor.FromRgba(pixLine[x]);
+                    var pixVal = Color.FromRgba(pixLine[x]);
                     var pixelPtr = imgLine + (x << 2);
 
                     pixelPtr[0] = pixVal.Blue;
@@ -110,19 +110,19 @@ namespace TesseractOCR
         #endregion
 
         #region TransferData16
-        private static unsafe void TransferData16(PixData pixData, BitmapData imgData)
+        private static unsafe void TransferData16(Data pixData, BitmapData imgData)
         {
             var height = imgData.Height;
             var width = imgData.Width;
 
             for (var y = 0; y < height; y++)
             {
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
                 var imgLine = (ushort*)imgData.Scan0 + y * imgData.Stride;
 
                 for (var x = 0; x < width; x++)
                 {
-                    var pixVal = (ushort)PixData.GetDataTwoByte(pixLine, x);
+                    var pixVal = (ushort)Data.GetDataTwoByte(pixLine, x);
 
                     imgLine[x] = pixVal;
                 }
@@ -131,19 +131,19 @@ namespace TesseractOCR
         #endregion
 
         #region TransferData8
-        private static unsafe void TransferData8(PixData pixData, BitmapData imgData)
+        private static unsafe void TransferData8(Data pixData, BitmapData imgData)
         {
             var height = imgData.Height;
             var width = imgData.Width;
 
             for (var y = 0; y < height; y++)
             {
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
 
                 for (var x = 0; x < width; x++)
                 {
-                    var pixVal = (byte)PixData.GetDataByte(pixLine, x);
+                    var pixVal = (byte)Data.GetDataByte(pixLine, x);
 
                     imgLine[x] = pixVal;
                 }
@@ -152,19 +152,19 @@ namespace TesseractOCR
         #endregion
 
         #region TransferData1
-        private static unsafe void TransferData1(PixData pixData, BitmapData imgData)
+        private static unsafe void TransferData1(Data pixData, BitmapData imgData)
         {
             var height = imgData.Height;
             var width = imgData.Width / 8;
 
             for (var y = 0; y < height; y++)
             {
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
 
                 for (var x = 0; x < width; x++)
                 {
-                    var pixVal = (byte)PixData.GetDataByte(pixLine, x);
+                    var pixVal = (byte)Data.GetDataByte(pixLine, x);
 
                     imgLine[x] = pixVal;
                 }
@@ -173,12 +173,13 @@ namespace TesseractOCR
         #endregion
 
         #region TransferPalette
-        private static void TransferPalette(Pix pix, Image img)
+        private static void TransferPalette(Image pix, System.Drawing.Image img)
         {
             var pallet = img.Palette;
             var maxColors = pallet.Entries.Length;
             var lastColor = maxColors - 1;
             var colormap = pix.Colormap;
+
             if (colormap != null && colormap.Count <= maxColors)
             {
                 var colormapCount = colormap.Count;
@@ -190,7 +191,7 @@ namespace TesseractOCR
                 for (var i = 0; i < maxColors; i++)
                 {
                     var value = (byte)(i * 255 / lastColor);
-                    pallet.Entries[i] = Color.FromArgb(value, value, value);
+                    pallet.Entries[i] = System.Drawing.Color.FromArgb(value, value, value);
                 }
             }
 
@@ -200,7 +201,7 @@ namespace TesseractOCR
         #endregion
 
         #region GetPixelFormat
-        private static PixelFormat GetPixelFormat(Pix pix)
+        private static PixelFormat GetPixelFormat(Image pix)
         {
             switch (pix.Depth)
             {

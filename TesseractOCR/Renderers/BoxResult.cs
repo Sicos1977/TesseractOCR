@@ -1,4 +1,5 @@
 ﻿using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -9,6 +10,8 @@ namespace TesseractOCR.Renderers
     {
         public BoxResult(string outputFilename)
         {
+            Logger.LogInformation("Create box renderer");
+
             var rendererHandle = TessApi.Native.BoxTextRendererCreate(outputFilename);
             Initialize(rendererHandle);
         }

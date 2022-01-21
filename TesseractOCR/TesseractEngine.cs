@@ -65,7 +65,7 @@ namespace TesseractOCR
 
         /// <summary>
         ///     Gets or sets default <see cref="PageSegMode" /> mode used by
-        ///     <see cref="Process(Pix, Rect, PageSegMode?)" />.
+        ///     <see cref="System.Diagnostics.Process" />.
         /// </summary>
         public PageSegMode DefaultPageSegMode { get; set; }
         #endregion
@@ -287,7 +287,7 @@ namespace TesseractOCR
         /// </remarks>
         /// <param name="image">The image to process.</param>
         /// <param name="pageSegMode">The page layout analysis method to use.</param>
-        public Page Process(Pix image, PageSegMode? pageSegMode = null)
+        public Page Process(Pix.Image image, PageSegMode? pageSegMode = null)
         {
             return Process(image, null, new Rect(0, 0, image.Width, image.Height), pageSegMode);
         }
@@ -302,7 +302,7 @@ namespace TesseractOCR
         /// <param name="region">The image region to process.</param>
         /// <param name="pageSegMode">The page layout analysis method to use.</param>
         /// <returns>A result iterator</returns>
-        public Page Process(Pix image, Rect region, PageSegMode? pageSegMode = null)
+        public Page Process(Pix.Image image, Rect region, PageSegMode? pageSegMode = null)
         {
             return Process(image, null, region, pageSegMode);
         }
@@ -316,7 +316,7 @@ namespace TesseractOCR
         /// <param name="image">The image to process.</param>
         /// <param name="inputName">Sets the input file's name, only needed for training or loading a uzn file.</param>
         /// <param name="pageSegMode">The page layout analysis method to use.</param>
-        public Page Process(Pix image, string inputName, PageSegMode? pageSegMode = null)
+        public Page Process(Pix.Image image, string inputName, PageSegMode? pageSegMode = null)
         {
             return Process(image, inputName, new Rect(0, 0, image.Width, image.Height), pageSegMode);
         }
@@ -332,7 +332,7 @@ namespace TesseractOCR
         /// <param name="region">The image region to process.</param>
         /// <param name="pageSegMode">The page layout analysis method to use.</param>
         /// <returns>A result iterator</returns>
-        public Page Process(Pix image, string inputName, Rect region, PageSegMode? pageSegMode = null)
+        public Page Process(Pix.Image image, string inputName, Rect region, PageSegMode? pageSegMode = null)
         {
             if (image == null) throw new ArgumentNullException(nameof(image));
 
@@ -426,11 +426,11 @@ namespace TesseractOCR
         {
             #region Fields
             private readonly Page _page;
-            private readonly Pix _pix;
+            private readonly Pix.Image _pix;
             #endregion
 
             #region PageDisposalHandle
-            public PageDisposalHandle(Page page, Pix pix)
+            public PageDisposalHandle(Page page, Pix.Image pix)
             {
                 _page = page;
                 _pix = pix;

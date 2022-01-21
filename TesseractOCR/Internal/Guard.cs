@@ -21,6 +21,7 @@
 
 using System;
 using System.Diagnostics;
+using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 
@@ -38,25 +39,13 @@ namespace TesseractOCR.Internal
         /// <exception cref="ArgumentException">The <paramref name="condition" /> is not true.</exception>
         /// <param name="paramName">The name of the parameter, used when generating the exception.</param>
         /// <param name="condition">The value of the parameter to check.</param>
-        [DebuggerHidden]
-        public static void Require(string paramName, bool condition)
-        {
-            if (!condition)
-                throw new ArgumentException(string.Empty, paramName);
-        }
-
-        /// <summary>
-        ///     Ensures the given <paramref name="condition" /> is true.
-        /// </summary>
-        /// <exception cref="ArgumentException">The <paramref name="condition" /> is not true.</exception>
-        /// <param name="paramName">The name of the parameter, used when generating the exception.</param>
-        /// <param name="condition">The value of the parameter to check.</param>
         /// <param name="message">The error message.</param>
         [DebuggerHidden]
         public static void Require(string paramName, bool condition, string message)
         {
-            if (!condition)
-                throw new ArgumentException(message, paramName);
+            if (condition) return;
+            Logger.LogError(message);
+            throw new ArgumentException(message, paramName);
         }
 
         /// <summary>
@@ -70,8 +59,10 @@ namespace TesseractOCR.Internal
         [DebuggerHidden]
         public static void Require(string paramName, bool condition, string message, params object[] args)
         {
-            if (!condition)
-                throw new ArgumentException(string.Format(message, args), paramName);
+            if (condition) return;
+            var error = string.Format(message, args);
+            Logger.LogError(error);
+            throw new ArgumentException(error, paramName);
         }
         #endregion
 
@@ -79,7 +70,10 @@ namespace TesseractOCR.Internal
         [DebuggerHidden]
         public static void RequireNotNull(string argName, object value)
         {
-            if (value == null) throw new ArgumentException($"Argument \"{argName}\" must not be null.");
+            if (value != null) return;
+            var error = $"Argument '{argName}' must not be null";
+            Logger.LogError(error);
+            throw new ArgumentException(error);
         }
         #endregion
 
@@ -94,8 +88,10 @@ namespace TesseractOCR.Internal
         public static void RequireNotNullOrEmpty(string paramName, string value)
         {
             RequireNotNull(paramName, value);
-            if (value.Length == 0)
-                throw new ArgumentException(paramName, $"The argument \"{paramName}\" must not be null or empty.");
+            if (value.Length != 0) return;
+            var error = $"The argument '{paramName}' must not be null or empty";
+            Logger.LogError(error);
+            throw new ArgumentException(paramName, error);
         }
         #endregion
 
@@ -110,7 +106,10 @@ namespace TesseractOCR.Internal
         [DebuggerHidden]
         public static void Verify(bool condition, string message, params object[] args)
         {
-            if (!condition) throw new InvalidOperationException(string.Format(message, args));
+            if (condition) return;
+            var error = string.Format(message, args);
+            Logger.LogError(error);
+            throw new InvalidOperationException(error);
         }
         #endregion
     }

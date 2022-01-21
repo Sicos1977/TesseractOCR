@@ -23,6 +23,8 @@ using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
+using TesseractOCR.Pix;
+
 // ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR
@@ -150,23 +152,23 @@ namespace TesseractOCR
         #endregion
 
         #region GetBinaryImage
-        public Pix GetBinaryImage(PageIteratorLevel level)
+        public Image GetBinaryImage(PageIteratorLevel level)
         {
             VerifyNotDisposed();
 
             return Handle.Handle == IntPtr.Zero
                 ? null
-                : Pix.Create(TessApi.Native.PageIteratorGetBinaryImage(Handle, level));
+                : Image.Create(TessApi.Native.PageIteratorGetBinaryImage(Handle, level));
         }
         #endregion
 
         #region GetImage
-        public Pix GetImage(PageIteratorLevel level, int padding, out int x, out int y)
+        public Image GetImage(PageIteratorLevel level, int padding, out int x, out int y)
         {
             VerifyNotDisposed();
 
             if (Handle.Handle != IntPtr.Zero)
-                return Pix.Create(TessApi.Native.PageIteratorGetImage(Handle, level, padding, Page.Image.Handle, out x, out y));
+                return Image.Create(TessApi.Native.PageIteratorGetImage(Handle, level, padding, Page.Image.Handle, out x, out y));
 
             x = 0;
             y = 0;

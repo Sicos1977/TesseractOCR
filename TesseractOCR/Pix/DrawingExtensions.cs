@@ -3,21 +3,22 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using TesseractOCR.Enums;
 
+// ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
     /// <summary>
     ///     Tesseract drawing extensions
     /// </summary>
-    public static class TesseractDrawingExtensions
+    public static class DrawingExtensions
     {
         #region Process
         /// <summary>
         ///     Process the specified bitmap image.
         /// </summary>
         /// <remarks>
-        ///     Please consider <see cref="TesseractEngine.Process(Pix, PageSegMode?)" /> instead. This is because
+        ///     Please consider <see cref="System.Diagnostics.Process" /> instead. This is because
         ///     this method must convert the bitmap to a pix for processing which will add additional overhead.
         ///     Leptonica also supports a large number of image pre-processing functions as well.
         /// </remarks>
@@ -34,7 +35,7 @@ namespace TesseractOCR
         ///     Process the specified bitmap image.
         /// </summary>
         /// <remarks>
-        ///     Please consider <see cref="TesseractEngine.Process(Pix, string, PageSegMode?)" /> instead. This is because
+        ///     Please consider <see cref="System.Diagnostics.Process" /> instead. This is because
         ///     this method must convert the bitmap to a pix for processing which will add additional overhead.
         ///     Leptonica also supports a large number of image pre-processing functions as well.
         /// </remarks>
@@ -53,7 +54,7 @@ namespace TesseractOCR
         ///     Process the specified bitmap image.
         /// </summary>
         /// <remarks>
-        ///     Please consider <see cref="TesseractEngine.Process(Pix, Rect, PageSegMode?)" /> instead. This is because
+        ///     Please consider <see cref="System.Diagnostics.Process" /> instead. This is because
         ///     this method must convert the bitmap to a pix for processing which will add additional overhead.
         ///     Leptonica also supports a large number of image pre-processing functions as well.
         /// </remarks>
@@ -72,7 +73,7 @@ namespace TesseractOCR
         ///     Process the specified bitmap image.
         /// </summary>
         /// <remarks>
-        ///     Please consider <see cref="TesseractEngine.Process(Pix, string, Rect, PageSegMode?)" /> instead. This is because
+        ///     Please consider <see cref="System.Diagnostics.Process" /> instead. This is because
         ///     this method must convert the bitmap to a pix for processing which will add additional overhead.
         ///     Leptonica also supports a large number of image pre-processing functions as well.
         /// </remarks>
@@ -85,7 +86,7 @@ namespace TesseractOCR
         public static Page Process(this TesseractEngine engine, Bitmap image, string inputName, Rect region,
             PageSegMode? pageSegMode = null)
         {
-            var pix = PixConverter.ToPix(image);
+            var pix = Converter.ToPix(image);
             pix.ImageName = inputName;
             var page = engine.Process(pix, region, pageSegMode);
             // ReSharper disable once ObjectCreationAsStatement
@@ -95,16 +96,26 @@ namespace TesseractOCR
         #endregion
 
         #region ToColor
-        public static Color ToColor(this PixColor color)
+        /// <summary>
+        ///     
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static System.Drawing.Color ToColor(this Color color)
         {
-            return Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
+            return System.Drawing.Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
         }
         #endregion
 
         #region PixColor
-        public static PixColor ToPixColor(this Color color)
+        /// <summary>
+        ///     Convert a system.drawing.color to a pix color
+        /// </summary>
+        /// <param name="color"></param>
+        /// <returns></returns>
+        public static Color ToPixColor(this System.Drawing.Color color)
         {
-            return new PixColor(color.R, color.G, color.B, color.A);
+            return new Color(color.R, color.G, color.B, color.A);
         }
         #endregion
 

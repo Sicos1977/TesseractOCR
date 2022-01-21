@@ -1,4 +1,5 @@
 ﻿using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -10,6 +11,8 @@ namespace TesseractOCR.Renderers
     {
         public TsvResult(string outputFilename)
         {
+            Logger.LogInformation("Create TSV renderer");
+
             var rendererHandle = TessApi.Native.TsvRendererCreate(outputFilename);
             Initialize(rendererHandle);
         }

@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using TesseractOCR.Interop;
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
     /// <summary>
     ///     Represents a colormap.
@@ -33,7 +33,7 @@ namespace TesseractOCR
     ///     Once the colormap is assigned to a pix it is owned by that pix and will be disposed off automatically
     ///     when the pix is disposed off.
     /// </remarks>
-    public sealed class PixColormap : IDisposable
+    public sealed class Colormap : IDisposable
     {
         #region Properties
         internal HandleRef Handle { get; private set; }
@@ -44,12 +44,12 @@ namespace TesseractOCR
 
         public int FreeCount => LeptonicaApi.Native.pixcmapGetFreeCount(Handle);
 
-        public PixColor this[int index]
+        public Color this[int index]
         {
             get
             {
                 if (LeptonicaApi.Native.pixcmapGetColor32(Handle, index, out var color) == 0)
-                    return PixColor.FromRgb((uint)color);
+                    return Color.FromRgb((uint)color);
                 throw new InvalidOperationException("Failed to retrieve color.");
             }
             set
@@ -61,26 +61,26 @@ namespace TesseractOCR
         #endregion
 
         #region Constructor
-        internal PixColormap(IntPtr handle)
+        internal Colormap(IntPtr handle)
         {
             Handle = new HandleRef(this, handle);
         }
         #endregion
 
         #region Create
-        public static PixColormap Create(int depth)
+        public static Colormap Create(int depth)
         {
             if (!(depth == 1 || depth == 2 || depth == 4 || depth == 8))
                 throw new ArgumentOutOfRangeException(nameof(depth), "Depth must be 1, 2, 4, or 8 bpp.");
 
             var handle = LeptonicaApi.Native.pixcmapCreate(depth);
             if (handle == IntPtr.Zero) throw new InvalidOperationException("Failed to create colormap.");
-            return new PixColormap(handle);
+            return new Colormap(handle);
         }
         #endregion
 
         #region CreateLinear
-        public static PixColormap CreateLinear(int depth, int levels)
+        public static Colormap CreateLinear(int depth, int levels)
         {
             if (!(depth == 1 || depth == 2 || depth == 4 || depth == 8))
                 throw new ArgumentOutOfRangeException(nameof(depth), "Depth must be 1, 2, 4, or 8 bpp.");
@@ -89,38 +89,38 @@ namespace TesseractOCR
 
             var handle = LeptonicaApi.Native.pixcmapCreateLinear(depth, levels);
             if (handle == IntPtr.Zero) throw new InvalidOperationException("Failed to create colormap.");
-            return new PixColormap(handle);
+            return new Colormap(handle);
         }
         #endregion
 
         #region CreateLinear
-        public static PixColormap CreateLinear(int depth, bool firstIsBlack, bool lastIsWhite)
+        public static Colormap CreateLinear(int depth, bool firstIsBlack, bool lastIsWhite)
         {
             if (!(depth == 1 || depth == 2 || depth == 4 || depth == 8))
                 throw new ArgumentOutOfRangeException(nameof(depth), "Depth must be 1, 2, 4, or 8 bpp.");
 
             var handle = LeptonicaApi.Native.pixcmapCreateRandom(depth, firstIsBlack ? 1 : 0, lastIsWhite ? 1 : 0);
             if (handle == IntPtr.Zero) throw new InvalidOperationException("Failed to create colormap.");
-            return new PixColormap(handle);
+            return new Colormap(handle);
         }
         #endregion
 
         #region AddColor
-        public bool AddColor(PixColor color)
+        public bool AddColor(Color color)
         {
             return LeptonicaApi.Native.pixcmapAddColor(Handle, color.Red, color.Green, color.Blue) == 0;
         }
         #endregion
 
         #region AddNewColor
-        public bool AddNewColor(PixColor color, out int index)
+        public bool AddNewColor(Color color, out int index)
         {
             return LeptonicaApi.Native.pixcmapAddNewColor(Handle, color.Red, color.Green, color.Blue, out index) == 0;
         }
         #endregion
 
         #region AddNearestColor
-        public bool AddNearestColor(PixColor color, out int index)
+        public bool AddNearestColor(Color color, out int index)
         {
             return LeptonicaApi.Native.pixcmapAddNearestColor(Handle, color.Red, color.Green, color.Blue,
                 out index) == 0;
@@ -142,7 +142,7 @@ namespace TesseractOCR
         #endregion
 
         #region IsUsableColor
-        public bool IsUsableColor(PixColor color)
+        public bool IsUsableColor(Color color)
         {
             if (LeptonicaApi.Native.pixcmapUsableColor(Handle, color.Red, color.Green, color.Blue, out var usable) == 0)
                 return usable == 1;

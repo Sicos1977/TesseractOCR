@@ -31,9 +31,9 @@ using TesseractOCR.Interop;
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
-    public sealed unsafe class Pix : DisposableBase, IEquatable<Pix>
+    public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     {
         #region Constants
         public const float Deg2Rad = (float)(Math.PI / 180.0);
@@ -86,7 +86,7 @@ namespace TesseractOCR
             { ".bmp", ImageFormat.Bmp }
         };
 
-        private PixColormap _colormap;
+        private Colormap _colormap;
         private HandleRef _handle;
         #endregion
 
@@ -100,7 +100,7 @@ namespace TesseractOCR
         /// </remarks>
         public string ImageName { get; set; }
 
-        public PixColormap Colormap
+        public Colormap Colormap
         {
             get => _colormap;
             set
@@ -178,7 +178,7 @@ namespace TesseractOCR
         ///     policy to avoid double frees and memory leaks.
         ///     The general usage protocol is:
         ///     <list type="number">
-        ///         <item>Whenever you want a new reference to an existing <see cref="Pix" /> call <see cref="Clone" />.</item>
+        ///         <item>Whenever you want a new reference to an existing <see cref="Image" /> call <see cref="Clone" />.</item>
         ///         <item>
         ///             Always call <see cref="Dispose" /> on all references. This decrements the reference count and
         ///             will destroy the pix when the reference count reaches zero.
@@ -186,17 +186,17 @@ namespace TesseractOCR
         ///     </list>
         /// </remarks>
         /// <returns>The pix with it's reference count incremented.</returns>
-        public Pix Clone()
+        public Image Clone()
         {
             var clonedHandle = LeptonicaApi.Native.pixClone(_handle);
-            return new Pix(clonedHandle);
+            return new Image(clonedHandle);
         }
         #endregion Clone
 
         #region Scaling
         /// <summary>
         ///     Scales the current pix by the specified <paramref name="scaleX" /> and <paramref name="scaleY" /> factors returning
-        ///     a new <see cref="Pix" /> of the same depth.
+        ///     a new <see cref="Image" /> of the same depth.
         /// </summary>
         /// <param name="scaleX"></param>
         /// <param name="scaleY"></param>
@@ -312,13 +312,13 @@ namespace TesseractOCR
         ///         Warning: implicit assumption about RGB component order for LI color scaling
         ///     </para>
         /// </remarks>
-        public Pix Scale(float scaleX, float scaleY)
+        public Image Scale(float scaleX, float scaleY)
         {
             var result = LeptonicaApi.Native.pixScale(_handle, scaleX, scaleY);
 
             if (result == IntPtr.Zero) throw new InvalidOperationException("Failed to scale pix.");
 
-            return new Pix(result);
+            return new Image(result);
         }
         #endregion
 
@@ -339,7 +339,7 @@ namespace TesseractOCR
         ///     Note that the resulting instance takes ownership of the data structure.
         /// </remarks>
         /// <param name="handle"></param>
-        private Pix(IntPtr handle)
+        private Image(IntPtr handle)
         {
             if (handle == IntPtr.Zero) throw new ArgumentNullException(nameof(handle));
 
@@ -349,12 +349,12 @@ namespace TesseractOCR
             Depth = LeptonicaApi.Native.pixGetDepth(_handle);
 
             var colorMapHandle = LeptonicaApi.Native.pixGetColormap(_handle);
-            if (colorMapHandle != IntPtr.Zero) _colormap = new PixColormap(colorMapHandle);
+            if (colorMapHandle != IntPtr.Zero) _colormap = new Colormap(colorMapHandle);
         }
         #endregion
 
         #region Create
-        public static Pix Create(int width, int height, int depth)
+        public static Image Create(int width, int height, int depth)
         {
             if (!AllowedDepths.Contains(depth))
                 throw new ArgumentException("Depth must be 1, 2, 4, 8, 16, or 32 bits.", nameof(depth));
@@ -370,17 +370,17 @@ namespace TesseractOCR
             return Create(handle);
         }
 
-        public static Pix Create(IntPtr handle)
+        public static Image Create(IntPtr handle)
         {
             if (handle == IntPtr.Zero)
                 throw new ArgumentException("Pix handle must not be zero (null).", nameof(handle));
 
-            return new Pix(handle);
+            return new Image(handle);
         }
         #endregion
 
         #region LoadFromFile
-        public static Pix LoadFromFile(string filename)
+        public static Image LoadFromFile(string filename)
         {
             var pixHandle = LeptonicaApi.Native.pixRead(filename);
             if (pixHandle == IntPtr.Zero) throw new IOException($"Failed to load image '{filename}'.");
@@ -391,7 +391,7 @@ namespace TesseractOCR
         #endregion
 
         #region LoadFromMemory
-        public static Pix LoadFromMemory(byte[] bytes)
+        public static Image LoadFromMemory(byte[] bytes)
         {
             IntPtr handle;
             fixed (byte* ptr = bytes)
@@ -405,7 +405,7 @@ namespace TesseractOCR
         #endregion
 
         #region LoadTiffFromMemory
-        public static Pix LoadTiffFromMemory(byte[] bytes)
+        public static Image LoadTiffFromMemory(byte[] bytes)
         {
             IntPtr handle;
             fixed (byte* ptr = bytes)
@@ -419,9 +419,9 @@ namespace TesseractOCR
         #endregion
 
         #region GetData
-        public PixData GetData()
+        public Data GetData()
         {
-            return new PixData(this);
+            return new Data(this);
         }
         #endregion
 
@@ -432,10 +432,10 @@ namespace TesseractOCR
             if (obj == null || GetType() != obj.GetType())
                 return false;
 
-            return Equals((Pix)obj);
+            return Equals((Image)obj);
         }
 
-        public bool Equals(Pix other)
+        public bool Equals(Image other)
         {
             if (other == null) return false;
 
@@ -468,7 +468,7 @@ namespace TesseractOCR
         /// <param name="smoothy"> smoothY Half-height of convolution kernel applied to threshold array: use 0 for no smoothing.</param>
         /// <param name="scorefract"> scoreFraction Fraction of the max Otsu score; typ. 0.1 (use 0.0 for standard Otsu).</param>
         /// <returns>The binarized image.</returns>
-        public Pix BinarizeOtsuAdaptiveThreshold(int sx, int sy, int smoothx, int smoothy, float scorefract)
+        public Image BinarizeOtsuAdaptiveThreshold(int sx, int sy, int smoothx, int smoothy, float scorefract)
         {
             Guard.Verify(Depth == 8, "Image must have a depth of 8 bits per pixel to be binarized using Otsu.");
             Guard.Require(nameof(sx), sx >= 16, "The sx parameter must be greater than or equal to 16");
@@ -483,7 +483,7 @@ namespace TesseractOCR
 
             if (result == 1) throw new TesseractException("Failed to binarize image.");
 
-            return new Pix(ppixd);
+            return new Image(ppixd);
         }
         #endregion
 
@@ -529,7 +529,7 @@ namespace TesseractOCR
         /// </param>
         /// <param name="addborder">If <c>True</c> add a border of width (<paramref name="whsize" /> + 1) on all sides.</param>
         /// <returns>The binarized image.</returns>
-        public Pix BinarizeSauvola(int whsize, float factor, bool addborder)
+        public Image BinarizeSauvola(int whsize, float factor, bool addborder)
         {
             Guard.Verify(Depth == 8, "Source image must be 8bpp");
             Guard.Verify(Colormap == null, "Source image must not be color mapped.");
@@ -547,7 +547,7 @@ namespace TesseractOCR
             if (ppixth != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixth);
             if (result == 1) throw new TesseractException("Failed to binarize image.");
 
-            return new Pix(ppixd);
+            return new Image(ppixd);
         }
         #endregion
 
@@ -573,7 +573,7 @@ namespace TesseractOCR
         /// <param name="nx">The number of tiles to subdivide the source image into on the x-axis.</param>
         /// <param name="ny">The number of tiles to subdivide the source image into on the y-axis.</param>
         /// <returns>THe binarized image.</returns>
-        public Pix BinarizeSauvolaTiled(int whsize, float factor, int nx, int ny)
+        public Image BinarizeSauvolaTiled(int whsize, float factor, int nx, int ny)
         {
             Guard.Verify(Depth == 8, "Source image must be 8bpp");
             Guard.Verify(Colormap == null, "Source image must not be color mapped.");
@@ -590,7 +590,7 @@ namespace TesseractOCR
 
             if (result == 1) throw new TesseractException("Failed to binarize image.");
 
-            return new Pix(ppixd);
+            return new Image(ppixd);
         }
         #endregion
 
@@ -603,7 +603,7 @@ namespace TesseractOCR
         /// <param name="gwt">Green weight</param>
         /// <param name="bwt">Blue weight</param>
         /// <returns>The Grayscale pix.</returns>
-        public Pix ConvertRGBToGray(float rwt, float gwt, float bwt)
+        public Image ConvertRGBToGray(float rwt, float gwt, float bwt)
         {
             Guard.Verify(Depth == 32, "The source image must have a depth of 32 (32 bpp).");
             Guard.Require(nameof(rwt), rwt >= 0, "All weights must be greater than or equal to zero; red was not.");
@@ -612,14 +612,14 @@ namespace TesseractOCR
 
             var resultPixHandle = LeptonicaApi.Native.pixConvertRGBToGray(_handle, rwt, gwt, bwt);
             if (resultPixHandle == IntPtr.Zero) throw new TesseractException("Failed to convert to grayscale.");
-            return new Pix(resultPixHandle);
+            return new Image(resultPixHandle);
         }
 
         /// <summary>
         ///     Conversion from RBG to 8bpp grayscale.
         /// </summary>
         /// <returns>The Grayscale pix.</returns>
-        public Pix ConvertRGBToGray()
+        public Image ConvertRGBToGray()
         {
             return ConvertRGBToGray(0, 0, 0);
         }
@@ -632,7 +632,7 @@ namespace TesseractOCR
         ///     See <a href="http://www.leptonica.com/line-removal.html">line-removal</a>.
         /// </summary>
         /// <returns>image with lines removed</returns>
-        public Pix RemoveLines()
+        public Image RemoveLines()
         {
             // ReSharper disable once JoinDeclarationAndInitializer
             IntPtr pix1, pix2, pix3, pix4, pix5, pix6, pix7, pix8, pix9;
@@ -679,7 +679,7 @@ namespace TesseractOCR
                 if (pix8 == IntPtr.Zero)
                     throw new TesseractException("Failed to remove lines from image.");
 
-                return new Pix(pix8);
+                return new Image(pix8);
             }
             finally
             {
@@ -706,7 +706,7 @@ namespace TesseractOCR
         /// <param name="selStr">hit-miss sels in 2D layout; SEL_STR2 and SEL_STR3 are predefined values</param>
         /// <param name="selSize">2 for 2x2, 3 for 3x3</param>
         /// <returns></returns>
-        public Pix Despeckle(string selStr, int selSize)
+        public Image Despeckle(string selStr, int selSize)
         {
             /*  Normalize for rapidly varying background */
             var pix1 = LeptonicaApi.Native.pixBackgroundNormFlex(_handle, 7, 7, 1, 1, 10);
@@ -738,7 +738,7 @@ namespace TesseractOCR
 
             if (pix6 == IntPtr.Zero) throw new TesseractException("Failed to despeckle image.");
 
-            return new Pix(pix6);
+            return new Image(pix6);
         }
         #endregion
 
@@ -753,7 +753,7 @@ namespace TesseractOCR
         ///     it returns a deskewed image; otherwise, it returns a clone.
         /// </remarks>
         /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
-        public Pix Deskew()
+        public Image Deskew()
         {
             return Deskew(DefaultBinarySearchReduction, out _);
         }
@@ -769,7 +769,7 @@ namespace TesseractOCR
         /// </remarks>
         /// <param name="scew">The scew angle and confidence</param>
         /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
-        public Pix Deskew(out Scew scew)
+        public Image Deskew(out Scew scew)
         {
             return Deskew(DefaultBinarySearchReduction, out scew);
         }
@@ -786,7 +786,7 @@ namespace TesseractOCR
         /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or 4.</param>
         /// <param name="scew">The scew angle and confidence</param>
         /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
-        public Pix Deskew(int redSearch, out Scew scew)
+        public Image Deskew(int redSearch, out Scew scew)
         {
             return Deskew(ScewSweep.Default, redSearch, DefaultBinaryThreshold, out scew);
         }
@@ -805,7 +805,7 @@ namespace TesseractOCR
         /// <param name="thresh">The threshold value used for binarizing the image.</param>
         /// <param name="scew">The scew angle and confidence</param>
         /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
-        public Pix Deskew(ScewSweep sweep, int redSearch, int thresh, out Scew scew)
+        public Image Deskew(ScewSweep sweep, int redSearch, int thresh, out Scew scew)
         {
             var resultPixHandle = LeptonicaApi.Native.pixDeskewGeneral(_handle, sweep.Reduction, sweep.Range,
                 sweep.Delta, redSearch, thresh, out var pAngle, out var pConf);
@@ -814,7 +814,7 @@ namespace TesseractOCR
                 new TesseractException("Failed to deskew image.");
 
             scew = new Scew(pAngle, pConf);
-            return new Pix(resultPixHandle);
+            return new Image(resultPixHandle);
         }
         #endregion
 
@@ -847,7 +847,7 @@ namespace TesseractOCR
         /// <param name="width">The original width; use 0 to avoid embedding</param>
         /// <param name="height">The original height; use 0 to avoid embedding</param>
         /// <returns>The image rotated around it's centre.</returns>
-        public Pix Rotate(float angleInRadians, RotationMethod method = RotationMethod.AreaMap,
+        public Image Rotate(float angleInRadians, RotationMethod method = RotationMethod.AreaMap,
             RotationFill fillColor = RotationFill.White, int? width = null, int? height = null)
         {
             if (width == null) width = Width;
@@ -868,7 +868,7 @@ namespace TesseractOCR
 
             if (resultHandle == IntPtr.Zero) throw new LeptonicaException("Failed to rotate image around its centre.");
 
-            return new Pix(resultHandle);
+            return new Image(resultHandle);
         }
         #endregion
 
@@ -878,12 +878,12 @@ namespace TesseractOCR
         /// </summary>
         /// <param name="direction">1 = clockwise,  -1 = counter-clockwise</param>
         /// <returns>rotated image</returns>
-        public Pix Rotate90(int direction)
+        public Image Rotate90(int direction)
         {
             var resultHandle = LeptonicaApi.Native.pixRotate90(_handle, direction);
 
             if (resultHandle == IntPtr.Zero) throw new LeptonicaException("Failed to rotate image.");
-            return new Pix(resultHandle);
+            return new Image(resultHandle);
         }
         #endregion
     }

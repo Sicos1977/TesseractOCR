@@ -25,23 +25,23 @@ using System.Drawing.Imaging;
 
 // ReSharper disable BitwiseOperatorOnEnumWithoutFlags
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
     /// <summary>
-    ///     Converts a <see cref="Bitmap" /> to a <see cref="Pix" />.
+    ///     Converts a <see cref="Bitmap" /> to a <see cref="Image" />.
     /// </summary>
-    public class BitmapToPixConverter
+    public class ToPixConverter
     {
         #region Convert
         /// <summary>
-        ///     Converts the specified <paramref name="img" /> to a <see cref="Pix" />.
+        ///     Converts the specified <paramref name="img" /> to a <see cref="Image" />.
         /// </summary>
         /// <param name="img">The source image to be converted.</param>
         /// <returns>The converted pix.</returns>
-        public Pix Convert(Bitmap img)
+        public Image Convert(Bitmap img)
         {
             var pixDepth = GetPixDepth(img.PixelFormat);
-            var pix = Pix.Create(img.Width, img.Height, pixDepth);
+            var pix = Image.Create(img.Width, img.Height, pixDepth);
 
             pix.XRes = (int)Math.Round(img.HorizontalResolution);
             pix.YRes = (int)Math.Round(img.VerticalResolution);
@@ -97,11 +97,11 @@ namespace TesseractOCR
         #endregion
 
         #region CopyColorMap
-        private static void CopyColorMap(Image img, Pix pix)
+        private static void CopyColorMap(System.Drawing.Image img, Image pix)
         {
             var imgPalette = img.Palette;
             var imgPaletteEntries = imgPalette.Entries;
-            var pixColorMap = PixColormap.Create(pix.Depth);
+            var pixColorMap = Colormap.Create(pix.Depth);
             try
             {
                 for (var i = 0; i < imgPaletteEntries.Length; i++)
@@ -141,26 +141,26 @@ namespace TesseractOCR
         #endregion
 
         #region TransferDataFormat1BppIndexed
-        private static unsafe void TransferDataFormat1BppIndexed(BitmapData imgData, PixData pixData)
+        private static unsafe void TransferDataFormat1BppIndexed(BitmapData imgData, Data pixData)
         {
             var height = imgData.Height;
             var width = imgData.Width / 8;
             for (var y = 0; y < height; y++)
             {
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
 
                 for (var x = 0; x < width; x++)
                 {
                     var pixelVal = BitmapHelper.GetDataByte(imgLine, x);
-                    PixData.SetDataByte(pixLine, x, pixelVal);
+                    Data.SetDataByte(pixLine, x, pixelVal);
                 }
             }
         }
         #endregion
 
         #region TransferDataFormat8BppIndexed
-        private static unsafe void TransferDataFormat8BppIndexed(BitmapData imgData, PixData pixData)
+        private static unsafe void TransferDataFormat8BppIndexed(BitmapData imgData, Data pixData)
         {
             var height = imgData.Height;
             var width = imgData.Width;
@@ -168,19 +168,19 @@ namespace TesseractOCR
             for (var y = 0; y < height; y++)
             {
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
 
                 for (var x = 0; x < width; x++)
                 {
                     var pixelVal = *(imgLine + x);
-                    PixData.SetDataByte(pixLine, x, pixelVal);
+                    Data.SetDataByte(pixLine, x, pixelVal);
                 }
             }
         }
         #endregion
 
         #region TransferDataFormat24BppRgb
-        private static unsafe void TransferDataFormat24BppRgb(BitmapData imgData, PixData pixData)
+        private static unsafe void TransferDataFormat24BppRgb(BitmapData imgData, Data pixData)
         {
             var height = imgData.Height;
             var width = imgData.Width;
@@ -188,7 +188,7 @@ namespace TesseractOCR
             for (var y = 0; y < height; y++)
             {
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
 
                 for (var x = 0; x < width; x++)
                 {
@@ -196,14 +196,14 @@ namespace TesseractOCR
                     var blue = pixelPtr[0];
                     var green = pixelPtr[1];
                     var red = pixelPtr[2];
-                    PixData.SetDataFourByte(pixLine, x, BitmapHelper.EncodeAsRGBA(red, green, blue, 255));
+                    Data.SetDataFourByte(pixLine, x, BitmapHelper.EncodeAsRGBA(red, green, blue, 255));
                 }
             }
         }
         #endregion
 
         #region TransferDataFormat32BppRgb
-        private static unsafe void TransferDataFormat32BppRgb(BitmapData imgData, PixData pixData)
+        private static unsafe void TransferDataFormat32BppRgb(BitmapData imgData, Data pixData)
         {
             var height = imgData.Height;
             var width = imgData.Width;
@@ -211,7 +211,7 @@ namespace TesseractOCR
             for (var y = 0; y < height; y++)
             {
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
 
                 for (var x = 0; x < width; x++)
                 {
@@ -219,14 +219,14 @@ namespace TesseractOCR
                     var blue = *pixelPtr;
                     var green = *(pixelPtr + 1);
                     var red = *(pixelPtr + 2);
-                    PixData.SetDataFourByte(pixLine, x, BitmapHelper.EncodeAsRGBA(red, green, blue, 255));
+                    Data.SetDataFourByte(pixLine, x, BitmapHelper.EncodeAsRGBA(red, green, blue, 255));
                 }
             }
         }
         #endregion
 
         #region TransferDataFormat32BppArgb
-        private static unsafe void TransferDataFormat32BppArgb(BitmapData imgData, PixData pixData)
+        private static unsafe void TransferDataFormat32BppArgb(BitmapData imgData, Data pixData)
         {
             var height = imgData.Height;
             var width = imgData.Width;
@@ -234,7 +234,7 @@ namespace TesseractOCR
             for (var y = 0; y < height; y++)
             {
                 var imgLine = (byte*)imgData.Scan0 + y * imgData.Stride;
-                var pixLine = (uint*)pixData.Data + y * pixData.WordsPerLine;
+                var pixLine = (uint*)pixData.PixData + y * pixData.WordsPerLine;
 
                 for (var x = 0; x < width; x++)
                 {
@@ -243,7 +243,7 @@ namespace TesseractOCR
                     var green = *(pixelPtr + 1);
                     var red = *(pixelPtr + 2);
                     var alpha = *(pixelPtr + 3);
-                    PixData.SetDataFourByte(pixLine, x, BitmapHelper.EncodeAsRGBA(red, green, blue, alpha));
+                    Data.SetDataFourByte(pixLine, x, BitmapHelper.EncodeAsRGBA(red, green, blue, alpha));
                 }
             }
         }

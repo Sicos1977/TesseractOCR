@@ -1,4 +1,5 @@
 ﻿using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -10,6 +11,7 @@ namespace TesseractOCR.Renderers
     {
         public WordStrBoxResult(string outputFilename)
         {
+            Logger.LogInformation("Create word string box renderer");
             var rendererHandle = TessApi.Native.WordStrBoxRendererCreate(outputFilename);
             Initialize(rendererHandle);
         }

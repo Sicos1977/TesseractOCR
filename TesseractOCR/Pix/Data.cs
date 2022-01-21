@@ -25,20 +25,20 @@ using TesseractOCR.Interop;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
-    public unsafe class PixData
+    public unsafe class Data
     {
         #region Properties
         /// <summary>
         ///     <see cref="Pix"/>
         /// </summary>
-        public Pix Pix { get; }
+        public Image Pix { get; }
 
         /// <summary>
         ///     Pointer to the data.
         /// </summary>
-        public IntPtr Data { get; }
+        public IntPtr PixData { get; }
 
         /// <summary>
         ///     Number of 32-bit words per line.
@@ -47,10 +47,10 @@ namespace TesseractOCR
         #endregion
 
         #region PixData
-        internal PixData(Pix pix)
+        internal Data(Image pix)
         {
             Pix = pix;
-            Data = LeptonicaApi.Native.pixGetData(Pix.Handle);
+            PixData = LeptonicaApi.Native.pixGetData(Pix.Handle);
             WordsPerLine = LeptonicaApi.Native.pixGetWpl(Pix.Handle);
         }
         #endregion

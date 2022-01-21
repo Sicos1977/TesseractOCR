@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -16,9 +17,10 @@ namespace TesseractOCR.Renderers
         #region Constructor
         public PdfResult(string outputFilename, string fontDirectory, bool textOnly)
         {
+            Logger.LogInformation("Create PDF renderer");
+
             var fontDirectoryHandle = Marshal.StringToHGlobalAnsi(fontDirectory);
-            var rendererHandle =
-                TessApi.Native.PDFRendererCreate(outputFilename, fontDirectoryHandle, textOnly ? 1 : 0);
+            var rendererHandle = TessApi.Native.PDFRendererCreate(outputFilename, fontDirectoryHandle, textOnly ? 1 : 0);
 
             Initialize(rendererHandle);
         }

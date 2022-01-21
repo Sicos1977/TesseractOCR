@@ -20,13 +20,12 @@
 // limitations under the License.
 
 using System;
-using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public readonly struct PixColor : IEquatable<PixColor>
+    public readonly struct Color : IEquatable<Color>
     {
         #region Properties
         /// <summary>
@@ -51,7 +50,7 @@ namespace TesseractOCR
         #endregion
 
         #region Constructor
-        public PixColor(byte red, byte green, byte blue, byte alpha = 255)
+        public Color(byte red, byte green, byte blue, byte alpha = 255)
         {
             Red = red;
             Green = green;
@@ -61,9 +60,9 @@ namespace TesseractOCR
         #endregion
 
         #region PixColor
-        public static PixColor FromRgba(uint value)
+        public static Color FromRgba(uint value)
         {
-            return new PixColor(
+            return new Color(
                 (byte)(value >> 24 & 0xFF),
                 (byte)(value >> 16 & 0xFF),
                 (byte)(value >> 8 & 0xFF),
@@ -72,9 +71,9 @@ namespace TesseractOCR
         #endregion
 
         #region FromRgb
-        public static PixColor FromRgb(uint value)
+        public static Color FromRgb(uint value)
         {
-            return new PixColor(
+            return new Color(
                 (byte)(value >> 24 & 0xFF),
                 (byte)(value >> 16 & 0xFF),
                 (byte)(value >> 8 & 0xFF));
@@ -92,28 +91,28 @@ namespace TesseractOCR
         #endregion
 
         #region Color
-        public static explicit operator Color(PixColor color)
+        public static explicit operator System.Drawing.Color(Color color)
         {
-            return Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
+            return System.Drawing.Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
         }
         #endregion
 
         #region PixColor
-        public static explicit operator PixColor(Color color)
+        public static explicit operator Color(System.Drawing.Color color)
         {
-            return new PixColor(color.R, color.G, color.B, color.A);
+            return new Color(color.R, color.G, color.B, color.A);
         }
         #endregion
 
         #region Equals
         public override bool Equals(object obj)
         {
-            return obj is PixColor color && Equals(color);
+            return obj is Color color && Equals(color);
         }
         #endregion
 
         #region Equals
-        public bool Equals(PixColor other)
+        public bool Equals(Color other)
         {
             return Red == other.Red && Blue == other.Blue && Green == other.Green && Alpha == other.Alpha;
         }
@@ -136,12 +135,12 @@ namespace TesseractOCR
         #endregion
 
         #region Operator
-        public static bool operator ==(PixColor lhs, PixColor rhs)
+        public static bool operator ==(Color lhs, Color rhs)
         {
             return lhs.Equals(rhs);
         }
 
-        public static bool operator !=(PixColor lhs, PixColor rhs)
+        public static bool operator !=(Color lhs, Color rhs)
         {
             return !(lhs == rhs);
         }

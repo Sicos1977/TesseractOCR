@@ -35,6 +35,134 @@ namespace TesseractOCR
         private readonly Dictionary<int, FontInfo> _fontInfoCache = new Dictionary<int, FontInfo>();
         #endregion
 
+        #region Properties
+        /// <summary>
+        ///     Returns <c>true</c> when the word is found is a Tesseract dictionary
+        /// </summary>
+        /// <returns></returns>
+        public bool WordIsFromDictionary
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsFromDictionary(Handle);
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="FontAttributes"/> for the word
+        /// </summary>
+        public FontAttributes WordFontAttributes
+        {
+            get
+            {
+                VerifyNotDisposed();
+
+                if (Handle.Handle == IntPtr.Zero)
+                    return null;
+
+                // Per docs (ltrresultiterator.h:104 as of 4897796 in github:tesseract-ocr/tesseract)
+                // this return value points to an internal table and should not be deleted.
+                var nameHandle =
+                    TessApi.Native.ResultIteratorWordFontAttributes(
+                        Handle,
+                        out var isBold, out var isItalic, out var isUnderlined,
+                        out var isMonospace, out var isSerif, out var isSmallCaps,
+                        out var pointSize, out var fontId);
+
+                // This can happen in certain error conditions
+                if (nameHandle == IntPtr.Zero)
+                    return null;
+
+                if (_fontInfoCache.TryGetValue(fontId, out var fontInfo))
+                    return new FontAttributes(fontInfo, isUnderlined, isSmallCaps, pointSize);
+
+                var fontName = MarshalHelper.PtrToString(nameHandle, Encoding.UTF8);
+                fontInfo = new FontInfo(fontName, fontId, isItalic, isBold, isMonospace, isSerif);
+                _fontInfoCache.Add(fontId, fontInfo);
+
+                return new FontAttributes(fontInfo, isUnderlined, isSmallCaps, pointSize);
+            }
+        }
+
+        /// <summary>
+        ///     Returns <c>true</c> when the word is numeric
+        /// </summary>
+        /// <returns></returns>
+        public bool WordIsNumeric
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsNumeric(Handle);
+            }
+        }
+
+        /// <summary>
+        ///     Returns the language for the recognized word
+        /// </summary>
+        /// <returns></returns>
+        public string WordLanguage
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return Handle.Handle == IntPtr.Zero ? null : TessApi.ResultIteratorWordRecognitionLanguage(Handle);
+            }
+        }
+
+        /// <summary>
+        ///     Returns <c>true</c> when the symbol is in superscript
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        ///     A subscript or superscript is a character (such as a number or letter) that is set slightly below or
+        ///     above the normal line of type, respectively. It is usually smaller than the rest of the text.
+        ///     Subscripts appear at or below the baseline, while superscripts are above. Subscripts and superscripts
+        ///     are perhaps most often used in formulas, mathematical expressions, and specifications of chemical
+        ///     compounds and isotopes, but have many other uses as well.
+        /// </remarks>
+        public bool SymbolIsSuperscript
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsSuperscript(Handle);
+            }
+        }
+
+        /// <summary>
+        ///     Returns <c>true</c> when the symbol is dropcap
+        /// </summary>
+        /// <remarks>
+        ///     A Drop Cap is the initial letter of a paragraph which sits within the margins and runs several
+        ///     lines deep into the paragraph, indenting some normal-sized text in these lines
+        /// </remarks>
+        public bool SymbolIsDropcap
+        {
+            get
+            {
+                VerifyNotDisposed();
+                return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsDropcap(Handle);
+            }
+        }
+
+        /// <summary>
+        ///     Gets an instance of a choice iterator using the current symbol of interest. The ChoiceIterator allows a one-shot
+        ///     iteration over the
+        ///     choices for this symbol and after that is is useless.
+        /// </summary>
+        /// <returns>an instance of a Choice Iterator</returns>
+        public ChoiceIterator ChoiceIterator
+        {
+            get
+            {
+                var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
+                return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
+            }
+        }
+        #endregion
+
         #region Constructor
         internal ResultIterator(Page page, IntPtr handle) : base(page, handle)
         {
@@ -42,115 +170,28 @@ namespace TesseractOCR
         #endregion
 
         #region GetConfidence
-        public float GetConfidence(PageIteratorLevel level)
+        /// <summary>
+        ///     Returns the confidence for the given <paramref name="pageIteratorLevel"/>
+        /// </summary>
+        /// <param name="pageIteratorLevel"></param>
+        /// <returns></returns>
+        public float GetConfidence(PageIteratorLevel pageIteratorLevel)
         {
             VerifyNotDisposed();
-
-            return Handle.Handle == IntPtr.Zero ? 0f : TessApi.Native.ResultIteratorGetConfidence(Handle, level);
+            return Handle.Handle == IntPtr.Zero ? 0f : TessApi.Native.ResultIteratorGetConfidence(Handle, pageIteratorLevel);
         }
         #endregion
 
         #region GetText
-        public string GetText(PageIteratorLevel level)
-        {
-            VerifyNotDisposed();
-
-            return Handle.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(Handle, level);
-        }
-        #endregion
-
-        #region GetWordFontAttributes
-        public FontAttributes GetWordFontAttributes()
-        {
-            VerifyNotDisposed();
-
-            if (Handle.Handle == IntPtr.Zero)
-                return null;
-
-            // per docs (ltrresultiterator.h:104 as of 4897796 in github:tesseract-ocr/tesseract)
-            // this return value points to an internal table and should not be deleted.
-            var nameHandle =
-                TessApi.Native.ResultIteratorWordFontAttributes(
-                    Handle,
-                    out var isBold, out var isItalic, out var isUnderlined,
-                    out var isMonospace, out var isSerif, out var isSmallCaps,
-                    out var pointSize, out var fontId);
-
-            // This can happen in certain error conditions
-            if (nameHandle == IntPtr.Zero)
-                return null;
-
-            if (_fontInfoCache.TryGetValue(fontId, out var fontInfo))
-                return new FontAttributes(fontInfo, isUnderlined, isSmallCaps, pointSize);
-
-            var fontName = MarshalHelper.PtrToString(nameHandle, Encoding.UTF8);
-            fontInfo = new FontInfo(fontName, fontId, isItalic, isBold, isMonospace, isSerif);
-            _fontInfoCache.Add(fontId, fontInfo);
-
-            return new FontAttributes(fontInfo, isUnderlined, isSmallCaps, pointSize);
-        }
-        #endregion
-
-        #region GetWordRecognitionLanguage
-        public string GetWordRecognitionLanguage()
-        {
-            VerifyNotDisposed();
-
-            return Handle.Handle == IntPtr.Zero ? null : TessApi.ResultIteratorWordRecognitionLanguage(Handle);
-        }
-        #endregion
-
-        #region GetWordIsFromDictionary
-        public bool GetWordIsFromDictionary()
-        {
-            VerifyNotDisposed();
-            return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsFromDictionary(Handle);
-        }
-        #endregion
-
-        #region GetWordIsNumeric
-        public bool GetWordIsNumeric()
-        {
-            VerifyNotDisposed();
-            return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorWordIsNumeric(Handle);
-        }
-        #endregion
-
-        #region GetSymbolIsSuperscript
-        public bool GetSymbolIsSuperscript()
-        {
-            VerifyNotDisposed();
-            return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsSuperscript(Handle);
-        }
-        #endregion
-
-        #region GetSymbolIsSubscript
-        public bool GetSymbolIsSubscript()
-        {
-            VerifyNotDisposed();
-            return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsSubscript(Handle);
-        }
-        #endregion
-
-        #region GetSymbolIsDropcap
-        public bool GetSymbolIsDropcap()
-        {
-            VerifyNotDisposed();
-            return Handle.Handle != IntPtr.Zero && TessApi.Native.ResultIteratorSymbolIsDropcap(Handle);
-        }
-        #endregion
-
-        #region GetChoiceIterator
         /// <summary>
-        ///     Gets an instance of a choice iterator using the current symbol of interest. The ChoiceIterator allows a one-shot
-        ///     iteration over the
-        ///     choices for this symbol and after that is is useless.
+        ///     Returns the text for the given <paramref name="pageIteratorLevel"/>
         /// </summary>
-        /// <returns>an instance of a Choice Iterator</returns>
-        public ChoiceIterator GetChoiceIterator()
+        /// <param name="pageIteratorLevel"></param>
+        public string GetText(PageIteratorLevel pageIteratorLevel)
         {
-            var choiceIteratorHandle = TessApi.Native.ResultIteratorGetChoiceIterator(Handle);
-            return choiceIteratorHandle == IntPtr.Zero ? null : new ChoiceIterator(choiceIteratorHandle);
+            VerifyNotDisposed();
+
+            return Handle.Handle == IntPtr.Zero ? string.Empty : TessApi.ResultIteratorGetUTF8Text(Handle, pageIteratorLevel);
         }
         #endregion
     }

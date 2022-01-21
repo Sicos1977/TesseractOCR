@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using TesseractOCR.Internal;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -103,11 +104,13 @@ namespace TesseractOCR.Renderers
 
             // Begin the document on each child renderer.
             var children = new List<IDisposable>();
+
             try
             {
+                Logger.LogInformation("Begin document");
                 children.AddRange(ResultRenderers.Select(m => m.BeginDocument(title)));
-
                 _currentDocumentHandle = new EndDocumentOnDispose(this, children);
+
                 return _currentDocumentHandle;
             }
             catch (Exception)
@@ -120,7 +123,7 @@ namespace TesseractOCR.Renderers
                     }
                     catch (Exception disposalError)
                     {
-                        Logger.TraceError("Failed to dispose of child document {0}: {1}", child, disposalError.Message);
+                        Logger.LogError($"Failed to dispose of child document {child}, error {disposalError}");
                     }
 
                 throw;

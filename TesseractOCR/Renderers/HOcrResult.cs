@@ -1,4 +1,5 @@
 ﻿using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -9,6 +10,8 @@ namespace TesseractOCR.Renderers
     {
         public HOcrResult(string outputFilename, bool fontInfo = false)
         {
+            Logger.LogInformation("Create HOCR renderer");
+
             var rendererHandle = TessApi.Native.HOcrRendererCreate2(outputFilename, fontInfo ? 1 : 0);
             Initialize(rendererHandle);
         }

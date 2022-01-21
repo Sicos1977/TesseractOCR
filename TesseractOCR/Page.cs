@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -30,6 +29,7 @@ using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 
@@ -37,8 +37,6 @@ namespace TesseractOCR
 {
     public sealed class Page : DisposableBase
     {
-        private static readonly TraceSource Trace = new TraceSource("Tesseract");
-
         #region Fields
         private bool _runRecognitionPhase;
         private Rect _regionOfInterest;
@@ -53,7 +51,7 @@ namespace TesseractOCR
         /// <summary>
         ///     Gets the <see cref="Pix" /> that is being ocr'd.
         /// </summary>
-        public Pix Image { get; }
+        public Pix.Image Image { get; }
 
         /// <summary>
         ///     Gets the name of the image being ocr'd.
@@ -95,7 +93,7 @@ namespace TesseractOCR
         #endregion
 
         #region Constructor
-        internal Page(TesseractEngine engine, Pix image, string imageName, Rect regionOfInterest, PageSegMode pageSegmentMode)
+        internal Page(TesseractEngine engine, Pix.Image image, string imageName, Rect regionOfInterest, PageSegMode pageSegmentMode)
         {
             Engine = engine;
             Image = image;
@@ -110,14 +108,14 @@ namespace TesseractOCR
         ///     Gets the thresholded image that was OCR'd.
         /// </summary>
         /// <returns></returns>
-        public Pix GetThresholdedImage()
+        public Pix.Image GetThresholdedImage()
         {
             Recognize();
 
             var pixHandle = TessApi.Native.BaseAPIGetThresholdedImage(Engine.Handle);
             if (pixHandle == IntPtr.Zero) throw new TesseractException("Failed to get thresholded image.");
 
-            return Pix.Create(pixHandle);
+            return Pix.Image.Create(pixHandle);
         }
         #endregion
 
@@ -409,13 +407,11 @@ namespace TesseractOCR
                 try
                 {
                     thresholdedImage.Save(filePath, ImageFormat.TiffG4);
-                    Trace.TraceEvent(TraceEventType.Information, 2,
-                        "Successfully saved the thresholded image to '{0}'", filePath);
+                    Logger.LogInformation($"Successfully saved the thresholded image to '{filePath}'");
                 }
                 catch (Exception error)
                 {
-                    Trace.TraceEvent(TraceEventType.Error, 2,
-                        "Failed to save the thresholded image to '{0}'.\nError: {1}", filePath, error.Message);
+                    Logger.LogError($"Failed to save the thresholded image to '{filePath}', error: {error}");
                 }
             }
         }

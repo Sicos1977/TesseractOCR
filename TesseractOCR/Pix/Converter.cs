@@ -23,17 +23,17 @@ using System.Drawing;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
     /// <summary>
     /// Handles converting between different image formats supported by DotNet.
     /// </summary>
-    public static class PixConverter
+    public static class Converter
     {
         #region Fields
-        private static readonly BitmapToPixConverter BitmapConverter = new BitmapToPixConverter();
+        private static readonly ToPixConverter BitmapConverter = new ToPixConverter();
         // ReSharper disable once InconsistentNaming
-        private static readonly PixToBitmapConverter PixConverter_ = new PixToBitmapConverter();
+        private static readonly ToBitmapConverter PixConverter_ = new ToBitmapConverter();
         #endregion
 
         #region ToBitmap
@@ -42,7 +42,7 @@ namespace TesseractOCR
         /// </summary>
         /// <param name="pix">The source image to be converted.</param>
         /// <returns>The converted pix as a <see cref="Bitmap"/>.</returns>
-        public static Bitmap ToBitmap(Pix pix)
+        public static Bitmap ToBitmap(Image pix)
         {
             return PixConverter_.Convert(pix);
         }
@@ -53,8 +53,8 @@ namespace TesseractOCR
         /// Converts the specified <paramref name="img"/> to a Pix.
         /// </summary>
         /// <param name="img">The source image to be converted.</param>
-        /// <returns>The converted bitmap image as a <see cref="Pix"/>.</returns>
-        public static Pix ToPix(Bitmap img)
+        /// <returns>The converted bitmap image as a <see cref="Image"/>.</returns>
+        public static Image ToPix(Bitmap img)
         {
             return BitmapConverter.Convert(img);
         }

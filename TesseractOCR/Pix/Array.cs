@@ -27,13 +27,14 @@ using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
+// ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Pix
 {
     /// <summary>
-    ///     Represents an array of <see cref="Pix" />.
+    ///     Represents an array of <see cref="Image" />.
     /// </summary>
-    public class PixArray : DisposableBase, IEnumerable<Pix>
+    public class Array : DisposableBase, IEnumerable<Image>
     {
         #region Fields
         /// <summary>
@@ -48,7 +49,7 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     Gets the number of <see cref="Pix" /> contained in the array.
+        ///     Gets the number of <see cref="Image" /> contained in the array.
         /// </summary>
         public int Count
         {
@@ -66,25 +67,25 @@ namespace TesseractOCR
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        public static PixArray LoadMultiPageTiffFromFile(string filename)
+        public static Array LoadMultiPageTiffFromFile(string filename)
         {
             var pixaHandle = LeptonicaApi.Native.pixaReadMultipageTiff(filename);
             if (pixaHandle == IntPtr.Zero) throw new IOException($"Failed to load image '{filename}'.");
 
-            return new PixArray(pixaHandle) { Filename = filename };
+            return new Array(pixaHandle) { Filename = filename };
         }
 
-        public static PixArray Create(int n)
+        public static Array Create(int n)
         {
             var pixaHandle = LeptonicaApi.Native.pixaCreate(n);
             if (pixaHandle == IntPtr.Zero) throw new IOException("Failed to create PixArray");
 
-            return new PixArray(pixaHandle);
+            return new Array(pixaHandle);
         }
         #endregion
 
         #region Constructor
-        private PixArray(IntPtr handle)
+        private Array(IntPtr handle)
         {
             _handle = new HandleRef(this, handle);
             _version = 1;
@@ -105,7 +106,7 @@ namespace TesseractOCR
         /// <param name="pix">The pix to add.</param>
         /// <param name="copyflag">Determines if a clone or copy of the pix is inserted into the array.</param>
         /// <returns></returns>
-        public bool Add(Pix pix, PixArrayAccessType copyflag = PixArrayAccessType.Clone)
+        public bool Add(Image pix, PixArrayAccessType copyflag = PixArrayAccessType.Clone)
         {
             Guard.RequireNotNull("pix", pix);
             Guard.Require(nameof(copyflag), copyflag == PixArrayAccessType.Clone || copyflag == PixArrayAccessType.Copy,
@@ -119,16 +120,16 @@ namespace TesseractOCR
 
         #region Private class PixArrayEnumerato
         /// <summary>
-        ///     Handles enumerating through the <see cref="Pix" /> in the PixArray.
+        ///     Handles enumerating through the <see cref="Image" /> in the PixArray.
         /// </summary>
-        private class PixArrayEnumerator : DisposableBase, IEnumerator<Pix>
+        private class PixArrayEnumerator : DisposableBase, IEnumerator<Image>
         {
             #region Constructor
-            public PixArrayEnumerator(PixArray array)
+            public PixArrayEnumerator(Array array)
             {
                 _array = array;
                 _version = array._version;
-                _items = new Pix[array.Count];
+                _items = new Image[array.Count];
                 _index = 0;
                 _current = null;
             }
@@ -148,9 +149,9 @@ namespace TesseractOCR
             #endregion
 
             #region Fields
-            private readonly PixArray _array;
-            private readonly Pix[] _items;
-            private Pix _current;
+            private readonly Array _array;
+            private readonly Image[] _items;
+            private Image _current;
             private int _index;
             private readonly int _version;
             #endregion
@@ -178,7 +179,7 @@ namespace TesseractOCR
 
             #region Current
             /// <inheritdoc />
-            public Pix Current
+            public Image Current
             {
                 get
                 {
@@ -266,16 +267,16 @@ namespace TesseractOCR
 
         #region GetPix
         /// <summary>
-        ///     Gets the <see cref="Pix" /> located at <paramref name="index" /> using the specified <paramref name="accessType" />
+        ///     Gets the <see cref="Image" /> located at <paramref name="index" /> using the specified <paramref name="accessType" />
         ///     .
         /// </summary>
         /// <param name="index">The index of the pix (zero based).</param>
         /// <param name="accessType">
-        ///     The <see cref="PixArrayAccessType" /> used to retrieve the <see cref="Pix" />, only Clone or
+        ///     The <see cref="PixArrayAccessType" /> used to retrieve the <see cref="Image" />, only Clone or
         ///     Copy are allowed.
         /// </param>
-        /// <returns>The retrieved <see cref="Pix" />.</returns>
-        public Pix GetPix(int index, PixArrayAccessType accessType = PixArrayAccessType.Clone)
+        /// <returns>The retrieved <see cref="Image" />.</returns>
+        public Image GetPix(int index, PixArrayAccessType accessType = PixArrayAccessType.Clone)
         {
             Guard.Require(nameof(accessType),
                 accessType == PixArrayAccessType.Clone || accessType == PixArrayAccessType.Copy,
@@ -288,7 +289,7 @@ namespace TesseractOCR
             var pixHandle = LeptonicaApi.Native.pixaGetPix(_handle, index, accessType);
             if (pixHandle == IntPtr.Zero)
                 throw new InvalidOperationException($"Failed to retrieve pix {pixHandle}.");
-            var result = Pix.Create(pixHandle);
+            var result = Image.Create(pixHandle);
             result.ImageName = Filename;
             return result;
         }
@@ -296,19 +297,19 @@ namespace TesseractOCR
 
         #region GetEnumerator
         /// <summary>
-        ///     Returns a <see cref="IEnumerator{Pix}" /> that iterates the the array of <see cref="Pix" />.
+        ///     Returns a <see cref="IEnumerator{Pix}" /> that iterates the the array of <see cref="Image" />.
         /// </summary>
         /// <remarks>
         ///     When done with the enumerator you must call <see cref="Dispose" /> to release any unmanaged resources.
         ///     However if your using the enumerator in a foreach loop, this is done for you automatically by .Net. This also means
-        ///     that any <see cref="Pix" /> returned from the enumerator cannot safely be used outside a foreach loop (or after
+        ///     that any <see cref="Image" /> returned from the enumerator cannot safely be used outside a foreach loop (or after
         ///     Dispose has been
         ///     called on the enumerator). If you do indeed need the pix after the enumerator has been disposed of you must clone
         ///     it using
-        ///     <see cref="Pix.Clone()" />.
+        ///     <see cref="Image.Clone()" />.
         /// </remarks>
-        /// <returns>A <see cref="IEnumerator{Pix}" /> that iterates the the array of <see cref="Pix" />.</returns>
-        public IEnumerator<Pix> GetEnumerator()
+        /// <returns>A <see cref="IEnumerator{Pix}" /> that iterates the the array of <see cref="Image" />.</returns>
+        public IEnumerator<Image> GetEnumerator()
         {
             return new PixArrayEnumerator(this);
         }
