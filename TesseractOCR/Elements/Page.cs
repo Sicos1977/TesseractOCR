@@ -34,7 +34,7 @@ using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Elements
 {
     public sealed class Page : DisposableBase
     {
@@ -208,7 +208,7 @@ namespace TesseractOCR
         {
             Recognize();
 
-            var result = TessApi.BaseApiGetHOcrText(Engine.Handle, Number - 1);
+            var result = TessApi.BaseApiGetHOcrText(Engine.Handle, Number);
 
             return useXHtml
                 ? XhtmlBeginTag + result + XhtmlEndTag
@@ -224,7 +224,7 @@ namespace TesseractOCR
             get
             {
                 Recognize();
-                return TessApi.BaseApiGetAltoText(Engine.Handle, Number - 1);
+                return TessApi.BaseApiGetAltoText(Engine.Handle, Number);
             }
         }
 
@@ -237,7 +237,7 @@ namespace TesseractOCR
             get
             {
                 Recognize();
-                return TessApi.BaseApiGetTsvText(Engine.Handle, Number - 1);
+                return TessApi.BaseApiGetTsvText(Engine.Handle, Number);
             }
         }
 
@@ -250,7 +250,7 @@ namespace TesseractOCR
             get
             {
                 Recognize();
-                return TessApi.BaseApiGetBoxText(Engine.Handle, Number - 1);
+                return TessApi.BaseApiGetBoxText(Engine.Handle, Number);
             }
         }
 
@@ -263,7 +263,7 @@ namespace TesseractOCR
             get
             {
                 Recognize();
-                return TessApi.BaseApiGetLSTMBoxText(Engine.Handle, Number - 1);
+                return TessApi.BaseApiGetLSTMBoxText(Engine.Handle, Number);
             }
         }
 
@@ -276,7 +276,7 @@ namespace TesseractOCR
             get
             {
                 Recognize();
-                return TessApi.BaseApiGetWordStrBoxText(Engine.Handle, Number - 1);
+                return TessApi.BaseApiGetWordStrBoxText(Engine.Handle, Number);
             }
         }
 
@@ -336,7 +336,7 @@ namespace TesseractOCR
 
         #region GetSegmentedRegions
         /// <summary>
-        ///     Get segmented regions at specified page iterator level.
+        ///     Get segmented regions at specified page iterator level
         /// </summary>
         /// <param name="pageIteratorLevel">PageIteratorLevel enum</param>
         /// <returns></returns>

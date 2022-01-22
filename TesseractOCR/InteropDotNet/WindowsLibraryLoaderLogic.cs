@@ -40,6 +40,7 @@ namespace TesseractOCR.InteropDotNet
             try
             {
                 Logger.LogInformation($"Trying to load native library '{fileName}'");
+
                 libraryHandle = WindowsLoadLibrary(fileName);
 
                 if (libraryHandle != IntPtr.Zero)
@@ -94,6 +95,7 @@ namespace TesseractOCR.InteropDotNet
                     Logger.LogInformation($"Successfully loaded native function '{functionName}' with handle '{functionHandle}'");
                 else
                     Logger.LogError($"Failed to load native function '{functionName}' with handle '{functionHandle}'");
+                
                 return functionHandle;
             }
             catch (Exception exception)
@@ -115,16 +117,13 @@ namespace TesseractOCR.InteropDotNet
         #endregion
 
         #region Native methods
-        [DllImport("kernel32", EntryPoint = "LoadLibrary", CallingConvention = CallingConvention.Winapi,
-            SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        [DllImport("kernel32", EntryPoint = "LoadLibrary", CallingConvention = CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         private static extern IntPtr WindowsLoadLibrary(string dllPath);
 
-        [DllImport("kernel32", EntryPoint = "FreeLibrary", CallingConvention = CallingConvention.Winapi,
-            SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+        [DllImport("kernel32", EntryPoint = "FreeLibrary", CallingConvention = CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         private static extern bool WindowsFreeLibrary(IntPtr handle);
 
-        [DllImport("kernel32", EntryPoint = "GetProcAddress", CallingConvention = CallingConvention.Winapi,
-            SetLastError = true)]
+        [DllImport("kernel32", EntryPoint = "GetProcAddress", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
         private static extern IntPtr WindowsGetProcAddress(IntPtr handle, string procedureName);
         #endregion
 

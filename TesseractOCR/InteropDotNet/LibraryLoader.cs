@@ -35,13 +35,51 @@ using File = System.IO.File;
 
 namespace TesseractOCR.InteropDotNet
 {
-    internal class LibraryLoader
+    public class LibraryLoader
     {
         #region Fields
         private readonly ILibraryLoaderLogic _logic;
         private readonly object _syncLock = new object();
         private readonly Dictionary<string, IntPtr> _loadedAssemblies = new Dictionary<string, IntPtr>();
         private static LibraryLoader _instance;
+        #endregion
+
+        #region Properties
+        public static LibraryLoader Instance
+        {
+            get
+            {
+                if (_instance != null) return _instance;
+
+                var operatingSystem = SystemManager.GetOperatingSystem();
+
+                const string notSupported = "Unsupported operation system";
+
+                switch (operatingSystem)
+                {
+                    case OperatingSystem.Windows:
+                        Logger.LogInformation("Current OS is Windows");
+                        _instance = new LibraryLoader(new WindowsLibraryLoaderLogic());
+                        break;
+
+                    case OperatingSystem.Unix:
+                        Logger.LogInformation("Current OS is Unix");
+                        _instance = new LibraryLoader(new UnixLibraryLoaderLogic());
+                        break;
+
+                    case OperatingSystem.MacOSX:
+                        Logger.LogError(notSupported);
+                        throw new NotSupportedException(notSupported);
+
+                    case OperatingSystem.Unknown:
+                    default:
+                        Logger.LogError(notSupported);
+                        throw new NotSupportedException(notSupported);
+                }
+
+                return _instance;
+            }
+        }
         #endregion
 
         #region Constructor
@@ -57,12 +95,13 @@ namespace TesseractOCR.InteropDotNet
             fileName = FixUpLibraryName(fileName);
             lock (_syncLock)
             {
-                if (_loadedAssemblies.ContainsKey(fileName)) return _loadedAssemblies[fileName];
+                if (_loadedAssemblies.ContainsKey(fileName)) 
+                    return _loadedAssemblies[fileName];
                 
                 if (platformName == null)
                     platformName = SystemManager.GetPlatformName();
                 
-                Logger.LogInformation($"Current platform: {platformName}");
+                Logger.LogInformation($"Current platform is {platformName}");
                 
                 var dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
                 
@@ -76,7 +115,7 @@ namespace TesseractOCR.InteropDotNet
                     _loadedAssemblies[fileName] = dllHandle;
                 else
                 {
-                    var error = $"Failed to find library \"{fileName}\" for platform {platformName}";
+                    var error = $"Failed to find library '{fileName}' for platform {platformName}";
                     Logger.LogError(error);
                     throw new DllNotFoundException(error);
                 }
@@ -138,7 +177,13 @@ namespace TesseractOCR.InteropDotNet
         private IntPtr InternalLoadLibrary(string baseDirectory, string platformName, string fileName)
         {
             var fullPath = Path.Combine(baseDirectory, Path.Combine(platformName, fileName));
-            return File.Exists(fullPath) ? _logic.LoadLibrary(fullPath) : IntPtr.Zero;
+
+            Logger.LogInformation($"Trying to load file from '{fullPath}'");
+
+            return
+                File.Exists(fullPath) ? 
+                    _logic.LoadLibrary(fullPath) : 
+                    IntPtr.Zero;
         }
         #endregion
 
@@ -184,44 +229,6 @@ namespace TesseractOCR.InteropDotNet
         private string FixUpLibraryName(string fileName)
         {
             return _logic.FixUpLibraryName(fileName);
-        }
-        #endregion
-
-        #region Instance
-        public static LibraryLoader Instance
-        {
-            get
-            {
-                if (_instance != null) return _instance;
-
-                var operatingSystem = SystemManager.GetOperatingSystem();
-
-                const string notSupported = "Unsupported operation system";
-
-                switch (operatingSystem)
-                {
-                    case OperatingSystem.Windows:
-                        Logger.LogInformation("Current OS: Windows");
-                        _instance = new LibraryLoader(new WindowsLibraryLoaderLogic());
-                        break;
-
-                    case OperatingSystem.Unix:
-                        Logger.LogInformation("Current OS: Unix");
-                        _instance = new LibraryLoader(new UnixLibraryLoaderLogic());
-                        break;
-
-                    case OperatingSystem.MacOSX:
-                        Logger.LogError(notSupported);
-                        throw new NotSupportedException(notSupported);
-
-                    case OperatingSystem.Unknown:
-                    default:
-                        Logger.LogError(notSupported);
-                        throw new NotSupportedException(notSupported);
-                }
-
-                return _instance;
-            }
         }
         #endregion
     }

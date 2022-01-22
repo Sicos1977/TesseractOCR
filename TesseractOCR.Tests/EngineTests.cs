@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -189,7 +188,7 @@ namespace Tesseract.Tests
         }
 
         [TestMethod]
-        public void CanProcessEmptyPxUsingResultIterator()
+        public void CanProcessEmptyPixUsingResultIterator()
         {
             string actualResult;
             using (var engine = CreateEngine())
@@ -649,53 +648,51 @@ namespace Tesseract.Tests
                 iterator.Begin();
                 do
                 {
-                    WriteResultToString(output, iterator);
                     do
                     {
-                        WriteResultToString(output, iterator);
                         do
                         {
-                            WriteResultToString(output, iterator);
                             do
                             {
-                                WriteResultToString(output, iterator);
                                 do
                                 {
-                                    // Symbol and choices
-                                    if (outputChoices)
-                                        using (var choiceIterator = iterator.ChoiceIterator)
-                                        {
-                                            var symbolConfidence = iterator.Confidence;
-                                            if (choiceIterator != null)
-                                            {
-                                                output.AppendFormat(CultureInfo.InvariantCulture, "<symbol text=\"{0}\" confidence=\"{1:P}\">", iterator.Text, symbolConfidence);
-                                                output.Append("<choices>");
-                                                
-                                                do
-                                                {
-                                                    var choiceConfidence = choiceIterator.Confidence / 100;
-                                                    output.AppendFormat(CultureInfo.InvariantCulture, "<choice text=\"{0}\" confidence\"{1:P}\"/>", choiceIterator.Text, choiceConfidence);
-                                                } 
-                                                while (choiceIterator.Next());
+                                    WriteResultToString(output, iterator);
 
-                                                output.Append("</choices>");
-                                                output.Append("</symbol>");
-                                            }
-                                            else
-                                                output.AppendFormat(CultureInfo.InvariantCulture, "<symbol text=\"{0}\" confidence=\"{1:P}\"/>", iterator.Text, symbolConfidence);
-                                        }
-                                    else
-                                        output.Append(iterator.Text);
+                                    // Symbol and choices
+                                    //if (outputChoices)
+                                    //    using (var choiceIterator = iterator.ChoiceIterator)
+                                    //    {
+                                    //        var symbolConfidence = iterator.Confidence;
+                                    //        if (choiceIterator != null)
+                                    //        {
+                                    //            output.AppendFormat(CultureInfo.InvariantCulture, "<symbol text=\"{0}\" confidence=\"{1:P}\">", iterator.Text, symbolConfidence);
+                                    //            output.Append("<choices>");
+                                                
+                                    //            do
+                                    //            {
+                                    //                var choiceConfidence = choiceIterator.Confidence / 100;
+                                    //                output.AppendFormat(CultureInfo.InvariantCulture, "<choice text=\"{0}\" confidence\"{1:P}\"/>", choiceIterator.Text, choiceConfidence);
+                                    //            } 
+                                    //            while (choiceIterator.Next());
+
+                                    //            output.Append("</choices>");
+                                    //            output.Append("</symbol>");
+                                    //        }
+                                    //        else
+                                    //            output.AppendFormat(CultureInfo.InvariantCulture, "<symbol text=\"{0}\" confidence=\"{1:P}\"/>", iterator.Text, symbolConfidence);
+                                    //    }
+                                    //else
+                                    //    output.Append(iterator.Text);
 
                                 } 
-                                while (iterator.NextElement(PageIteratorLevel.Symbol));
+                                while (iterator.NextElement()); // Symbol
 
                             } 
-                            while (iterator.NextElement(PageIteratorLevel.Word));
+                            while (iterator.NextElement()); // Word
                         } 
-                        while (iterator.NextElement(PageIteratorLevel.TextLine));
+                        while (iterator.NextElement()); // Text line
                     } 
-                    while (iterator.NextElement(PageIteratorLevel.Paragraph));
+                    while (iterator.NextElement()); // Paragraph
                 } 
                 while (iterator.NextLevel(PageIteratorLevel.Block));
             }

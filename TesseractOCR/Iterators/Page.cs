@@ -62,7 +62,7 @@ namespace TesseractOCR.Iterators
         public PageIteratorLevel Element { get; private set; }
 
         /// <summary>
-        ///     Returns <c>true</c> if the iterator is at the first <see cref="Element"/> at the given <see cref="Level"/>.
+        ///     Returns <c>true</c> if the iterator is at the first <see cref="Element"/> at the current <see cref="Level"/>
         /// </summary>
         /// <remarks>
         ///     A possible use is to determine if a call to next(word) moved to the start of a new paragraph.
@@ -77,15 +77,15 @@ namespace TesseractOCR.Iterators
                 if (HandleRef.Handle == IntPtr.Zero)
                     return false;
 
-                return TessApi.Native.PageIteratorIsAtBeginningOf(HandleRef, Level) != 0;
+                return TessApi.Native.PageIteratorIsAtBeginningOf(HandleRef, Element) != 0;
             }
         }
 
         /// <summary>
-        ///     Returns <c>true</c> if the iterator is positioned at the last element at the given level
+        ///     Returns <c>true</c> if the iterator is positioned at the last <see cref="Element"/> at the current <see cref="Level"/>
         /// </summary>
         /// <returns></returns>
-        public bool IsAtFinal
+        public bool IsAtFinalElement
         {
             get
             {
@@ -93,8 +93,8 @@ namespace TesseractOCR.Iterators
 
                 if (HandleRef.Handle == IntPtr.Zero)
                     return false;
-                return TessApi.Native.PageIteratorIsAtFinalElement(HandleRef, Level, Element) != 0;
 
+                return TessApi.Native.PageIteratorIsAtFinalElement(HandleRef, Level, Element) != 0;
             }
         }
 
@@ -146,7 +146,7 @@ namespace TesseractOCR.Iterators
         }
 
         /// <summary>
-        ///     Returns the bounding <see cref="Rect"/> of the current <see cref="Element"/> at the given <see cref="Level"/>
+        ///     Returns the bounding <see cref="Rect"/> of the current <see cref="Element"/>
         /// </summary>
         /// <returns>The <see cref="Rect"/> or <c>null</c> returns when it fails</returns>
         public Rect? BoundingBox
@@ -156,7 +156,7 @@ namespace TesseractOCR.Iterators
                 VerifyNotDisposed();
 
                 if (HandleRef.Handle != IntPtr.Zero &&
-                    TessApi.Native.PageIteratorBoundingBox(HandleRef, Level, out var x1, out var y1, out var x2, out var y2) != 0)
+                    TessApi.Native.PageIteratorBoundingBox(HandleRef, Element, out var x1, out var y1, out var x2, out var y2) != 0)
                     return Rect.FromCoords(x1, y1, x2, y2);
 
                 return null;
@@ -164,7 +164,7 @@ namespace TesseractOCR.Iterators
         }
 
         /// <summary>
-        ///     Returns the baseline of the current <see cref="Element"/> at the current <see cref="Level"/>
+        ///     Returns the baseline of the current <see cref="Element"/>
         /// </summary>
         /// <remarks>
         ///     The baseline is the line that passes through (x1, y1) and (x2, y2).
@@ -192,8 +192,7 @@ namespace TesseractOCR.Iterators
                 VerifyNotDisposed();
 
                 if (HandleRef.Handle == IntPtr.Zero)
-                    return new ElementProperties(Orientation.PageUp, TextLineOrder.TopToBottom,
-                        WritingDirection.LeftToRight, 0f);
+                    return new ElementProperties(Orientation.PageUp, TextLineOrder.TopToBottom, WritingDirection.LeftToRight, 0f);
 
                 TessApi.Native.PageIteratorOrientation(HandleRef, out var orientation, out var writingDirection,
                     out var textLineOrder,
@@ -214,12 +213,20 @@ namespace TesseractOCR.Iterators
 
         #region Begin
         /// <summary>
-        ///     Moves the iterator to the start of the page
+        ///     Moves the iterator to the start of the page at the <see cref="PageIteratorLevel.Block"/>
+        ///     <see cref="Level"/> on the <see cref="PageIteratorLevel.Paragraph"/> <see cref="Element"/>
         /// </summary>
         public void Begin()
         {
             VerifyNotDisposed();
-            if (HandleRef.Handle != IntPtr.Zero) TessApi.Native.PageIteratorBegin(HandleRef);
+
+            if (HandleRef.Handle != IntPtr.Zero) 
+                TessApi.Native.PageIteratorBegin(HandleRef);
+
+            Loggers.Logger.LogInformation($"Beginning result iterator setting level to '{PageIteratorLevel.Block}' and element to '{PageIteratorLevel.Block}'");
+
+            Level = PageIteratorLevel.Block;
+            Element = PageIteratorLevel.Block;
         }
         #endregion
 
@@ -238,18 +245,43 @@ namespace TesseractOCR.Iterators
             if (HandleRef.Handle == IntPtr.Zero)
                 return false;
 
-            var result = TessApi.Native.PageIteratorNext(HandleRef, level) != 0;
+            var result = PageIteratorNext(level);
             
             if (result)
             {
                 Loggers.Logger.LogInformation($"Moved to the next '{level}' level");
                 Level = level;
-                Element = level;
+
+                switch (level)
+                {
+                    case PageIteratorLevel.Block:
+                        Element = PageIteratorLevel.Paragraph;
+                        break;
+                    case PageIteratorLevel.Paragraph:
+                        Element = PageIteratorLevel.TextLine;
+                        break;
+                    case PageIteratorLevel.TextLine:
+                        Element = PageIteratorLevel.Word;
+                        break;
+                    case PageIteratorLevel.Word:
+                        Element = PageIteratorLevel.Symbol;
+                        break;
+                    case PageIteratorLevel.Symbol:
+                        Element = PageIteratorLevel.Symbol;
+                        break;
+                }
             }
             else
                 Loggers.Logger.LogInformation($"There is no next '{level}' level");
 
             return result;
+        }
+        #endregion
+
+        #region PageIteratorNext
+        private bool PageIteratorNext(PageIteratorLevel iteratorLevel)
+        {
+            return TessApi.Native.PageIteratorNext(HandleRef, iteratorLevel) != 0;
         }
         #endregion
 
@@ -263,19 +295,21 @@ namespace TesseractOCR.Iterators
         ///     Returns <c>true</c> if there is another <paramref name="element" /> to advance too and the current element is not the
         ///     last element at the given level, otherwise returns <c>false</c>.
         /// </returns>
-        public bool NextElement(PageIteratorLevel element)
+        public bool NextElement()
         {
             VerifyNotDisposed();
 
-            var result = !IsAtFinal && NextLevel(element);
+            //Element = element;
+
+            var result = !IsAtFinalElement && PageIteratorNext(Element);
             
             if (result)
             {
-                Loggers.Logger.LogInformation($"Moved to the next '{element}' element");
-                Element = element;
+                Loggers.Logger.LogInformation($"Moved to the next '{Element}' element");
+                //Element = element;
             }
             else
-                Loggers.Logger.LogInformation($"There is no next '{element}' element");
+                Loggers.Logger.LogInformation($"There is no next '{Element}' element");
 
             return result;
         }
