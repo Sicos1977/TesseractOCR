@@ -109,27 +109,6 @@ namespace Tesseract.Tests
 
 
         [TestMethod]
-        public void CanProcessBitmap()
-        {
-            using (var engine = CreateEngine())
-            {
-                var testImgFilename = TestFilePath(@"Ocr\phototest.tif");
-                using (var img = new Bitmap(testImgFilename))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        var text = page.Text;
-
-                        const string expectedText =
-                            "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
-
-                        Assert.AreEqual(text, expectedText);
-                    }
-                }
-            }
-        }
-
-        [TestMethod]
         public void CanProcessSpecifiedRegionInImage()
         {
             using (var engine = CreateEngine(mode: EngineMode.LstmOnly))
@@ -278,35 +257,7 @@ namespace Tesseract.Tests
             
             Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultPath, actualResultPath);
         }
-
-
-        // Test for [Issue #166](https://github.com/charlesw/tesseract/issues/166)
-        [TestMethod]
-        public void CanProcessScaledBitmap()
-        {
-            using (var engine = CreateEngine())
-            {
-                var imagePath = TestFilePath(TestImagePath)
-                    ;
-                using (var img = Image.FromFile(imagePath))
-                {
-                    using (var scaledImg = new Bitmap(img, new Size(img.Width * 2, img.Height * 2)))
-                    {
-                        using (var page = engine.Process(scaledImg))
-                        {
-                            var text = page.Text.Trim();
-
-                            const string expectedText =
-                                "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n\nThe quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.";
-
-                            Assert.AreEqual(text, expectedText);
-                        }
-                    }
-                }
-            }
-        }
-
-
+        
         [DataTestMethod]
         [DataRow(true)]
         [DataRow(false)]

@@ -64,9 +64,6 @@
     <Compile Include="..\TesseractOCR.Tests\TesseractTestBase.cs" Link="TesseractTestBase.cs" />
     <Compile Include="..\TesseractOCR.Tests\TestDifferenceHandler.cs" Link="TestDifferenceHandler.cs" />
     <Compile Include="..\TesseractOCR.Tests\TestRun.cs" Link="TestRun.cs" />
-    <Compile Include="..\TesseractOCR.Tests\Leptonica\BitmapHelperTests.cs" Link="Leptonica\BitmapHelperTests.cs" />
-    <Compile Include="..\TesseractOCR.Tests\Leptonica\ColorTests.cs" Link="Leptonica\ColorTests.cs" />
-    <Compile Include="..\TesseractOCR.Tests\Leptonica\ConvertBitmapToPixTests.cs" Link="Leptonica\ConvertBitmapToPixTests.cs" />
     <Compile Include="..\TesseractOCR.Tests\Leptonica\LoadFromFileTests.cs" Link="Leptonica\LoadFromFileTests.cs" />
     <Compile Include="..\TesseractOCR.Tests\Leptonica\PixATests.cs" Link="Leptonica\PixATests.cs" />
     <Compile Include="..\TesseractOCR.Tests\Leptonica\PixTests\ImageManipulationTests.cs" Link="Leptonica\PixTests\ImageManipulationTests.cs" />
