@@ -86,8 +86,6 @@ namespace TesseractOCR.Iterators
                 if (HandleRef.Handle == IntPtr.Zero)
                     return null;
 
-                // Per docs (ltrresultiterator.h:104 as of 4897796 in github:tesseract-ocr/tesseract)
-                // this return value points to an internal table and should not be deleted.
                 var nameHandle =
                     TessApi.Native.ResultIteratorWordFontAttributes(
                         HandleRef,

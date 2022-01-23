@@ -34,7 +34,7 @@ using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Elements
+namespace TesseractOCR
 {
     public sealed class Page : DisposableBase
     {
