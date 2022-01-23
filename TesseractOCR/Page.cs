@@ -85,7 +85,7 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     <see cref="TesseractEngine"/>
+        ///     Returns a reference to the <see cref="TesseractEngine"/>
         /// </summary>
         public TesseractEngine Engine { get; }
 
@@ -95,7 +95,7 @@ namespace TesseractOCR
         public Pix.Image Image { get; }
 
         /// <summary>
-        ///     Returns the name of the image being ocr'd
+        ///     Returns the name of the <see cref="Image"/> being ocr'd
         /// </summary>
         /// <remarks>
         ///     This is also used for some of the more advanced functionality such as identifying the associated UZN file if
@@ -128,7 +128,7 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns the segmentation mode used to OCR the specified image
+        ///     Returns the segmentation mode used to OCR the specified <see cref="Image"/>
         /// </summary>
         public PageSegMode SegmentMode { get; }
 
@@ -138,9 +138,9 @@ namespace TesseractOCR
         public int Number { get; internal set; }
 
         /// <summary>
-        ///     Returns the thresholded image that was OCR'd
+        ///     Returns the thresholded <see cref="Image"/> that was OCR'd
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The <see cref="Image"/> in grayscale</returns>
         public Pix.Image ThresholdedImage
         {
             get
