@@ -658,14 +658,10 @@ namespace TesseractOCR.Interop
         public static string ResultIteratorGetUTF8Text(HandleRef handle, PageIteratorLevel level)
         {
             var txtHandle = Native.ResultIteratorGetUTF8TextInternal(handle, level);
-            if (txtHandle != IntPtr.Zero)
-            {
-                var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
-                Native.DeleteText(txtHandle);
-                return result;
-            }
-
-            return null;
+            if (txtHandle == IntPtr.Zero) return null;
+            var result = MarshalHelper.PtrToString(txtHandle, Encoding.UTF8);
+            Native.DeleteText(txtHandle);
+            return result;
         }
         #endregion
 
@@ -681,8 +677,7 @@ namespace TesseractOCR.Interop
         /// <returns>string</returns>
         internal static string ChoiceIteratorGetUTF8Text(HandleRef choiceIteratorHandle)
         {
-            Guard.Require("choiceIteratorHandle", choiceIteratorHandle.Handle != IntPtr.Zero,
-                "ChoiceIterator Handle cannot be a null IntPtr and is required");
+            Guard.Require("choiceIteratorHandle", choiceIteratorHandle.Handle != IntPtr.Zero, "ChoiceIterator Handle cannot be a null IntPtr and is required");
             var txtChoiceHandle = Native.ChoiceIteratorGetUTF8TextInternal(choiceIteratorHandle);
             return MarshalHelper.PtrToString(txtChoiceHandle, Encoding.UTF8);
         }
