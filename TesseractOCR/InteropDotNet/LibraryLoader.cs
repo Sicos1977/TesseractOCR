@@ -148,7 +148,7 @@ namespace TesseractOCR.InteropDotNet
 
             if (string.IsNullOrEmpty(appBase))
             {
-                Logger.LogInformation("App domain current domain base was empty");
+                Logger.LogInformation("App domains current domain base was empty");
                 return IntPtr.Zero;
             }
 
