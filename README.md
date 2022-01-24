@@ -29,6 +29,23 @@ using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default
 
 For more examples see https://github.com/Sicos1977/TesseractOCR/wiki/examples.md
 
+Supported input formats
+=======================
+
+Tesseract uses the Leptonica library to read images with one of these formats:
+
+- PNG - requires libpng, libz
+- JPEG - requires libjpeg / libjpeg-turbo
+- TIFF - requires libtiff, libz
+- JPEG 2000 - requires libopenjp2
+- GIF - requires libgif (giflib)
+- WebP (including animated WebP) - requires libwebp
+- BMP - no library required*
+= PNM - no library required*
+* Except Leptonica
+
+## I have dropped support for the Windows.Drawing.Image namespace since this only works good on Windows an not on other systems. You should be fine with Leptonica
+
 Installing via NuGet
 ====================
 
