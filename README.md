@@ -44,7 +44,7 @@ Tesseract uses the Leptonica library to read images with one of these formats:
 = PNM - no library required*
 * Except Leptonica
 
-## I have dropped support for the Windows.Drawing.Image namespace since this only works good on Windows an not on other systems. You should be fine with Leptonica
+[b]I have dropped support for the Windows.Drawing.Image namespace since this only works good on Windows an not on other systems. You should be fine with Leptonica[/b]
 
 Installing via NuGet
 ====================
