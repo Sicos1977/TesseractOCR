@@ -137,11 +137,16 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetInputName")]
         string BaseAPIGetInputName(HandleRef handle);
 
-        // TODO: Add support for : TESS_API void TessBaseAPISetInputImage(TessBaseAPI *handle, struct Pix *pix);
+        // TODO: Check if I can pass in an image like this
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputImage")]
+        void TessBaseAPISetInputImage(HandleRef handle, Pix.Image pix);
 
-        // TODO: Add support for : TESS_API struct Pix *TessBaseAPIGetInputImage(TessBaseAPI *handle);
+        // TODO: Check if I can get an image like this
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetInputImage")]
+        Pix.Image BaseAPIGetInputImage(HandleRef handle);
 
-        // TODO: Add support for : TESS_API int TessBaseAPIGetSourceYResolution(TessBaseAPI *handle);
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetSourceYResolution")]
+        int BaseAPIGetSourceYResolution(HandleRef handle);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetDatapath")]
         IntPtr BaseApiGetDatapath(HandleRef handle);
@@ -167,16 +172,20 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetStringVariable")]
         IntPtr BaseApiGetStringVariableInternal(HandleRef handle, string name);
 
+        // TODO: No idea yet how to do this
         // TODO: Add support for : TESS_API void TessBaseAPIPrintVariables(const TessBaseAPI *handle, FILE *fp);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIPrintVariablesToFile")]
         int BaseApiPrintVariablesToFile(HandleRef handle, string filename);
 
-        // TODO: Add support for : TESS_API int TessBaseAPIInit1(TessBaseAPI* handle, const char* datapath, const char* language, TessOcrEngineMode oem,char** configs, int configs_size);
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit1")]
+        int BaseApiInit1(HandleRef handle, string datapath, string language, EngineMode mode, string[] configs, int configs_size);
 
-        // TODO: Add support for : TESS_API int TessBaseAPIInit2(TessBaseAPI* handle, const char* datapath, const char* language, TessOcrEngineMode oem);
-
-        // TODO: Add support for : TESS_API int TessBaseAPIInit3(TessBaseAPI* handle, const char* datapath, const char* language);
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit2")]
+        int BaseApiInit2(HandleRef handle, string datapath, string language, EngineMode mode);
+        
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit3")]
+        int BaseApiInit3(HandleRef handle, string datapath, string language);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit4")]
         int BaseApiInit4(HandleRef handle, string datapath, string language, int mode, string[] configs, int configs_size, string[] vars_vec, string[] vars_values, UIntPtr vars_vec_size, bool set_only_non_debug_params);
@@ -400,7 +409,9 @@ namespace TesseractOCR.Interop
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorSymbolIsDropcap")]
         bool ResultIteratorSymbolIsDropcap(HandleRef handle);
+        #endregion
 
+        #region Choice iterator
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorDelete")]
         void ChoiceIteratorDelete(HandleRef handle);
 
