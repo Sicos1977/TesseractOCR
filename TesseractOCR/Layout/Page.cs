@@ -52,7 +52,6 @@ namespace TesseractOCR.Layout
 
             foreach (var block in Blocks)
             {
-                block.
             }
         }
 
