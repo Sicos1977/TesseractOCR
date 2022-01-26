@@ -19,13 +19,45 @@
 // limitations under the License.
 
 
+using System;
+using System.Runtime.InteropServices;
+using TesseractOCR.Enums;
+using TesseractOCR.Interop;
+
 namespace TesseractOCR.Layout
 {
-    public sealed class Page
+    public sealed class Page : IDisposable
     {
+        #region Fields
+
+        private readonly HandleRef _engineHandle;
+        private HandleRef _analyseLayoutHandle;
+        #endregion
+
+        #region Properties
         /// <summary>
-        ///     Returns an enumerator to all the available <see cref="Paragraphs"/>s on the page
+        ///     Returns an enumerator to all the available <see cref="Blocks"/>s on the page
         /// </summary>
-        public Paragraphs Paragraphs { get; }
+        public Blocks Blocks => new Blocks(_analyseLayoutHandle);
+        #endregion
+
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="engineHandle">The Tesseract engine handle</param>
+        internal Page(IntPtr engineHandle)
+        {
+            _engineHandle = new HandleRef(this, engineHandle);
+            _analyseLayoutHandle = new HandleRef(this, TessApi.Native.BaseApiAnalyseLayout(_engineHandle));
+
+            foreach (var block in Blocks)
+            {
+                block.
+            }
+        }
+
+        public void Dispose()
+        {
+        }
     }
 }

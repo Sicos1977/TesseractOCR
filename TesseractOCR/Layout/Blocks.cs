@@ -21,25 +21,35 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using TesseractOCR.Interop;
 
 namespace TesseractOCR.Layout
 {
     /// <summary>
     ///     All the <see cref="Blocks"/> on the <see cref="Page"/>
     /// </summary>
-    public sealed class Blocks : IEnumerable<Block>
+    public sealed class Blocks : IEnumerable
     {
-        #region GetEnumerator
-        /// <inheritdoc />
-        public IEnumerator<Block> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
+        private readonly HandleRef _handleRef;
 
-        /// <inheritdoc />
+        #region GetEnumerator
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
+        }
+
+        public Block GetEnumerator()
+        {
+            return new Block(_handleRef);
+        }
+        #endregion
+
+        #region Constructor
+        internal Blocks(HandleRef handleRef)
+        {
+            _handleRef = handleRef;
+            TessApi.Native.PageIteratorBegin(_handleRef);
         }
         #endregion
     }
@@ -49,6 +59,10 @@ namespace TesseractOCR.Layout
     /// </summary>
     public sealed class Block : IEnumerator
     {
+        #region Fields
+        private HandleRef _handleRef;
+        #endregion
+
         #region Properties
         /// <summary>
         ///     All the available <see cref="Paragraphs"/> in this <see cref="Block"/>
@@ -58,7 +72,29 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Returns the current <see cref="Block"/>
         /// </summary>
-        public object Current { get; }
+        public object Current 
+        {
+            get
+            {
+                try
+                {
+                    return _blocks[_position];
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+        #endregion
+
+        #region Constructor
+        internal Block(HandleRef handleRef)
+        {
+            _handleRef = handleRef;
+            TessApi.Native.PageIteratorBegin(handleRef);
+            TessApi.Native.PageIteratorNext(handleRef, iteratorLevel) != 0;
+        }
         #endregion
 
         #region MoveNext
@@ -68,7 +104,8 @@ namespace TesseractOCR.Layout
         /// <returns><c>true</c> when there is a next <see cref="Line"/>, otherwise <c>false</c></returns>
         public bool MoveNext()
         {
-            throw new NotImplementedException();
+            _position++;
+            return _position < _blocks.Count;
         }
         #endregion
 
@@ -78,7 +115,7 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Reset()
         {
-            throw new System.NotImplementedException();
+            _position = -1;
         }
         #endregion
     }
