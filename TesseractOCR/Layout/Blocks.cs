@@ -92,7 +92,7 @@ namespace TesseractOCR.Layout
         internal Block(HandleRef handleRef)
         {
             _handleRef = handleRef;
-            TessApi.Native.PageIteratorBegin(handleRef);
+            
             TessApi.Native.PageIteratorNext(handleRef, iteratorLevel) != 0;
         }
         #endregion
@@ -115,7 +115,7 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Reset()
         {
-            _position = -1;
+            TessApi.Native.PageIteratorBegin(_handleRef);
         }
         #endregion
     }
