@@ -173,7 +173,7 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Dispose()
         {
-            // We have implement this method because of the IEnumerator interface
+            // We have to implement this method because of the IEnumerator interface
             // but we have nothing to do here so just ignore it
         }
         #endregion

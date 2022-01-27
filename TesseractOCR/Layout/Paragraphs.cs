@@ -18,7 +18,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -156,10 +155,9 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Dispose()
         {
-            // We have implement this method because of the IEnumerator interface
+            // We have to implement this method because of the IEnumerator interface
             // but we have nothing to do here so just ignore it
         }
         #endregion
-
     }
 }
