@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Layout
 {
@@ -71,20 +72,35 @@ namespace TesseractOCR.Layout
         ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
         /// </summary>
         private readonly HandleRef _iteratorHandle;
+
+        private bool _first = true;
         #endregion
 
         #region Properties
+        /// <summary>
+        ///     Returns the current <see cref="Paragraph"/> object
+        /// </summary>
         public object Current => this;
 
         /// <summary>
-        ///     Returns the current element
+        ///     Returns the current <see cref="Paragraph"/> object
         /// </summary>
         Paragraph IEnumerator<Paragraph>.Current => this;
 
         /// <summary>
-        ///     All the available <see cref="Lines"/> in this <see cref="Paragraph"/>
+        ///     All the available <see cref="TextLines"/> in this <see cref="Paragraph"/>
         /// </summary>
-        public IEnumerable<TextLines> Lines { get; }
+        public TextLines TextLines => new TextLines(_iteratorHandle);
+
+        /// <summary>
+        ///     Returns the text for the <see cref="Paragraph"/>
+        /// </summary>
+        public string Text => TessApi.ResultIteratorGetUTF8Text(_iteratorHandle, PageIteratorLevel.Paragraph);
+
+        /// <summary>
+        ///     Returns the confidence for the <see cref="Paragraph"/>
+        /// </summary>
+        public float Confidence => TessApi.Native.ResultIteratorGetConfidence(_iteratorHandle, PageIteratorLevel.Paragraph);
         #endregion
 
         #region Constructor
@@ -98,13 +114,27 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Moves to the next <see cref="Paragraph"/> in the <see cref="Block"/>
         /// </summary>
-        /// <returns><c>true</c> when there is a next <see cref="Line"/>, otherwise <c>false</c></returns>
+        /// <returns><c>true</c> when there is a next <see cref="Paragraph"/>, otherwise <c>false</c></returns>
         public bool MoveNext()
         {
-            if (TessApi.Native.PageIteratorIsAtBeginningOf(_iteratorHandle, PageIteratorLevel.Paragraph) != 0)
+            if (_first)
+            {
+                _first = false;
                 return true;
+            }
 
-            return TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.Paragraph) != 0;
+            if (TessApi.Native.PageIteratorIsAtFinalElement(_iteratorHandle, PageIteratorLevel.Block, PageIteratorLevel.Paragraph) != Constants.False)
+            {
+                Logger.LogInformation($"At final '{PageIteratorLevel.Paragraph}' element");
+                return false;
+            }
+
+            var result = TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.Paragraph) != Constants.False;
+
+            if (result)
+                Logger.LogInformation($"Moving to next '{PageIteratorLevel.Paragraph}' element");
+
+            return result;
         }
         #endregion
 
@@ -114,13 +144,22 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Reset()
         {
+            Logger.LogInformation($"Resetting to first '{PageIteratorLevel.Paragraph}' element");
+            _first = true;
             TessApi.Native.PageIteratorBegin(_iteratorHandle);
         }
         #endregion
 
+        #region Dispose
+        /// <summary>
+        ///     Does not do a thing, we have to implement it because of the <see cref="IEnumerator"/> interface
+        /// </summary>
         public void Dispose()
         {
-            //TessApi.Native.PageIteratorDelete(_iteratorHandle);
+            // We have implement this method because of the IEnumerator interface
+            // but we have nothing to do here so just ignore it
         }
+        #endregion
+
     }
 }

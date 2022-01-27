@@ -18,9 +18,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using TesseractOCR.Enums;
+using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Layout
 {
@@ -29,11 +32,18 @@ namespace TesseractOCR.Layout
     /// </summary>
     public sealed class Symbols : IEnumerable<Symbol>
     {
+        #region Fields
+        /// <summary>
+        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+        /// </summary>
+        private readonly HandleRef _iteratorHandle;
+        #endregion
+
         #region GetEnumerator
         /// <inheritdoc />
         public IEnumerator<Symbol> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Symbol(_iteratorHandle);
         }
 
         /// <inheritdoc />
@@ -42,18 +52,79 @@ namespace TesseractOCR.Layout
             return GetEnumerator();
         }
         #endregion
+
+        #region Constructor
+        internal Symbols(HandleRef iteratorHandle)
+        {
+            _iteratorHandle = iteratorHandle;
+        }
+        #endregion
     }
 
     /// <summary>
     ///     A single <see cref="Symbol"/> in the <see cref="Word"/>
     /// </summary>
-    public sealed class Symbol : IEnumerator
+    public sealed class Symbol : IEnumerator<Symbol>
     {
+        #region Fields
+        /// <summary>
+        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+        /// </summary>
+        private readonly HandleRef _iteratorHandle;
+
+        private bool _first = true;
+        #endregion
+
         #region Properties
         /// <summary>
-        ///     Returns the current <see cref="Symbol"/>
+        ///     Returns the current <see cref="Symbol"/> object
         /// </summary>
-        public object Current { get; }
+        public object Current => this;
+
+        /// <summary>
+        ///     Returns the current <see cref="Symbol"/> object
+        /// </summary>
+        Symbol IEnumerator<Symbol>.Current => this;
+
+        /// <summary>
+        ///     Returns the text for the <see cref="Symbol"/>
+        /// </summary>
+        public string Text => TessApi.ResultIteratorGetUTF8Text(_iteratorHandle, PageIteratorLevel.Symbol);
+
+        /// <summary>
+        ///     Returns the confidence for the <see cref="Symbol"/>
+        /// </summary>
+        /// <returns></returns>
+        public float Confidence => TessApi.Native.ResultIteratorGetConfidence(_iteratorHandle, PageIteratorLevel.Symbol);
+
+        /// <summary>
+        ///     Returns <c>true</c> when the <see cref="Symbol"/> is in superscript
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        ///     A subscript or superscript is a character (such as a number or letter) that is set slightly below or
+        ///     above the normal line of type, respectively. It is usually smaller than the rest of the text.
+        ///     Subscripts appear at or below the baseline, while superscripts are above. Subscripts and superscripts
+        ///     are perhaps most often used in formulas, mathematical expressions, and specifications of chemical
+        ///     compounds and isotopes, but have many other uses as well.
+        /// </remarks>
+        public bool IsSuperscript => TessApi.Native.ResultIteratorSymbolIsSuperscript(_iteratorHandle);
+
+        /// <summary>
+        ///     Returns <c>true</c> when the <see cref="Symbol"/> is dropcap
+        /// </summary>
+        /// <remarks>
+        ///     A Drop Cap is the initial letter of a paragraph which sits within the margins and runs several
+        ///     lines deep into the paragraph, indenting some normal-sized text in these lines
+        /// </remarks>
+        public bool IsDropcap => TessApi.Native.ResultIteratorSymbolIsDropcap(_iteratorHandle);
+        #endregion
+
+        #region Constructor
+        internal Symbol(HandleRef iteratorHandle)
+        {
+            _iteratorHandle = iteratorHandle;
+        }
         #endregion
 
         #region MoveNext
@@ -63,7 +134,24 @@ namespace TesseractOCR.Layout
         /// <returns><c>true</c> when there is a next <see cref="Symbol"/>, otherwise <c>false</c></returns>
         public bool MoveNext()
         {
-            throw new NotImplementedException();
+            if (_first)
+            {
+                _first = false;
+                return true;
+            }
+
+            if (TessApi.Native.PageIteratorIsAtFinalElement(_iteratorHandle, PageIteratorLevel.Word, PageIteratorLevel.Symbol) != Constants.False)
+            {
+                Logger.LogDebug($"At final '{PageIteratorLevel.Symbol}' element");
+                return false;
+            }
+
+            var result = TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.Symbol) != Constants.False;
+
+            if (result)
+                Logger.LogDebug($"Moving to next '{PageIteratorLevel.Symbol}' element");
+
+            return result;
         }
         #endregion
 
@@ -73,7 +161,20 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Reset()
         {
-            throw new NotImplementedException();
+            Logger.LogInformation($"Resetting to first '{PageIteratorLevel.Symbol}' element");
+            _first = true;
+            TessApi.Native.PageIteratorBegin(_iteratorHandle);
+        }
+        #endregion
+
+        #region Dispose
+        /// <summary>
+        ///     Does not do a thing, we have to implement it because of the <see cref="IEnumerator"/> interface
+        /// </summary>
+        public void Dispose()
+        {
+            // We have implement this method because of the IEnumerator interface
+            // but we have nothing to do here so just ignore it
         }
         #endregion
     }

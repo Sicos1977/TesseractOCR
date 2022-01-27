@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -243,10 +244,38 @@ namespace Tesseract.Tests
                     using (var page = engine.Process(img))
                     {
                         foreach (var block in page.Blocks)
-                        foreach(var paragraph in block.Paragraphs)
-                        foreach (var line in paragraph.Lines)
                         {
-                            var t = line;
+                            Debug.Print($"Block text: {block.Text}");
+                            Debug.Print($"Block confidence: {block.Confidence}");
+
+                            foreach (var paragraph in block.Paragraphs)
+                            {
+                                Debug.Print($"Paragraph text: {paragraph.Text}");
+                                Debug.Print($"Paragraph confidence: {paragraph.Confidence}");
+
+                                foreach (var textLine in paragraph.TextLines)
+                                {
+                                    Debug.Print($"Text line text: {textLine.Text}");
+                                    Debug.Print($"Text line confidence: {textLine.Confidence}");
+
+                                    foreach (var word in textLine.Words)
+                                    {
+                                        Debug.Print($"Word text: {word.Text}");
+                                        Debug.Print($"Word confidence: {word.Confidence}");
+                                        Debug.Print($"Word is from dictionary: {word.IsFromDictionary}");
+                                        Debug.Print($"Word is numeric: {word.IsNumeric}");
+                                        Debug.Print($"Word language: {word.Language}");
+
+                                        foreach (var symbol in word.Symbols)
+                                        {
+                                            Debug.Print($"Symbol text: {symbol.Text}");
+                                            Debug.Print($"Symbol confidence: {symbol.Confidence}");
+                                            Debug.Print($"Symbol is superscript: {symbol.IsSuperscript}");
+                                            Debug.Print($"Symbol is dropcap: {symbol.IsDropcap}");
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         actualResult = NormalizeNewLine(WriteResultsToString(page, false));
