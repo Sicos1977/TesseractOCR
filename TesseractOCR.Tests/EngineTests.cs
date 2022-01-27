@@ -242,6 +242,13 @@ namespace Tesseract.Tests
                 {
                     using (var page = engine.Process(img))
                     {
+                        foreach (var block in page.Blocks)
+                        foreach(var paragraph in block.Paragraphs)
+                        foreach (var line in paragraph.Lines)
+                        {
+                            var t = line;
+                        }
+
                         actualResult = NormalizeNewLine(WriteResultsToString(page, false));
                     }
                 }

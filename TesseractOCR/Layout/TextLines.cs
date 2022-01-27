@@ -1,5 +1,5 @@
 ﻿//
-// Paragraphs.cs
+// Lines.cs
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
@@ -28,9 +28,9 @@ using TesseractOCR.Interop;
 namespace TesseractOCR.Layout
 {
     /// <summary>
-    ///     All the <see cref="Paragraphs"/> in the <see cref="Block"/>
+    ///     All the <see cref="TextLines"/> in the <see cref="Paragraph"/>
     /// </summary>
-    public sealed class Paragraphs : IEnumerable<Paragraph>
+    public sealed class TextLines : IEnumerable<Line>
     {
         #region Fields
         /// <summary>
@@ -41,9 +41,9 @@ namespace TesseractOCR.Layout
 
         #region GetEnumerator
         /// <inheritdoc />
-        public IEnumerator<Paragraph> GetEnumerator()
+        public IEnumerator<Line> GetEnumerator()
         {
-            return new Paragraph(_iteratorHandle);
+            throw new NotImplementedException();
         }
 
         /// <inheritdoc />
@@ -52,19 +52,12 @@ namespace TesseractOCR.Layout
             return GetEnumerator();
         }
         #endregion
-
-        #region Constructor
-        internal Paragraphs(HandleRef iteratorHandle)
-        {
-            _iteratorHandle = iteratorHandle;
-        }
-        #endregion
     }
 
     /// <summary>
-    ///     A single <see cref="Paragraph"/> in the <see cref="Block"/>
+    ///     A single <see cref="TextLine"/> in the <see cref="Paragraph"/>
     /// </summary>
-    public sealed class Paragraph : IEnumerator<Paragraph>
+    public sealed class TextLine : IEnumerator<TextLine>
     {
         #region Fields
         /// <summary>
@@ -79,16 +72,16 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Returns the current element
         /// </summary>
-        Paragraph IEnumerator<Paragraph>.Current => this;
+        TextLine IEnumerator<TextLine>.Current => this;
 
         /// <summary>
-        ///     All the available <see cref="Lines"/> in this <see cref="Paragraph"/>
+        ///     All the available <see cref="Words"/> in this <see cref="Line"/>
         /// </summary>
-        public IEnumerable<TextLines> Lines { get; }
+        public Words Words { get; }
         #endregion
 
         #region Constructor
-        internal Paragraph(HandleRef iteratorHandle)
+        internal TextLine(HandleRef iteratorHandle)
         {
             _iteratorHandle = iteratorHandle;
         }
@@ -96,31 +89,31 @@ namespace TesseractOCR.Layout
 
         #region MoveNext
         /// <summary>
-        ///     Moves to the next <see cref="Paragraph"/> in the <see cref="Block"/>
+        ///     Moves to the next <see cref="TextLine"/> in the <see cref="Paragraph"/>
         /// </summary>
-        /// <returns><c>true</c> when there is a next <see cref="Line"/>, otherwise <c>false</c></returns>
+        /// <returns><c>true</c> when there is a next <see cref="TextLine"/>, otherwise <c>false</c></returns>
         public bool MoveNext()
         {
-            if (TessApi.Native.PageIteratorIsAtBeginningOf(_iteratorHandle, PageIteratorLevel.Paragraph) != 0)
+            if (TessApi.Native.PageIteratorIsAtBeginningOf(_iteratorHandle, PageIteratorLevel.TextLine) != 0)
                 return true;
 
-            return TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.Paragraph) != 0;
+            return TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.TextLine) != 0;
         }
         #endregion
 
         #region Reset
         /// <summary>
-        ///     Resets the enumerator to the first <see cref="Paragraph"/> in the <see cref="Block"/>
+        ///     Resets the enumerator to the first <see cref="Line"/> in the <see cref="Paragraph"/>
         /// </summary>
         public void Reset()
         {
             TessApi.Native.PageIteratorBegin(_iteratorHandle);
         }
-        #endregion
 
         public void Dispose()
         {
             //TessApi.Native.PageIteratorDelete(_iteratorHandle);
         }
+        #endregion
     }
 }

@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
+using TesseractOCR.Exceptions;
 using TesseractOCR.Interop;
 
 namespace TesseractOCR.Layout
@@ -32,12 +33,17 @@ namespace TesseractOCR.Layout
     /// </summary>
     public sealed class Blocks : IEnumerable<Block>
     {
-        private readonly HandleRef _handleRef;
+        #region Fields
+        /// <summary>
+        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+        /// </summary>
+        private readonly HandleRef _iteratorHandle;
+        #endregion
 
         #region GetEnumerator
         public IEnumerator<Block> GetEnumerator()
         {
-            return new Block(_handleRef);
+            return new Block(_iteratorHandle);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -47,10 +53,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal Blocks(HandleRef handleRef)
+        internal Blocks(HandleRef engineHandleRef)
         {
-            _handleRef = handleRef;
-            TessApi.Native.PageIteratorBegin(_handleRef);
+            var monitorHandle = new HandleRef(this, IntPtr.Zero);
+
+            if (TessApi.Native.BaseApiRecognize(engineHandleRef, monitorHandle) != 0)
+                throw new InvalidOperationException("Recognition of image failed");
+
+            _iteratorHandle = new HandleRef(this, TessApi.Native.BaseApiGetIterator(engineHandleRef));
+            TessApi.Native.PageIteratorBegin(_iteratorHandle);
         }
         #endregion
     }
@@ -61,29 +72,30 @@ namespace TesseractOCR.Layout
     public sealed class Block : IEnumerator<Block>
     {
         #region Fields
-        private readonly HandleRef _handleRef;
+        /// <summary>
+        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+        /// </summary>
+        private readonly HandleRef _iteratorHandle;
         #endregion
 
         #region Properties
-        /// <summary>
-        ///     All the available <see cref="Paragraphs"/> in this <see cref="Block"/>
-        /// </summary>
-        public Paragraphs Paragraphs { get; }
-
         public object Current => this;
 
         /// <summary>
         ///     Returns the current element
         /// </summary>
         Block IEnumerator<Block>.Current => this;
+
+        /// <summary>
+        ///     All the available <see cref="Paragraphs"/> in this <see cref="Block"/>
+        /// </summary>
+        public Paragraphs Paragraphs => new Paragraphs(_iteratorHandle);
         #endregion
 
         #region Constructor
-        internal Block(HandleRef handleRef)
+        internal Block(HandleRef iteratorHandle)
         {
-            _handleRef = handleRef;
-            
-            //TessApi.Native.PageIteratorNext(handleRef, iteratorLevel) != 0;
+            _iteratorHandle = iteratorHandle;
         }
         #endregion
 
@@ -94,7 +106,10 @@ namespace TesseractOCR.Layout
         /// <returns><c>true</c> when there is a next <see cref="Line"/>, otherwise <c>false</c></returns>
         public bool MoveNext()
         {
-            return TessApi.Native.PageIteratorNext(_handleRef, PageIteratorLevel.Block) != 0;
+            if (TessApi.Native.PageIteratorIsAtBeginningOf(_iteratorHandle, PageIteratorLevel.Block) != 0)
+                return true;
+
+            return TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.Block) != 0;
         }
         #endregion
 
@@ -104,13 +119,13 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Reset()
         {
-            TessApi.Native.PageIteratorBegin(_handleRef);
+            TessApi.Native.PageIteratorBegin(_iteratorHandle);
         }
         #endregion
 
         public void Dispose()
         {
-            TessApi.Native.PageIteratorDelete(_handleRef);
+            TessApi.Native.PageIteratorDelete(_iteratorHandle);
         }
     }
 }

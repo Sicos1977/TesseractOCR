@@ -23,6 +23,7 @@ using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
+using TesseractOCR.Layout;
 using TesseractOCR.Pix;
 
 // ReSharper disable UnusedMember.Global

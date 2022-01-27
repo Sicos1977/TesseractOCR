@@ -21,6 +21,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using TesseractOCR.Interop;
 
 namespace TesseractOCR.Layout
 {
@@ -29,11 +31,18 @@ namespace TesseractOCR.Layout
     /// </summary>
     public sealed class Words : IEnumerable<Word>
     {
+        #region Fields
+        /// <summary>
+        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+        /// </summary>
+        private readonly HandleRef _iteratorHandle;
+        #endregion
+
         #region GetEnumerator
         /// <inheritdoc />
         public IEnumerator<Word> GetEnumerator()
         {
-            throw new NotImplementedException();
+            return new Word(_iteratorHandle);
         }
 
         /// <inheritdoc />
@@ -42,23 +51,46 @@ namespace TesseractOCR.Layout
             return GetEnumerator();
         }
         #endregion
+
+        #region Constructor
+        internal Words(HandleRef iteratorHandle)
+        {
+            _iteratorHandle = iteratorHandle;
+        }
+        #endregion
     }
 
     /// <summary>
     ///     A single <see cref="Word"/> in the <see cref="Line"/>
     /// </summary>
-    public sealed class Word : IEnumerator
+    public sealed class Word : IEnumerator<Word>
     {
+        #region Fields
+        /// <summary>
+        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+        /// </summary>
+        private readonly HandleRef _iteratorHandle;
+        #endregion
+
         #region Properties
+        public object Current => this;
+
+        /// <summary>
+        ///     Returns the current element
+        /// </summary>
+        Word IEnumerator<Word>.Current => this;
+
         /// <summary>
         ///     All the available <see cref="Symbols"/> in this <see cref="Word"/>
         /// </summary>
         public Symbols Symbols { get; }
+        #endregion
 
-        /// <summary>
-        ///     Returns the current <see cref="Word"/>
-        /// </summary>
-        public object Current { get; }
+        #region Constructor
+        internal Word(HandleRef iteratorHandle)
+        {
+            _iteratorHandle = iteratorHandle;
+        }
         #endregion
 
         #region MoveNext
@@ -78,8 +110,13 @@ namespace TesseractOCR.Layout
         /// </summary>
         public void Reset()
         {
-            throw new NotImplementedException();
+            TessApi.Native.PageIteratorBegin(_iteratorHandle);
         }
         #endregion
+
+        public void Dispose()
+        {
+            //TessApi.Native.PageIteratorDelete(_iteratorHandle);
+        }
     }
 }

@@ -30,6 +30,7 @@ using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
 using TesseractOCR.Iterators;
+using TesseractOCR.Layout;
 using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
@@ -84,6 +85,9 @@ namespace TesseractOCR
         #endregion
 
         #region Properties
+
+        public Blocks Blocks => new Blocks(Engine.Handle);
+
         /// <summary>
         ///     Returns a reference to the <see cref="TesseractEngine"/>
         /// </summary>
