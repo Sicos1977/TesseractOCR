@@ -169,8 +169,8 @@ namespace TesseractOCR.Iterators
         /// </summary>
         /// <remarks>
         ///     The baseline is the line that passes through (x1, y1) and (x2, y2).
-        ///     WARNING: with vertical text, baselines may be vertical! Returns false if there is no baseline at the current
-        ///     position.
+        ///     WARNING: with vertical text, baselines may be vertical! Returns <c>false</c> if there is no baseline at the current
+        ///     position
         /// </remarks>
         /// <returns>The <see cref="Rect"/> or <c>null</c> when it fails</returns>
         public Rect? Baseline(PageIteratorLevel level)
