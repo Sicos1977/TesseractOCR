@@ -64,17 +64,8 @@ namespace TesseractOCR.Layout
     /// <summary>
     ///     A single <see cref="Symbol"/> in the <see cref="Word"/>
     /// </summary>
-    public sealed class Symbol : IEnumerator<Symbol>
+    public sealed class Symbol : EnumeratorBase, IEnumerator<Symbol>
     {
-        #region Fields
-        /// <summary>
-        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
-        /// </summary>
-        private readonly HandleRef _iteratorHandle;
-
-        private bool _first = true;
-        #endregion
-
         #region Properties
         /// <summary>
         ///     Returns the current <see cref="Symbol"/> object
@@ -87,17 +78,6 @@ namespace TesseractOCR.Layout
         Symbol IEnumerator<Symbol>.Current => this;
 
         /// <summary>
-        ///     Returns the text for the <see cref="Symbol"/>
-        /// </summary>
-        public string Text => TessApi.ResultIteratorGetUTF8Text(_iteratorHandle, PageIteratorLevel.Symbol);
-
-        /// <summary>
-        ///     Returns the confidence for the <see cref="Symbol"/>
-        /// </summary>
-        /// <returns></returns>
-        public float Confidence => TessApi.Native.ResultIteratorGetConfidence(_iteratorHandle, PageIteratorLevel.Symbol);
-
-        /// <summary>
         ///     Returns <c>true</c> when the <see cref="Symbol"/> is in superscript
         /// </summary>
         /// <returns></returns>
@@ -108,7 +88,7 @@ namespace TesseractOCR.Layout
         ///     are perhaps most often used in formulas, mathematical expressions, and specifications of chemical
         ///     compounds and isotopes, but have many other uses as well.
         /// </remarks>
-        public bool IsSuperscript => TessApi.Native.ResultIteratorSymbolIsSuperscript(_iteratorHandle);
+        public bool IsSuperscript => TessApi.Native.ResultIteratorSymbolIsSuperscript(IteratorHandleRef);
 
         /// <summary>
         ///     Returns <c>true</c> when the <see cref="Symbol"/> is dropcap
@@ -117,64 +97,14 @@ namespace TesseractOCR.Layout
         ///     A Drop Cap is the initial letter of a paragraph which sits within the margins and runs several
         ///     lines deep into the paragraph, indenting some normal-sized text in these lines
         /// </remarks>
-        public bool IsDropcap => TessApi.Native.ResultIteratorSymbolIsDropcap(_iteratorHandle);
+        public bool IsDropcap => TessApi.Native.ResultIteratorSymbolIsDropcap(IteratorHandleRef);
         #endregion
 
         #region Constructor
         internal Symbol(HandleRef iteratorHandle)
         {
-            _iteratorHandle = iteratorHandle;
-        }
-        #endregion
-
-        #region MoveNext
-        /// <summary>
-        ///     Moves to the next <see cref="Symbol"/> in the <see cref="Word"/>
-        /// </summary>
-        /// <returns><c>true</c> when there is a next <see cref="Symbol"/>, otherwise <c>false</c></returns>
-        public bool MoveNext()
-        {
-            if (_first)
-            {
-                _first = false;
-                return true;
-            }
-
-            if (TessApi.Native.PageIteratorIsAtFinalElement(_iteratorHandle, PageIteratorLevel.Word, PageIteratorLevel.Symbol) != Constants.False)
-            {
-                Logger.LogDebug($"At final '{PageIteratorLevel.Symbol}' element");
-                return false;
-            }
-
-            var result = TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.Symbol) != Constants.False;
-
-            if (result)
-                Logger.LogDebug($"Moving to next '{PageIteratorLevel.Symbol}' element");
-
-            return result;
-        }
-        #endregion
-
-        #region Reset
-        /// <summary>
-        ///     Resets the enumerator to the first <see cref="Symbol"/> in the <see cref="Word"/>
-        /// </summary>
-        public void Reset()
-        {
-            Logger.LogInformation($"Resetting to first '{PageIteratorLevel.Symbol}' element");
-            _first = true;
-            TessApi.Native.PageIteratorBegin(_iteratorHandle);
-        }
-        #endregion
-
-        #region Dispose
-        /// <summary>
-        ///     Does not do a thing, we have to implement it because of the <see cref="IEnumerator"/> interface
-        /// </summary>
-        public void Dispose()
-        {
-            // We have to implement this method because of the IEnumerator interface
-            // but we have nothing to do here so just ignore it
+            IteratorHandleRef = iteratorHandle;
+            PageIteratorLevel = PageIteratorLevel.Symbol;
         }
         #endregion
     }

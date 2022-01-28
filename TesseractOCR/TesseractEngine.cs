@@ -21,7 +21,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -29,6 +28,7 @@ using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMember.Local
@@ -40,15 +40,7 @@ namespace TesseractOCR
     /// </summary>
     public class TesseractEngine : DisposableBase
     {
-        #region Event Handlers
-        private void OnIteratorDisposed(object sender, EventArgs e)
-        {
-            _processCount--;
-        }
-        #endregion Event Handlers
-
         #region Fields
-        private static readonly TraceSource Trace = new TraceSource("Tesseract");
         private HandleRef _handle;
         private int _processCount;
         internal HandleRef Handle => _handle;
@@ -58,14 +50,10 @@ namespace TesseractOCR
         /// <summary>
         ///     Returns the Tesseract version
         /// </summary>
-        public string Version =>
-            // Get version doesn't work for x64, might be compilation related for now just
-            // return constant so we don't crash.
-            TessApi.BaseApiGetVersion();
+        public string Version => TessApi.BaseApiGetVersion();
 
         /// <summary>
-        ///     Gets or sets default <see cref="PageSegMode" /> mode used by
-        ///     <see cref="System.Diagnostics.Process" />.
+        ///     Gets or sets default <see cref="PageSegMode" /> mode used by one of the Process methods
         /// </summary>
         public PageSegMode DefaultPageSegMode { get; set; }
         #endregion
@@ -322,14 +310,14 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Processes a specified region in the image using the specified page layout analysis mode.
+        ///     Processes a specified region in the image using the specified page layout analysis mode
         /// </summary>
         /// <remarks>
         ///     You can only have one result iterator open at any one time.
         /// </remarks>
-        /// <param name="image">The image to process.</param>
-        /// <param name="inputName">Sets the input file's name, only needed for training or loading a uzn file.</param>
-        /// <param name="region">The image region to process.</param>
+        /// <param name="image">The image to process</param>
+        /// <param name="inputName">Sets the input file's name, only needed for training or loading a uzn file</param>
+        /// <param name="region">The image region to process</param>
         /// <param name="pageSegMode">The page layout analysis method to use.</param>
         /// <returns>A result iterator</returns>
         public Page Process(Pix.Image image, string inputName, Rect region, PageSegMode? pageSegMode = null)
@@ -337,20 +325,25 @@ namespace TesseractOCR
             if (image == null) throw new ArgumentNullException(nameof(image));
 
             if (region.X1 < 0 || region.Y1 < 0 || region.X2 > image.Width || region.Y2 > image.Height)
-                throw new ArgumentException("The image region to be processed must be within the image bounds.", nameof(region));
+            {
+                const string message = "The image region to be processed must be within the image bounds";
+                Logger.LogError(message);
+                throw new ArgumentException(message, nameof(region));
+            }
 
             if (_processCount > 0)
-                throw new InvalidOperationException(
-                    "Only one image can be processed at once. Please make sure you dispose of the page once your finished with it.");
+                throw new InvalidOperationException("Only one image can be processed at once. Please make sure you dispose of the page once your finished with it");
 
             _processCount++;
 
             var actualPageSegmentMode = pageSegMode ?? DefaultPageSegMode;
             TessApi.Native.BaseApiSetPageSegMode(_handle, actualPageSegmentMode);
             TessApi.Native.BaseApiSetImage(_handle, image.Handle);
-            if (!string.IsNullOrEmpty(inputName)) TessApi.Native.BaseApiSetInputName(_handle, inputName);
+            
+            if (!string.IsNullOrEmpty(inputName)) 
+                TessApi.Native.BaseApiSetInputName(_handle, inputName);
+            
             var page = new Page(this, image, inputName, region, actualPageSegmentMode, 1);
-            page.Disposed += OnIteratorDisposed;
             return page;
         }
         #endregion
@@ -371,9 +364,9 @@ namespace TesseractOCR
             {
                 return Environment.GetEnvironmentVariable("TESSDATA_PREFIX");
             }
-            catch (SecurityException e)
+            catch (SecurityException exception)
             {
-                Trace.TraceEvent(TraceEventType.Error, 0, "Failed to detect if the environment variable 'TESSDATA_PREFIX' is set: {0}", e.Message);
+                Logger.LogError($"Failed to detect if the environment variable 'TESSDATA_PREFIX' is set: {exception.Message}");
                 return null;
             }
         }
@@ -398,10 +391,10 @@ namespace TesseractOCR
             // do some minor processing on datapath to fix some common errors (this basically mirrors what tesseract does as of 3.04)
             if (!string.IsNullOrEmpty(dataPath))
             {
-                // remove any excess whitespace
+                // Remove any excess whitespace
                 dataPath = dataPath.Trim();
 
-                // remove any trialing '\' or '/' characters
+                // Remove any trialing '\' or '/' characters
                 if (dataPath.EndsWith("\\", StringComparison.Ordinal) ||
                     dataPath.EndsWith("/", StringComparison.Ordinal))
                     dataPath = dataPath.Substring(0, dataPath.Length - 1);

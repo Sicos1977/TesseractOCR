@@ -29,7 +29,6 @@ using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
-using TesseractOCR.Iterators;
 using TesseractOCR.Layout;
 using TesseractOCR.Loggers;
 
@@ -86,7 +85,14 @@ namespace TesseractOCR
 
         #region Properties
 
-        public Blocks Blocks => new Blocks(Engine.Handle);
+        public Blocks Blocks
+        {
+            get
+            {
+                Recognize();
+                return new Blocks(Engine.Handle, Image.Handle);
+            }
+        } 
 
         /// <summary>
         ///     Returns a reference to the <see cref="TesseractEngine"/>
@@ -120,9 +126,10 @@ namespace TesseractOCR
                         "The region of interest to be processed must be within the image bounds", nameof(value));
 
                 if (_regionOfInterest == value) return;
+
                 _regionOfInterest = value;
 
-                // update region of interest in image
+                // Update region of interest in image
                 TessApi.Native.BaseApiSetRectangle(Engine.Handle, _regionOfInterest.X1, _regionOfInterest.Y1,
                     _regionOfInterest.Width, _regionOfInterest.Height);
 
@@ -172,21 +179,6 @@ namespace TesseractOCR
 
                 var resultIteratorHandle = TessApi.Native.BaseApiAnalyseLayout(Engine.Handle);
                 return new Iterators.Page(this, resultIteratorHandle);
-            }
-        }
-
-        /// <summary>
-        ///     Returns a <see cref="ResultIterator" /> object that is used to iterate over the page as defined by the current
-        ///     <see cref="RegionOfInterest" />
-        /// </summary>
-        /// <returns></returns>
-        public Result ResultIterator
-        {
-            get
-            {
-                Recognize();
-                var resultIteratorHandle = TessApi.Native.BaseApiGetIterator(Engine.Handle);
-                return new Result(this, resultIteratorHandle);
             }
         }
 
@@ -368,7 +360,7 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region DetectBestOrientation
+        #region DetectOrientation
         /// <summary>
         ///     Detects the page orientation, with corresponding confidence when using <see cref="PageSegMode.OsdOnly" />
         /// </summary>
@@ -378,13 +370,13 @@ namespace TesseractOCR
         /// </remarks>
         /// <param name="orientation">The detected clockwise page rotation in degrees (0, 90, 180, or 270)</param>
         /// <param name="confidence">The confidence level of the orientation (15 is reasonably confident)</param>
-        public void DetectBestOrientation(out int orientation, out float confidence)
+        public void DetectOrientation(out int orientation, out float confidence)
         {
-            DetectBestOrientationAndScript(out orientation, out confidence, out _, out _);
+            DetectOrientationAndScript(out orientation, out confidence, out _, out _);
         }
         #endregion
 
-        #region DetectBestOrientationAndScript
+        #region DetectOrientationAndScript
         /// <summary>
         ///     Detects the page orientation, with corresponding confidence when using <see cref="PageSegMode.OsdOnly" />.
         /// </summary>
@@ -397,8 +389,7 @@ namespace TesseractOCR
         /// <param name="confidence">The confidence level of the orientation (15 is reasonably confident).</param>
         /// <param name="scriptName">The name of the script (e.g. Latin)</param>
         /// <param name="scriptConfidence">The confidence level in the script</param>
-        public void DetectBestOrientationAndScript(out int orientation, out float confidence, out string scriptName,
-            out float scriptConfidence)
+        public void DetectOrientationAndScript(out int orientation, out float confidence, out string scriptName, out float scriptConfidence)
         {
             if (TessApi.Native.TessBaseAPIDetectOrientationScript(Engine.Handle, out var orientDeg, out var orientConf,
                     out var scriptNameHandle, out var scriptConf) != 0)
@@ -421,28 +412,39 @@ namespace TesseractOCR
             if (_runRecognitionPhase)
                 return;
 
-            if (TessApi.Native.BaseApiRecognize(Engine.Handle, new HandleRef(this, IntPtr.Zero)) != 0)
-                throw new InvalidOperationException("Recognition of image failed");
+            Logger.LogInformation("Recognizing image");
+
+            var monitorHandle = new HandleRef(this, IntPtr.Zero);
+
+            if (TessApi.Native.BaseApiRecognize(Engine.Handle, monitorHandle) != Constants.False)
+            {
+                const string message = "Recognition of image failed";
+                Logger.LogInformation(message);
+                throw new InvalidOperationException(message);
+            }
 
             _runRecognitionPhase = true;
 
-            // Now write out the thresholded image if required to do so
-            if (!Engine.TryGetBoolVariable("tessedit_write_images", out var tesseditWriteImages) || !tesseditWriteImages)
-                return;
+            Logger.LogInformation("Image recognized");
 
-            using (ThresholdedImage)
-            {
-                var filePath = Path.Combine(Environment.CurrentDirectory, "tessinput.tif");
-                try
-                {
-                    ThresholdedImage.Save(filePath, ImageFormat.TiffG4);
-                    Logger.LogInformation($"Successfully saved the thresholded image to '{filePath}'");
-                }
-                catch (Exception error)
-                {
-                    Logger.LogError($"Failed to save the thresholded image to '{filePath}', error: {error}");
-                }
-            }
+
+            //// Now write out the thresholded image if required to do so
+            //if (!Engine.TryGetBoolVariable("tessedit_write_images", out var tesseditWriteImages) || !tesseditWriteImages)
+            //    return;
+
+            //using (ThresholdedImage)
+            //{
+            //    var filePath = Path.Combine(Environment.CurrentDirectory, "tessinput.tif");
+            //    try
+            //    {
+            //        ThresholdedImage.Save(filePath, ImageFormat.TiffG4);
+            //        Logger.LogInformation($"Successfully saved the thresholded image to '{filePath}'");
+            //    }
+            //    catch (Exception error)
+            //    {
+            //        Logger.LogError($"Failed to save the thresholded image to '{filePath}', error: {error}");
+            //    }
+            //}
         }
         #endregion
 

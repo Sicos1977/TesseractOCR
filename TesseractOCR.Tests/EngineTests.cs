@@ -20,6 +20,7 @@ namespace Tesseract.Tests
     public class EngineTests : TesseractTestBase
     {
         private const string TestImagePath = "Ocr/phototest.tif";
+        private const string TestImageFileColumn = "Ocr/ocr-five-column.jpg";
 
         [TestMethod]
         public void CanParseMultiPageTif()
@@ -237,7 +238,7 @@ namespace Tesseract.Tests
             string actualResult;
             using (var engine = CreateEngine())
             {
-                using (var img = LoadTestPix(TestImagePath))
+                using (var img = LoadTestPix(TestImageFileColumn))
                 {
                     using (var page = engine.Process(img))
                     {
@@ -264,13 +265,13 @@ namespace Tesseract.Tests
                                         Debug.Print($"Word is numeric: {word.IsNumeric}");
                                         Debug.Print($"Word language: {word.Language}");
 
-                                        foreach (var symbol in word.Symbols)
-                                        {
-                                            Debug.Print($"Symbol text: {symbol.Text}");
-                                            Debug.Print($"Symbol confidence: {symbol.Confidence}");
-                                            Debug.Print($"Symbol is superscript: {symbol.IsSuperscript}");
-                                            Debug.Print($"Symbol is dropcap: {symbol.IsDropcap}");
-                                        }
+                                        //foreach (var symbol in word.Symbols)
+                                        //{
+                                        //    Debug.Print($"Symbol text: {symbol.Text}");
+                                        //    Debug.Print($"Symbol confidence: {symbol.Confidence}");
+                                        //    Debug.Print($"Symbol is superscript: {symbol.IsSuperscript}");
+                                        //    Debug.Print($"Symbol is dropcap: {symbol.IsDropcap}");
+                                        //}
                                     }
                                 }
                             }

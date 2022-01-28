@@ -18,7 +18,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -65,17 +64,8 @@ namespace TesseractOCR.Layout
     /// <summary>
     ///     A single <see cref="TextLine"/> in the <see cref="Paragraph"/>
     /// </summary>
-    public sealed class TextLine : IEnumerator<TextLine>
+    public sealed class TextLine : EnumeratorBase, IEnumerator<TextLine>
     {
-        #region Fields
-        /// <summary>
-        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
-        /// </summary>
-        private readonly HandleRef _iteratorHandle;
-
-        private bool _first = true;
-        #endregion
-
         #region Properties
         /// <summary>
         ///     Returns the current <see cref="TextLine"/> object
@@ -90,75 +80,14 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="Words"/> in this <see cref="TextLine"/>
         /// </summary>
-        public Words Words => new Words(_iteratorHandle);
-
-        /// <summary>
-        ///     Returns the text for the <see cref="TextLine"/>
-        /// </summary>
-        public string Text => TessApi.ResultIteratorGetUTF8Text(_iteratorHandle, PageIteratorLevel.TextLine);
-
-        /// <summary>
-        ///     Returns the confidence for the <see cref="TextLine"/>
-        /// </summary>
-        /// <returns></returns>
-        public float Confidence => TessApi.Native.ResultIteratorGetConfidence(_iteratorHandle, PageIteratorLevel.TextLine);
+        public Words Words => new Words(IteratorHandleRef);
         #endregion
 
         #region Constructor
         internal TextLine(HandleRef iteratorHandle)
         {
-            _iteratorHandle = iteratorHandle;
-        }
-        #endregion
-
-        #region MoveNext
-        /// <summary>
-        ///     Moves to the next <see cref="TextLine"/> in the <see cref="Paragraph"/>
-        /// </summary>
-        /// <returns><c>true</c> when there is a next <see cref="TextLine"/>, otherwise <c>false</c></returns>
-        public bool MoveNext()
-        {
-            if (_first)
-            {
-                _first = false;
-                return true;
-            }
-
-            if (TessApi.Native.PageIteratorIsAtFinalElement(_iteratorHandle, PageIteratorLevel.Paragraph, PageIteratorLevel.TextLine) != Constants.False)
-            {
-                Logger.LogInformation($"At final '{PageIteratorLevel.TextLine}' element");
-                return false;
-            }
-
-            var result = TessApi.Native.PageIteratorNext(_iteratorHandle, PageIteratorLevel.TextLine) != Constants.False;
-
-            if (result)
-                Logger.LogInformation($"Moving to next '{PageIteratorLevel.TextLine}' element");
-
-            return result;
-        }
-        #endregion
-
-        #region Reset
-        /// <summary>
-        ///     Resets the enumerator to the first <see cref="TextLine"/> in the <see cref="Paragraph"/>
-        /// </summary>
-        public void Reset()
-        {
-            Logger.LogInformation($"Resetting to first '{PageIteratorLevel.TextLine}' element");
-            _first = true;
-            TessApi.Native.PageIteratorBegin(_iteratorHandle);
-        }
-        #endregion
-
-        #region Dispose
-        /// <summary>
-        ///     Does not do a thing, we have to implement it because of the <see cref="IEnumerator"/> interface
-        /// </summary>
-        public void Dispose()
-        {
-            // We have to implement this method because of the IEnumerator interface
-            // but we have nothing to do here so just ignore it
+            IteratorHandleRef = iteratorHandle;
+            PageIteratorLevel = PageIteratorLevel.TextLine;
         }
         #endregion
     }
