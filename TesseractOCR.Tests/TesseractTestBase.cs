@@ -38,8 +38,7 @@ namespace Tesseract.Tests
 
         protected static string TestResultRunDirectory(string path)
         {
-            var runPath = AbsolutePath($"Runs/{TestRun.Current.StartedAt:yyyyMMddTHHmmss}"
-            );
+            var runPath = AbsolutePath($"Runs/{TestRun.Current.StartedAt:yyyyMMddTHHmmss}");
             var testResultRunDirectory = Path.Combine(runPath, path);
             Directory.CreateDirectory(testResultRunDirectory);
 

@@ -343,7 +343,16 @@
     <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_rgb_32bpp.tif" Link="Data\Conversion\photo_rgb_32bpp.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\TesseractOCR.Tests\Data\Ocr\blank.tif" Link="Data\Ocr\blank.tif">
+	  <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-one-column.jpg" Link="Data\Ocr\ocr-one-column.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-five-column.jpg" Link="Data\Ocr\ocr-five-column.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-one-and-two-column.jpg" Link="Data\Ocr\ocr-one-and-two-column.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="..\TesseractOCR.Tests\Data\Ocr\blank.tif" Link="Data\Ocr\blank.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\TesseractOCR.Tests\Data\Ocr\empty.png" Link="Data\Ocr\empty.png">

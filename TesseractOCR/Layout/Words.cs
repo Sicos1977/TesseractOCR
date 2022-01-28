@@ -117,10 +117,21 @@ namespace TesseractOCR.Layout
         public bool IsNumeric => TessApi.Native.ResultIteratorWordIsNumeric(_iteratorHandle);
 
         /// <summary>
-        ///     Returns the language for the recognized <see cref="Word"/>
+        ///     Returns the <see cref="Language"/> for the recognized <see cref="Word"/>
         /// </summary>
         /// <returns></returns>
-        public string Language => TessApi.ResultIteratorWordRecognitionLanguage(_iteratorHandle);
+        public Language Language
+        {
+            get
+            {
+                var value = LanguageAsString;
+                return LanguageHelper.StringAttributeToEnum(value);
+            }
+        } 
+        /// <summary>
+        ///     Returns the <see cref="Language"/> as a string
+        /// </summary>
+        public string LanguageAsString => TessApi.ResultIteratorWordRecognitionLanguage(_iteratorHandle);
 
         /// <summary>
         ///     Returns the <see cref="FontAttributes"/> for the <see cref="Word"/>
@@ -156,7 +167,7 @@ namespace TesseractOCR.Layout
 
         #region MoveNext
         /// <summary>
-        ///     Moves to the next <see cref="Word"/> in the <see cref="Line"/>
+        ///     Moves to the next <see cref="Word"/> in the <see cref="TextLine"/>
         /// </summary>
         /// <returns><c>true</c> when there is a next <see cref="Word"/>, otherwise <c>false</c></returns>
         public bool MoveNext()

@@ -144,16 +144,14 @@ namespace Tesseract.Tests
                     {
                         var region1Text = page.Text;
 
-                        const string expectedTextRegion1 =
-                            "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n";
+                        const string expectedTextRegion1 = "This is a lot of 12 point text to test the\nocr code and see if it works on all types\nof file format.\n";
 
                         Assert.AreEqual(region1Text, expectedTextRegion1);
 
                         page.RegionOfInterest = Rect.FromCoords(0, 188, img.Width, img.Height);
 
                         var region2Text = page.Text;
-                        const string expectedTextRegion2 =
-                            "The quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
+                        const string expectedTextRegion2 = "The quick brown dog jumped over the\nlazy fox. The quick brown dog jumped\nover the lazy fox. The quick brown dog\njumped over the lazy fox. The quick\nbrown dog jumped over the lazy fox.\n";
 
                         Assert.AreEqual(region2Text, expectedTextRegion2);
                     }

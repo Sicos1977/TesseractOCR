@@ -20,13 +20,22 @@
 
 // ReSharper disable UnusedMember.Global
 
+using System;
+
 namespace TesseractOCR.Enums
 {
+    #region Enum Language
     /// <summary>
     ///     All the available Tesseract languages
     /// </summary>
     public enum Language
     {
+        /// <summary>
+        ///     The language is unknown
+        /// </summary>
+        [String("unknown")]
+        Unknown,
+
         /// <summary>
         ///     Afrikaans
         /// </summary>
@@ -276,18 +285,20 @@ namespace TesseractOCR.Enums
         /// <summary>
         ///     Irish
         /// </summary>
-        [String("gle")] Irish,
+        [String("gle")] 
+        Irish,
 
         /// <summary>
         ///     Galician
         /// </summary>
-        [String("glg")] Galician,
+        [String("glg")] 
+        Galician,
 
         /// <summary>
         ///     Greek, Ancient (to 1453) (contrib)
         /// </summary>
-        [String("grc")] Greek,
-        AncientContrib,
+        [String("grc")] 
+        GreekAncientContrib,
 
         /// <summary>
         ///     Gujarati
@@ -774,5 +785,45 @@ namespace TesseractOCR.Enums
         /// </summary>
         [String("yor")] 
         Yoruba
+    }
+    #endregion
+
+    internal static class LanguageHelper
+    {
+        #region StringAttributeToEnum
+        internal static Language StringAttributeToEnum(string languageString)
+        {
+            foreach (var language in (Language[])Enum.GetValues(typeof(Language)))
+            {
+                var value = language.GetAttributeOfType<StringAttribute>().Value;
+
+                if (value == languageString)
+                    return language;
+            }
+
+            return Language.Unknown;
+        }
+        #endregion
+
+        #region GetAttributeOfType
+        /// <summary>
+        ///     Gets an attribute on an enum field value
+        /// </summary>
+        /// <typeparam name="T">The type of the attribute you want to retrieve</typeparam>
+        /// <param name="enumVal">The enum value</param>
+        /// <returns>The attribute of type T that exists on the enum value</returns>
+        /// <example>
+        ///     <code>
+        ///         var value = enum.GetAttributeOfType&lt;StringAttribute>().Value;&gt;
+        ///     </code>
+        /// </example>
+        internal static T GetAttributeOfType<T>(this Enum enumVal) where T : Attribute
+        {
+            var type = enumVal.GetType();
+            var memInfo = type.GetMember(enumVal.ToString());
+            var attributes = memInfo[0].GetCustomAttributes(typeof(T), false);
+            return attributes.Length > 0 ? (T)attributes[0] : null;
+        }
+        #endregion
     }
 }
