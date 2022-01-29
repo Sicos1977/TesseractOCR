@@ -788,10 +788,19 @@ namespace TesseractOCR.Enums
     }
     #endregion
 
+    /// <summary>
+    ///     A helper class for working with the <see cref="Language"/>
+    /// </summary>
     internal static class LanguageHelper
     {
-        #region StringAttributeToEnum
-        internal static Language StringAttributeToEnum(string languageString)
+        #region StringToEnum
+        /// <summary>
+        ///     Returns the <see cref="Language"/> enum that has the <see cref="StringAttribute"/>
+        ///     with the corresponding <paramref name="languageString"/>
+        /// </summary>
+        /// <param name="languageString">The language string</param>
+        /// <returns><see cref="Language"/></returns>
+        internal static Language StringToEnum(string languageString)
         {
             foreach (var language in (Language[])Enum.GetValues(typeof(Language)))
             {

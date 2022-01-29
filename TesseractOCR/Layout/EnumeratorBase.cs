@@ -1,8 +1,9 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
-using Image = TesseractOCR.Pix.Image;
+// ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR.Layout
 {
@@ -32,6 +33,18 @@ namespace TesseractOCR.Layout
 
         #region Properties
         /// <summary>
+        ///     Returns <c>true</c> if the iterator is at the first element at the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        /// <returns><c>true</c> when at the beginning</returns>
+        public bool IsAtBeginning => TessApi.Native.PageIteratorIsAtBeginningOf(IteratorHandleRef, PageIteratorLevel) == Constants.True;
+
+        /// <summary>
+        ///     Returns <c>true</c> if the iterator is at the final element at the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        /// <returns><c>true</c> when at the beginning</returns>
+        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtBeginningOf(IteratorHandleRef, PageIteratorLevel) == Constants.True;
+
+        /// <summary>
         ///     Returns the text for the <see cref="Block"/>
         /// </summary>
         public string Text => TessApi.ResultIteratorGetUTF8Text(IteratorHandleRef, PageIteratorLevel);
@@ -46,12 +59,76 @@ namespace TesseractOCR.Layout
         ///     Returns a binary (gray) <see cref="Pix.Image"/> at the current <see cref="PageIteratorLevel"/>
         /// </summary>
         /// <returns>The <see cref="Pix.Image"/> or <c>null</c> when it fails</returns>
-        public Image BinaryImage => Image.Create(TessApi.Native.PageIteratorGetBinaryImage(IteratorHandleRef, PageIteratorLevel));
+        public Pix.Image BinaryImage => Pix.Image.Create(TessApi.Native.PageIteratorGetBinaryImage(IteratorHandleRef, PageIteratorLevel));
 
-        ///// <summary>
-        /////     Returns a <see cref="Pix.Image"/> from what is seen at the current <see cref="PageIteratorLevel"/>>
-        ///// </summary>
-        //public Image Image => Image.Create(TessApi.Native.PageIteratorGetImage(IteratorHandle, PageIteratorLevel, 0, PageRef.Image.Handle, out _, out _))
+        /// <summary>
+        ///     Returns a <see cref="Pix.Image"/> from what is seen at the current <see cref="PageIteratorLevel"/>>
+        /// </summary>
+        /// <remarks>
+        ///     Image.Item1 = The image<br/>
+        ///     Image.Item2 = The left coordinate of the image<br/>
+        ///     Image.Item3 = The top coordinate of the image<br/>
+        /// </remarks>
+        public Tuple<Pix.Image, int, int> Image
+        {
+            get
+            {
+                var image = Pix.Image.Create(TessApi.Native.PageIteratorGetImage(IteratorHandleRef, PageIteratorLevel, 0, ImageHandleRef, out var left, out var top));
+                return new Tuple<Pix.Image, int, int>(image, top, left);
+            }
+        }
+
+        /// <summary>
+        ///     Returns the bounding <see cref="Rect"/> of the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        /// <returns>Returns the <see cref="Rect"/> or <c>null</c> when it fails</returns>
+        public Rect? BoundingBox
+        {
+            get
+            {
+                if (TessApi.Native.PageIteratorBoundingBox(IteratorHandleRef, PageIteratorLevel, out var x1, out var y1, out var x2, out var y2) == Constants.True)
+                    return Rect.FromCoords(x1, y1, x2, y2);
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the baseline of the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        /// <remarks>
+        ///     The baseline is the line that passes through (x1, y1) and (x2, y2).
+        ///     WARNING: with vertical text, baselines may be vertical! Returns <c>false</c> if there is no baseline at the current
+        ///     position
+        /// </remarks>
+        /// <returns>Returns the <see cref="Rect"/> or <c>null</c> when it fails</returns>
+        public Rect? Baseline
+        {
+            get
+            {
+                if (TessApi.Native.PageIteratorBaseline(IteratorHandleRef, PageIteratorLevel, out var x1, out var y1, out var x2, out var y2) == Constants.True)
+                    return Rect.FromCoords(x1, y1, x2, y2);
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the <see cref="ElementProperties"/> of the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        public ElementProperties Properties
+        {
+            get
+            {
+                TessApi.Native.PageIteratorOrientation(IteratorHandleRef, 
+                    out var orientation, 
+                    out var writingDirection,
+                    out var textLineOrder,
+                    out var deskewAngle);
+
+                return new ElementProperties(orientation, textLineOrder, writingDirection, deskewAngle);
+            }
+        }
         #endregion
 
         #region MoveNext

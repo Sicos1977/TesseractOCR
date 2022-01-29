@@ -20,13 +20,22 @@
 
 // ReSharper disable UnusedMember.Global
 
+using System;
+
 namespace TesseractOCR.Enums
 {
+    #region Enum ScriptName
     /// <summary>
     ///     All the available Tesseract scripts
     /// </summary>
-    public enum Script
+    public enum ScriptName
     {
+        /// <summary>
+        ///     Arabic
+        /// </summary>
+        [String("Unknown")]
+        Unknown,
+
         /// <summary>
         ///     Arabic
         /// </summary>
@@ -247,5 +256,34 @@ namespace TesseractOCR.Enums
         /// </summary>
         [String("Vietnamese")] 
         Vietnamese
+    }
+    #endregion
+
+    /// <summary>
+    ///     A helper class to work with the <see cref="ScriptName"/>
+    /// </summary>
+    internal static class ScriptNameHelper
+    {
+        #region StringToEnum
+        /// <summary>
+        ///     Returns the <see cref="ScriptName"/> enum that has the <see cref="StringAttribute"/>
+        ///     with the corresponding <paramref name="scriptNameString"/>
+        /// </summary>
+        /// <param name="scriptNameString">The language string</param>
+        /// <returns><see cref="Language"/></returns>
+
+        internal static ScriptName StringToEnum(string scriptNameString)
+        {
+            foreach (var scriptName in (ScriptName[])Enum.GetValues(typeof(ScriptName)))
+            {
+                var value = scriptName.GetAttributeOfType<StringAttribute>().Value;
+
+                if (value == scriptNameString)
+                    return scriptName;
+            }
+
+            return ScriptName.Unknown;
+        }
+        #endregion
     }
 }

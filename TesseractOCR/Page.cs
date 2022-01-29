@@ -309,9 +309,9 @@ namespace TesseractOCR
         /// </summary>
         /// <param name="engine"><see cref="TesseractEngine"/></param>
         /// <param name="image">The <see cref="Pix"/> <see cref="Image" /> that is being ocr'd</param>
-        /// <param name="imageName">The name of the image being ocr'd</param>
+        /// <param name="imageName">The name of the <see cref="Image" /> being ocr'd</param>
         /// <param name="regionOfInterest">The current region of interest being parsed</param>
-        /// <param name="segmentMode">The segmentation mode used to OCR the specified image</param>
+        /// <param name="segmentMode">The <see cref="PageSegMode"/> used to OCR the specified <see cref="Image" /></param>
         /// <param name="number">The page number</param>
         internal Page(
             TesseractEngine engine,
@@ -335,7 +335,10 @@ namespace TesseractOCR
         ///     Get segmented regions at specified page iterator level
         /// </summary>
         /// <param name="pageIteratorLevel">PageIteratorLevel enum</param>
-        /// <returns></returns>
+        /// <remarks>
+        ///     This method can be called without triggering the <see cref="Recognize"/> method
+        /// </remarks>
+        /// <returns>A list with <see cref="Rectangle"/>'s</returns>
         public List<Rectangle> GetSegmentedRegions(PageIteratorLevel pageIteratorLevel)
         {
             var boxArray = TessApi.Native.BaseApiGetComponentImages(Engine.Handle, pageIteratorLevel, Constants.True, IntPtr.Zero, IntPtr.Zero);
@@ -381,22 +384,29 @@ namespace TesseractOCR
         ///     Detects the page orientation, with corresponding confidence when using <see cref="PageSegMode.OsdOnly" />.
         /// </summary>
         /// <remarks>
-        ///     If using full page segmentation mode (i.e. AutoOsd) then consider using <see cref="Layout" /> instead as
-        ///     this also provides a
-        ///     deskew angle which isn't available when just performing orientation detection.
+        ///     If using full page segmentation mode (i.e. <see cref="PageSegMode.AutoOsd"/>) then consider using <see cref="Layout" />
+        ///     instead as this because this also provides a deskew angle which isn't available when just performing orientation detection.
         /// </remarks>
-        /// <param name="orientation">The detected clockwise page rotation in degrees (0, 90, 180, or 270).</param>
-        /// <param name="confidence">The confidence level of the orientation (15 is reasonably confident).</param>
-        /// <param name="scriptName">The name of the script (e.g. Latin)</param>
+        /// <param name="orientation">The detected clockwise page rotation in degrees (0, 90, 180, or 270)</param>
+        /// <param name="confidence">The confidence level of the orientation (15 is reasonably confident)</param>
+        /// <param name="scriptName"><see cref="ScriptName"/></param>
         /// <param name="scriptConfidence">The confidence level in the script</param>
-        public void DetectOrientationAndScript(out int orientation, out float confidence, out string scriptName, out float scriptConfidence)
+        public void DetectOrientationAndScript(out int orientation, out float confidence, out ScriptName scriptName, out float scriptConfidence)
         {
             if (TessApi.Native.TessBaseAPIDetectOrientationScript(Engine.Handle, out var orientDeg, out var orientConf,
                     out var scriptNameHandle, out var scriptConf) != 0)
             {
                 orientation = orientDeg;
                 confidence = orientConf;
-                scriptName = scriptNameHandle != IntPtr.Zero ? MarshalHelper.PtrToString(scriptNameHandle, Encoding.ASCII) : null;
+
+                if (scriptNameHandle != IntPtr.Zero)
+                {
+                    var value = MarshalHelper.PtrToString(scriptNameHandle, Encoding.ASCII);
+                    scriptName = ScriptNameHelper.StringToEnum(value);
+                }
+                else
+                    scriptName = ScriptName.Unknown;
+                
                 scriptConfidence = scriptConf;
             }
             else

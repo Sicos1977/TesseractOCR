@@ -103,7 +103,7 @@ namespace TesseractOCR.Layout
             get
             {
                 var value = LanguageAsString;
-                return LanguageHelper.StringAttributeToEnum(value);
+                return LanguageHelper.StringToEnum(value);
             }
         } 
         /// <summary>
