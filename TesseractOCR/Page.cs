@@ -336,6 +336,8 @@ namespace TesseractOCR
         /// <returns>A list with <see cref="Rectangle"/>'s</returns>
         public List<Rectangle> GetSegmentedRegions(PageIteratorLevel pageIteratorLevel)
         {
+            Logger.LogInformation("Getting segmented regions");
+
             var boxArray = TessApi.Native.BaseApiGetComponentImages(Engine.Handle, pageIteratorLevel, Constants.True, IntPtr.Zero, IntPtr.Zero);
             var boxCount = LeptonicaApi.Native.boxaGetCount(new HandleRef(this, boxArray));
             var boxList = new List<Rectangle>();
@@ -353,6 +355,8 @@ namespace TesseractOCR
             }
 
             LeptonicaApi.Native.boxaDestroy(ref boxArray);
+
+            Logger.LogInformation($"Found {boxList.Count} region{(boxList.Count == 1 ? string.Empty : "s")}");
 
             return boxList;
         }
@@ -388,8 +392,9 @@ namespace TesseractOCR
         /// <param name="scriptConfidence">The confidence level in the script</param>
         public void DetectOrientationAndScript(out int orientation, out float confidence, out ScriptName scriptName, out float scriptConfidence)
         {
-            if (TessApi.Native.TessBaseAPIDetectOrientationScript(Engine.Handle, out var orientDeg, out var orientConf,
-                    out var scriptNameHandle, out var scriptConf) != 0)
+            Logger.LogInformation("Detection orientation and script name");
+
+            if (TessApi.Native.TessBaseAPIDetectOrientationScript(Engine.Handle, out var orientDeg, out var orientConf, out var scriptNameHandle, out var scriptConf) != 0)
             {
                 orientation = orientDeg;
                 confidence = orientConf;
@@ -403,9 +408,15 @@ namespace TesseractOCR
                     scriptName = ScriptName.Unknown;
                 
                 scriptConfidence = scriptConf;
+
+                Logger.LogInformation($"Detected orientation '{orientDeg}', confidence '{orientConf}' and script name '{scriptName}', confidence '{scriptConf}'");
             }
             else
-                throw new TesseractException("Failed to detect image orientation.");
+            {
+                const string message = "Failed to detect image orientation";
+                Logger.LogError(message);
+                throw new TesseractException(message);
+            }
         }
         #endregion
 
