@@ -383,15 +383,29 @@ namespace TesseractOCR
                 dataPath = dataPath.TrimEnd('\\');
             }
 
-            if (TessApi.BaseApiInit(_handle, dataPath, LanguageHelper.EnumToString(language), (int)engineMode, configFiles ?? new List<string>(),
-                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.True) 
+            var languageString = LanguageHelper.EnumToString(language);
+
+            Logger.LogInformation($"Initializing Tesseract engine, using data path '{dataPath}', language '{languageString}' and engine mode '{engineMode}'");
+
+            if (setOnlyNonDebugVariables)
+                Logger.LogInformation("Setting only no debug variables");
+
+            if (TessApi.BaseApiInit(_handle, dataPath, languageString, (int)engineMode,
+                    configFiles ?? new List<string>(),
+                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.True)
+            {
+                Logger.LogInformation("Tesseract engine initialized");
                 return;
-            
+            }
+
             // Special case logic to handle cleaning up as init has already released the handle if it fails
             _handle = new HandleRef(this, IntPtr.Zero);
             GC.SuppressFinalize(this);
 
-            throw new TesseractException("Failed to initialise tesseract engine");
+
+            const string message = "Failed to initialize Tesseract engine";
+            Logger.LogInformation(message);
+            throw new TesseractException(message);
         }
         #endregion
 
@@ -442,6 +456,7 @@ namespace TesseractOCR
         /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
         public bool SetVariable(string name, string value)
         {
+            Logger.LogInformation($"Setting variable '{name}' to '{value}'");
             return TessApi.BaseApiSetVariable(_handle, name, value) != 0;
         }
         #endregion
@@ -456,6 +471,7 @@ namespace TesseractOCR
         public bool SetVariable(string name, bool value)
         {
             var strEncodedValue = value ? "TRUE" : "FALSE";
+            Logger.LogInformation($"Setting variable '{name}' to '{strEncodedValue}'");
             return TessApi.BaseApiSetVariable(_handle, name, strEncodedValue) != 0;
         }
 
@@ -468,6 +484,7 @@ namespace TesseractOCR
         public bool SetVariable(string name, int value)
         {
             var strEncodedValue = value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+            Logger.LogInformation($"Setting variable '{name}' to '{strEncodedValue}'");
             return TessApi.BaseApiSetVariable(_handle, name, strEncodedValue) != 0;
         }
 
@@ -480,6 +497,7 @@ namespace TesseractOCR
         public bool SetVariable(string name, double value)
         {
             var strEncodedValue = value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
+            Logger.LogInformation($"Setting variable '{name}' to '{strEncodedValue}'");
             return TessApi.BaseApiSetVariable(_handle, name, strEncodedValue) != 0;
         }
         #endregion
@@ -490,14 +508,17 @@ namespace TesseractOCR
         /// </summary>
         /// <param name="name">The name of the variable.</param>
         /// <param name="value">The current value of the variable.</param>
-        /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
+        /// <returns><c>true</c> if successful, otherwise <c>false</c>.</returns>
         public bool TryGetBoolVariable(string name, out bool value)
         {
-            if (TessApi.Native.BaseApiGetBoolVariable(_handle, name, out var val) != 0)
+            if (TessApi.Native.BaseApiGetBoolVariable(_handle, name, out var val) == Constants.True)
             {
                 value = val != 0;
+                Logger.LogInformation($"Returned variable '{name}' with value ''{val}");
                 return true;
             }
+
+            Logger.LogError($"Could not get bool variable '{name}'");
 
             value = false;
             return false;
@@ -513,7 +534,16 @@ namespace TesseractOCR
         /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
         public bool TryGetDoubleVariable(string name, out double value)
         {
-            return TessApi.Native.BaseApiGetDoubleVariable(_handle, name, out value) != 0;
+            var result = TessApi.Native.BaseApiGetDoubleVariable(_handle, name, out value) == Constants.True;
+
+            if (result)
+            {
+                Logger.LogInformation($"Returned double variable '{name}' with value ''{value}");
+                return true;
+            }
+            
+            Logger.LogError($"Could not get double variable '{name}'");
+            return false;
         }
         #endregion
 
@@ -526,7 +556,16 @@ namespace TesseractOCR
         /// <returns>Returns <c>True</c> if successful; otherwise <c>False</c>.</returns>
         public bool TryGetIntVariable(string name, out int value)
         {
-            return TessApi.Native.BaseApiGetIntVariable(_handle, name, out value) != 0;
+            var result = TessApi.Native.BaseApiGetIntVariable(_handle, name, out value) == Constants.True;
+
+            if (result)
+            {
+                Logger.LogInformation($"Returned int variable '{name}' with value ''{value}");
+                return true;
+            }
+
+            Logger.LogError($"Could not get int variable '{name}'");
+            return false;
         }
         #endregion
 
@@ -540,7 +579,17 @@ namespace TesseractOCR
         public bool TryGetStringVariable(string name, out string value)
         {
             value = TessApi.BaseApiGetStringVariable(_handle, name);
-            return value != null;
+            
+            var result = value != null;
+
+            if (result)
+            {
+                Logger.LogInformation($"Returned string variable '{name}' with value ''{value}");
+                return true;
+            }
+
+            Logger.LogError($"Could not get string variable '{name}'");
+            return false;
         }
         #endregion
 
@@ -552,7 +601,16 @@ namespace TesseractOCR
         /// <returns></returns>
         public bool TryPrintVariablesToFile(string filename)
         {
-            return TessApi.Native.BaseApiPrintVariablesToFile(_handle, filename) != 0;
+            var result = TessApi.Native.BaseApiPrintVariablesToFile(_handle, filename) == Constants.True;
+
+            if (result)
+            {
+                Logger.LogInformation($"Printed variable to file '{filename}'");
+                return true;
+            }
+
+            Logger.LogError($"Could not print variables to file '{filename}'");
+            return false;
         }
         #endregion Config
     }
