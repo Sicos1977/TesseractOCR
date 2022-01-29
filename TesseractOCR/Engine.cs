@@ -26,7 +26,6 @@ using System.Runtime.InteropServices;
 using System.Security;
 using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
-using TesseractOCR.Internal;
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
 
@@ -36,7 +35,7 @@ using TesseractOCR.Loggers;
 namespace TesseractOCR
 {
     /// <summary>
-    ///     The tesseract OCR engine.
+    ///     The tesseract OCR engine
     /// </summary>
     public class Engine : DisposableBase
     {
@@ -76,9 +75,8 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        public Engine(string datapath, string language) : this(datapath, language, EngineMode.Default,
-            Array.Empty<string>(), new Dictionary<string, object>(), false)
+        /// <param name="language">The <see cref="Language"/> to load</param>
+        public Engine(string datapath, Language language) : this(datapath, language, EngineMode.Default, Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -103,14 +101,12 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
+        /// <param name="language">The <see cref="Language"/> to load</param>
         /// <param name="configFile">
         ///     An optional tesseract configuration file that is encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, string language, string configFile)
-            : this(datapath, language, EngineMode.Default, configFile != null ? new[] { configFile } : Array.Empty<string>(),
-                new Dictionary<string, object>(), false)
+        public Engine(string datapath, Language language, string configFile) : this(datapath, language, EngineMode.Default, configFile != null ? new[] { configFile } : Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -132,13 +128,12 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
+        /// <param name="language">The <see cref="Language"/> to load</param>
         /// <param name="configFiles">
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, string language, IEnumerable<string> configFiles)
-            : this(datapath, language, EngineMode.Default, configFiles, new Dictionary<string, object>(), false)
+        public Engine(string datapath, Language language, IEnumerable<string> configFiles) : this(datapath, language, EngineMode.Default, configFiles, new Dictionary<string, object>(), false)
         {
         }
 
@@ -159,10 +154,9 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
+        /// <param name="language">The <see cref="Language"/> to load</param>
         /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine.</param>
-        public Engine(string datapath, string language, EngineMode engineMode)
-            : this(datapath, language, engineMode, Array.Empty<string>(), new Dictionary<string, object>(), false)
+        public Engine(string datapath, Language language, EngineMode engineMode) : this(datapath, language, engineMode, Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -187,15 +181,13 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
+        /// <param name="language">The <see cref="Language"/> to load</param>
         /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine.</param>
         /// <param name="configFile">
         ///     An optional tesseract configuration file that is encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, string language, EngineMode engineMode, string configFile)
-            : this(datapath, language, engineMode, configFile != null ? new[] { configFile } : Array.Empty<string>(),
-                new Dictionary<string, object>(), false)
+        public Engine(string datapath, Language language, EngineMode engineMode, string configFile) : this(datapath, language, engineMode, configFile != null ? new[] { configFile } : Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -217,14 +209,13 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
+        /// <param name="language">The <see cref="Language"/> to load</param>
         /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine.</param>
         /// <param name="configFiles">
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles)
-            : this(datapath, language, engineMode, configFiles, new Dictionary<string, object>(), false)
+        public Engine(string datapath, Language language, EngineMode engineMode, IEnumerable<string> configFiles) : this(datapath, language, engineMode, configFiles, new Dictionary<string, object>(), false)
         {
         }
 
@@ -246,19 +237,16 @@ namespace TesseractOCR
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
-        /// <param name="language">The language to load, for example 'eng' for English.</param>
-        /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine.</param>
+        /// <param name="language">The <see cref="Language"/> to load</param>
+        /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine</param>
         /// <param name="configFiles">
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
         /// <param name="initialOptions"></param>
         /// <param name="setOnlyNonDebugVariables"></param>
-        public Engine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles,
-            IDictionary<string, object> initialOptions, bool setOnlyNonDebugVariables)
+        public Engine(string datapath, Language language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialOptions, bool setOnlyNonDebugVariables)
         {
-            Guard.RequireNotNullOrEmpty("language", language);
-
             DefaultPageSegMode = PageSegMode.Auto;
             _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
@@ -383,31 +371,27 @@ namespace TesseractOCR
         /// <param name="initialValues"></param>
         /// <param name="setOnlyNonDebugVariables"></param>
         /// <exception cref="TesseractException"></exception>
-        private void Initialize(string dataPath, string language, EngineMode engineMode,
-            IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
+        private void Initialize(string dataPath, Language language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
         {
-            Guard.RequireNotNullOrEmpty("language", language);
-
-            // do some minor processing on datapath to fix some common errors (this basically mirrors what tesseract does as of 3.04)
+            // Do some minor processing on datapath to fix some common errors (this basically mirrors what tesseract does as of 3.04)
             if (!string.IsNullOrEmpty(dataPath))
             {
                 // Remove any excess whitespace
                 dataPath = dataPath.Trim();
 
-                // Remove any trialing '\' or '/' characters
-                if (dataPath.EndsWith("\\", StringComparison.Ordinal) ||
-                    dataPath.EndsWith("/", StringComparison.Ordinal))
-                    dataPath = dataPath.Substring(0, dataPath.Length - 1);
+                dataPath = dataPath.TrimEnd('/');
+                dataPath = dataPath.TrimEnd('\\');
             }
 
-            if (TessApi.BaseApiInit(_handle, dataPath, language, (int)engineMode, configFiles ?? new List<string>(),
-                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == 0) return;
+            if (TessApi.BaseApiInit(_handle, dataPath, LanguageHelper.EnumToString(language), (int)engineMode, configFiles ?? new List<string>(),
+                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.True) 
+                return;
             
-            // Special case logic to handle cleaning up as init has already released the handle if it fails.
+            // Special case logic to handle cleaning up as init has already released the handle if it fails
             _handle = new HandleRef(this, IntPtr.Zero);
             GC.SuppressFinalize(this);
 
-            throw new TesseractException(ErrorMessage.Format("Failed to initialise tesseract engine."));
+            throw new TesseractException("Failed to initialise tesseract engine");
         }
         #endregion
 

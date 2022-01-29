@@ -814,6 +814,18 @@ namespace TesseractOCR.Enums
         }
         #endregion
 
+        #region EnumToString
+        /// <summary>
+        ///     Returns the <see cref="StringAttribute"/> for the given <paramref name="language"/> enum
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        internal static string EnumToString(Language language)
+        {
+            return language.GetAttributeOfType<StringAttribute>().Value;
+        }
+        #endregion
+
         #region GetAttributeOfType
         /// <summary>
         ///     Gets an attribute on an enum field value
