@@ -84,16 +84,6 @@ namespace TesseractOCR
         #endregion
 
         #region Properties
-
-        public Blocks Blocks
-        {
-            get
-            {
-                Recognize();
-                return new Blocks(Engine.Handle, Image.Handle);
-            }
-        } 
-
         /// <summary>
         ///     Returns a reference to the <see cref="TesseractEngine"/>
         /// </summary>
@@ -166,19 +156,24 @@ namespace TesseractOCR
         }
 
         /// <summary>
-        ///     Returns a <see cref="Page" /> object that is used to iterate over the page's layout as defined by the
+        ///     Returns a <see cref="Blocks" /> object that is used to iterate over the page's layout as defined by the
         ///     current <see cref="RegionOfInterest" />.
         /// </summary>
-        /// <returns></returns>
-        public Iterators.Page Layout
+        /// <remarks>
+        ///     A page is build like this --> <see cref="Blocks"/> (with one or more <see cref="Block"/> objects) --> <br/>
+        ///     <see cref="Paragraphs"/> (with one or more <see cref="Paragraph"/> objects) --> <see cref="TextLines"/> <br/>
+        ///     with (one or more in a <see cref="TextLine"/> objects) --> <see cref="Words"/> (with one ore more <br/>
+        ///     <see cref="Word"/> objects) --> <see cref="Symbols"/> (with one ore more <see cref="Symbol"/> objects)
+        /// </remarks>
+        /// <returns>A enumerator at the <see cref="Blocks"/> level</returns>
+        public Blocks Layout
         {
             get
             {
-                Guard.Verify(SegmentMode != PageSegMode.OsdOnly,
-                    "Cannot analyse image layout when using OSD only page segmentation, please use DetectBestOrientation instead");
+                Guard.Verify(SegmentMode != PageSegMode.OsdOnly, "Cannot analyse image layout when using OSD only page segmentation, please use DetectBestOrientation instead");
 
-                var resultIteratorHandle = TessApi.Native.BaseApiAnalyseLayout(Engine.Handle);
-                return new Iterators.Page(this, resultIteratorHandle);
+                Recognize();
+                return new Blocks(Engine.Handle, Image.Handle);
             }
         }
 
@@ -415,6 +410,10 @@ namespace TesseractOCR
         #endregion
 
         #region Recognize
+        /// <summary>
+        ///     Will perform a recognition of the <see cref="Page"/>
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         internal void Recognize()
         {
             Guard.Verify(SegmentMode != PageSegMode.OsdOnly, "Cannot OCR image when using OSD only page segmentation, please use DetectBestOrientation instead");
@@ -436,25 +435,24 @@ namespace TesseractOCR
             _runRecognitionPhase = true;
 
             Logger.LogInformation("Image recognized");
+            
+            // Now write out the thresholded image if required to do so
+            if (!Engine.TryGetBoolVariable("tessedit_write_images", out var tesseditWriteImages) || !tesseditWriteImages)
+                return;
 
-
-            //// Now write out the thresholded image if required to do so
-            //if (!Engine.TryGetBoolVariable("tessedit_write_images", out var tesseditWriteImages) || !tesseditWriteImages)
-            //    return;
-
-            //using (ThresholdedImage)
-            //{
-            //    var filePath = Path.Combine(Environment.CurrentDirectory, "tessinput.tif");
-            //    try
-            //    {
-            //        ThresholdedImage.Save(filePath, ImageFormat.TiffG4);
-            //        Logger.LogInformation($"Successfully saved the thresholded image to '{filePath}'");
-            //    }
-            //    catch (Exception error)
-            //    {
-            //        Logger.LogError($"Failed to save the thresholded image to '{filePath}', error: {error}");
-            //    }
-            //}
+            using (ThresholdedImage)
+            {
+                var filePath = Path.Combine(Environment.CurrentDirectory, "tessinput.tif");
+                try
+                {
+                    ThresholdedImage.Save(filePath, ImageFormat.TiffG4);
+                    Logger.LogInformation($"Successfully saved the thresholded image to '{filePath}'");
+                }
+                catch (Exception error)
+                {
+                    Logger.LogError($"Failed to save the thresholded image to '{filePath}', error: {error}");
+                }
+            }
         }
         #endregion
 

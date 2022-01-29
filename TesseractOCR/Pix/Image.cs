@@ -27,6 +27,7 @@ using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
+using TesseractOCR.Loggers;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
@@ -100,6 +101,9 @@ namespace TesseractOCR.Pix
         /// </remarks>
         public string ImageName { get; set; }
 
+        /// <summary>
+        ///     Returns the colormap for the <see cref="Image"/>
+        /// </summary>
         public Colormap Colormap
         {
             get => _colormap;
@@ -116,55 +120,172 @@ namespace TesseractOCR.Pix
             }
         }
 
+        /// <summary>
+        ///     Returns the depth of the <see cref="Image"/>
+        /// </summary>
         public int Depth { get; }
 
+        /// <summary>
+        ///     Returns the height of the <see cref="Image"/>
+        /// </summary>
         public int Height { get; }
 
+        /// <summary>
+        ///     Returns the width of the <see cref="Image"/>
+        /// </summary>
         public int Width { get; }
 
+        /// <summary>
+        ///     Gets or sets the X-resolution for the <see cref="Image"/> in DPI
+        /// </summary>
         public int XRes
         {
             get => LeptonicaApi.Native.pixGetXRes(_handle);
             set => LeptonicaApi.Native.pixSetXRes(_handle, value);
         }
 
+        /// <summary>
+        ///     Gets or sets the Y-resolution for the <see cref="Image"/> in DPI
+        /// </summary>
         public int YRes
         {
             get => LeptonicaApi.Native.pixGetYRes(_handle);
             set => LeptonicaApi.Native.pixSetYRes(_handle, value);
         }
 
+        /// <summary>
+        ///     Returns the <see cref="HandleRef"/> to the <see cref="Image"/>
+        /// </summary>
         public HandleRef Handle => _handle;
+        #endregion
+
+        #region Constructor
+        /// <summary>
+        ///     Creates a new pix instance using an existing handle to a pix structure.
+        /// </summary>
+        /// <remarks>
+        ///     Note that the resulting instance takes ownership of the data structure.
+        /// </remarks>
+        /// <param name="handle"></param>
+        private Image(IntPtr handle)
+        {
+            if (handle == IntPtr.Zero) throw new ArgumentNullException(nameof(handle));
+
+            _handle = new HandleRef(this, handle);
+            Width = LeptonicaApi.Native.pixGetWidth(_handle);
+            Height = LeptonicaApi.Native.pixGetHeight(_handle);
+            Depth = LeptonicaApi.Native.pixGetDepth(_handle);
+
+            var colorMapHandle = LeptonicaApi.Native.pixGetColormap(_handle);
+            if (colorMapHandle != IntPtr.Zero) _colormap = new Colormap(colorMapHandle);
+        }
+        #endregion
+
+        #region LoadFromFile
+        public static Image LoadFromFile(string filename)
+        {
+            Logger.LogInformation($"Loading image from file '{filename}'");
+
+            var pixHandle = LeptonicaApi.Native.pixRead(filename);
+
+            if (pixHandle == IntPtr.Zero)
+            {
+                const string message = "Failed to load image from file";
+                Logger.LogError(message);
+                throw new IOException(message);
+            }
+
+            var r = Create(pixHandle);
+            r.ImageName = filename;
+            Logger.LogInformation("Image loaded");
+            return r;
+        }
+        #endregion
+
+        #region LoadFromMemory
+        public static Image LoadFromMemory(byte[] bytes)
+        {
+            Logger.LogInformation("Loading image from memory");
+
+            IntPtr handle;
+            
+            fixed (byte* ptr = bytes)
+            {
+                handle = LeptonicaApi.Native.pixReadMem(ptr, bytes.Length);
+            }
+
+            if (handle == IntPtr.Zero)
+            {
+                const string message = "Failed to load image from memory";
+                Logger.LogError(message);
+                throw new IOException(message);
+            }
+
+            Logger.LogInformation("Image loaded");
+            return Create(handle);
+        }
+        #endregion
+
+        #region LoadTiffFromMemory
+        public static Image LoadTiffFromMemory(byte[] bytes)
+        {
+            Logger.LogInformation("Loading TIFF image from memory");
+
+            IntPtr handle;
+            
+            fixed (byte* ptr = bytes)
+            {
+                handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, 0);
+            }
+
+            if (handle == IntPtr.Zero)
+            {
+                const string message = "Failed to load image from memory";
+                Logger.LogError(message);
+                throw new IOException(message);
+            }
+
+            Logger.LogInformation("Image loaded");
+            return Create(handle);
+        }
         #endregion
 
         #region Save
         /// <summary>
-        ///     Saves the image to the specified file.
+        ///     Saves the image to the specified file
         /// </summary>
-        /// <param name="filename">The path to the file.</param>
-        /// <param name="format">
+        /// <param name="filename">The path to the file</param>
+        /// <param name="imageFormat">
         ///     The format to use when saving the image, if not specified the file extension is used to guess the
-        ///     format.
+        ///     format
         /// </param>
-        public void Save(string filename, ImageFormat? format = null)
+        public void Save(string filename, ImageFormat? imageFormat = null)
         {
-            ImageFormat actualFormat;
+            Logger.LogInformation($"Saving image to '{filename}' with the format '{imageFormat}'");
 
-            if (!format.HasValue)
+            ImageFormat actualFormat;
+            
+            if (!imageFormat.HasValue)
             {
                 var extension = Path.GetExtension(filename).ToLowerInvariant();
 
                 if (!ImageFormatLookup.TryGetValue(extension, out actualFormat))
-                    // couldn't find matching format, perhaps there is no extension or it's not recognized, fallback to default.
+                {
+                    Logger.LogInformation("Couldn't find matching format, perhaps there is no extension or it's not recognized, fallback to default");
                     actualFormat = ImageFormat.Default;
+                }
             }
             else
-            {
-                actualFormat = format.Value;
-            }
+                actualFormat = imageFormat.Value;
 
             if (LeptonicaApi.Native.pixWrite(filename, _handle, actualFormat) != 0)
-                throw new IOException($"Failed to save image '{filename}'.");
+            {
+                const string message = "Failed to save image";
+                Logger.LogError(message);
+                throw new IOException("Failed to save image");
+            }
+
+            Logger.LogInformation("Image saved");
         }
         #endregion
 
@@ -188,7 +309,9 @@ namespace TesseractOCR.Pix
         /// <returns>The pix with it's reference count incremented.</returns>
         public Image Clone()
         {
+            Logger.LogInformation("Cloning image");
             var clonedHandle = LeptonicaApi.Native.pixClone(_handle);
+            Logger.LogInformation("Image cloned");
             return new Image(clonedHandle);
         }
         #endregion Clone
@@ -314,42 +437,19 @@ namespace TesseractOCR.Pix
         /// </remarks>
         public Image Scale(float scaleX, float scaleY)
         {
+            Logger.LogInformation($"Scaling image to x '{scaleX}' and y '{scaleY}'");
             var result = LeptonicaApi.Native.pixScale(_handle, scaleX, scaleY);
 
-            if (result == IntPtr.Zero) throw new InvalidOperationException("Failed to scale pix.");
+            if (result == IntPtr.Zero)
+            {
+                const string message = "Failed to scale image";
+                Logger.LogError(message);
+                throw new InvalidOperationException(message);
+            }
+
+            Logger.LogInformation("Image scaled");
 
             return new Image(result);
-        }
-        #endregion
-
-        #region Dispose
-        protected override void Dispose(bool disposing)
-        {
-            var tmpHandle = _handle.Handle;
-            LeptonicaApi.Native.pixDestroy(ref tmpHandle);
-            _handle = new HandleRef(this, IntPtr.Zero);
-        }
-        #endregion
-
-        #region Constructor
-        /// <summary>
-        ///     Creates a new pix instance using an existing handle to a pix structure.
-        /// </summary>
-        /// <remarks>
-        ///     Note that the resulting instance takes ownership of the data structure.
-        /// </remarks>
-        /// <param name="handle"></param>
-        private Image(IntPtr handle)
-        {
-            if (handle == IntPtr.Zero) throw new ArgumentNullException(nameof(handle));
-
-            _handle = new HandleRef(this, handle);
-            Width = LeptonicaApi.Native.pixGetWidth(_handle);
-            Height = LeptonicaApi.Native.pixGetHeight(_handle);
-            Depth = LeptonicaApi.Native.pixGetDepth(_handle);
-
-            var colorMapHandle = LeptonicaApi.Native.pixGetColormap(_handle);
-            if (colorMapHandle != IntPtr.Zero) _colormap = new Colormap(colorMapHandle);
         }
         #endregion
 
@@ -357,64 +457,46 @@ namespace TesseractOCR.Pix
         public static Image Create(int width, int height, int depth)
         {
             if (!AllowedDepths.Contains(depth))
-                throw new ArgumentException("Depth must be 1, 2, 4, 8, 16, or 32 bits.", nameof(depth));
+            {
+                const string message = "Depth must be 1, 2, 4, 8, 16, or 32 bits";
+                Logger.LogError(message);
+                throw new ArgumentException(message, nameof(depth));
+            }
 
-            if (width <= 0) throw new ArgumentException("Width must be greater than zero", nameof(width));
-            if (height <= 0) throw new ArgumentException("Height must be greater than zero", nameof(height));
+            if (width <= 0)
+            {
+                const string message = "Width must be greater than zero";
+                Logger.LogError(message);
+                throw new ArgumentException(message, nameof(width));
+            }
+
+            if (height <= 0)
+            {
+                const string message = "Height must be greater than zero";
+                Logger.LogError(message);
+                throw new ArgumentException(message, nameof(width));
+            }
 
             var handle = LeptonicaApi.Native.pixCreate(width, height, depth);
+
             if (handle == IntPtr.Zero)
-                throw new InvalidOperationException(
-                    "Failed to create pix, this normally occurs because the requested image size is too large, please check Standard Error Output.");
+            {
+                const string message = "Failed to create pix, this normally occurs because the requested image size is too large, please check Standard Error Output";
+                Logger.LogError(message);
+                throw new InvalidOperationException(message);
+            }
 
             return Create(handle);
         }
 
         public static Image Create(IntPtr handle)
         {
-            if (handle == IntPtr.Zero)
-                throw new ArgumentException("Pix handle must not be zero (null).", nameof(handle));
+            if (handle != IntPtr.Zero) 
+                return new Image(handle);
 
-            return new Image(handle);
-        }
-        #endregion
-
-        #region LoadFromFile
-        public static Image LoadFromFile(string filename)
-        {
-            var pixHandle = LeptonicaApi.Native.pixRead(filename);
-            if (pixHandle == IntPtr.Zero) throw new IOException($"Failed to load image '{filename}'.");
-            var r = Create(pixHandle);
-            r.ImageName = filename;
-            return r;
-        }
-        #endregion
-
-        #region LoadFromMemory
-        public static Image LoadFromMemory(byte[] bytes)
-        {
-            IntPtr handle;
-            fixed (byte* ptr = bytes)
-            {
-                handle = LeptonicaApi.Native.pixReadMem(ptr, bytes.Length);
-            }
-
-            if (handle == IntPtr.Zero) throw new IOException("Failed to load image from memory.");
-            return Create(handle);
-        }
-        #endregion
-
-        #region LoadTiffFromMemory
-        public static Image LoadTiffFromMemory(byte[] bytes)
-        {
-            IntPtr handle;
-            fixed (byte* ptr = bytes)
-            {
-                handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, 0);
-            }
-
-            if (handle == IntPtr.Zero) throw new IOException("Failed to load image from memory.");
-            return Create(handle);
+            const string message = "Pix handle must not be zero (null)";
+            Logger.LogError(message);
+            throw new ArgumentException(message, nameof(handle));
         }
         #endregion
 
@@ -468,20 +550,31 @@ namespace TesseractOCR.Pix
         /// <param name="smoothy"> smoothY Half-height of convolution kernel applied to threshold array: use 0 for no smoothing.</param>
         /// <param name="scorefract"> scoreFraction Fraction of the max Otsu score; typ. 0.1 (use 0.0 for standard Otsu).</param>
         /// <returns>The binarized image.</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image BinarizeOtsuAdaptiveThreshold(int sx, int sy, int smoothx, int smoothy, float scorefract)
         {
             Guard.Verify(Depth == 8, "Image must have a depth of 8 bits per pixel to be binarized using Otsu.");
             Guard.Require(nameof(sx), sx >= 16, "The sx parameter must be greater than or equal to 16");
             Guard.Require(nameof(sy), sy >= 16, "The sy parameter must be greater than or equal to 16");
 
-            var result = LeptonicaApi.Native.pixOtsuAdaptiveThreshold(_handle, sx, sy, smoothx, smoothy, scorefract,
-                out var ppixth, out var ppixd);
+            Logger.LogInformation("Binarizing image with Otsu adaptive threshold");
+
+            var result = LeptonicaApi.Native.pixOtsuAdaptiveThreshold(_handle, sx, sy, smoothx, smoothy, scorefract, out var ppixth, out var ppixd);
 
             if (ppixth != IntPtr.Zero)
-                // free memory held by ppixth, an array of threshold values found for each tile
+            {
+                // Free memory held by ppixth, an array of threshold values found for each tile
                 LeptonicaApi.Native.pixDestroy(ref ppixth);
+            }
 
-            if (result == 1) throw new TesseractException("Failed to binarize image.");
+            if (result == 1)
+            {
+                const string message = "Failed to binarize image with Otsu adaptive threshold";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation("Image binarized with Otsu adaptive threshold");
 
             return new Image(ppixd);
         }
@@ -528,7 +621,8 @@ namespace TesseractOCR.Pix
         ///     around 0.35.
         /// </param>
         /// <param name="addborder">If <c>True</c> add a border of width (<paramref name="whsize" /> + 1) on all sides.</param>
-        /// <returns>The binarized image.</returns>
+        /// <returns>The binarized image</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image BinarizeSauvola(int whsize, float factor, bool addborder)
         {
             Guard.Verify(Depth == 8, "Source image must be 8bpp");
@@ -538,6 +632,8 @@ namespace TesseractOCR.Pix
             Guard.Require(nameof(whsize), whsize < maxWhSize, "The window half-width (whsize) must be less than {0} for this image.", maxWhSize);
             Guard.Require(nameof(factor), factor >= 0, "Factor must be greater than zero (0).");
 
+            Logger.LogInformation("Binarizing image with Sauvola");
+
             var result = LeptonicaApi.Native.pixSauvolaBinarize(_handle, whsize, factor, addborder ? 1 : 0, out var ppixm,
                 out var ppixsd, out var ppixth, out var ppixd);
 
@@ -545,7 +641,15 @@ namespace TesseractOCR.Pix
             if (ppixm != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixm);
             if (ppixsd != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixsd);
             if (ppixth != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixth);
-            if (result == 1) throw new TesseractException("Failed to binarize image.");
+            
+            if (result == 1)
+            {
+                const string message = "Failed to binarize image with Sauvola";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation("Image binarized with Sauvola");
 
             return new Image(ppixd);
         }
@@ -572,23 +676,32 @@ namespace TesseractOCR.Pix
         /// </param>
         /// <param name="nx">The number of tiles to subdivide the source image into on the x-axis.</param>
         /// <param name="ny">The number of tiles to subdivide the source image into on the y-axis.</param>
-        /// <returns>THe binarized image.</returns>
+        /// <returns>THe binarized image</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image BinarizeSauvolaTiled(int whsize, float factor, int nx, int ny)
         {
             Guard.Verify(Depth == 8, "Source image must be 8bpp");
             Guard.Verify(Colormap == null, "Source image must not be color mapped.");
             Guard.Require(nameof(whsize), whsize >= 2, "The window half-width (whsize) must be greater than 2.");
             var maxWhSize = Math.Min((Width - 3) / 2, (Height - 3) / 2);
-            Guard.Require(nameof(whsize), whsize < maxWhSize,
-                "The window half-width (whsize) must be less than {0} for this image.", maxWhSize);
+            Guard.Require(nameof(whsize), whsize < maxWhSize, "The window half-width (whsize) must be less than {0} for this image.", maxWhSize);
             Guard.Require(nameof(factor), factor >= 0, "Factor must be greater than zero (0).");
+
+            Logger.LogInformation("Binarizing image with Sauvola local thresholding method");
 
             var result = LeptonicaApi.Native.pixSauvolaBinarizeTiled(_handle, whsize, factor, nx, ny, out var ppixth, out var ppixd);
 
             // Free memory held by other unused pix's
             if (ppixth != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixth);
 
-            if (result == 1) throw new TesseractException("Failed to binarize image.");
+            if (result == 1)
+            {
+                const string message = "Failed to binarize image with Sauvola local thresholding method";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation("Image binarized with Sauvola local thresholding method");
 
             return new Image(ppixd);
         }
@@ -596,13 +709,13 @@ namespace TesseractOCR.Pix
 
         #region ConvertRGBToGray
         /// <summary>
-        ///     Conversion from RBG to 8bpp grayscale using the specified weights. Note red, green, blue weights should add up to
-        ///     1.0.
+        ///     Conversion from RBG to 8bpp grayscale using the specified weights. Note red, green, blue weights should add up to 1.0.
         /// </summary>
         /// <param name="rwt">Red weight</param>
         /// <param name="gwt">Green weight</param>
         /// <param name="bwt">Blue weight</param>
-        /// <returns>The Grayscale pix.</returns>
+        /// <returns>The Grayscale pix</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image ConvertRGBToGray(float rwt, float gwt, float bwt)
         {
             Guard.Verify(Depth == 32, "The source image must have a depth of 32 (32 bpp).");
@@ -610,8 +723,19 @@ namespace TesseractOCR.Pix
             Guard.Require(nameof(gwt), gwt >= 0, "All weights must be greater than or equal to zero; green was not.");
             Guard.Require(nameof(bwt), bwt >= 0, "All weights must be greater than or equal to zero; blue was not.");
 
+            Logger.LogInformation("Converting RGB image to grayscale");
+
             var resultPixHandle = LeptonicaApi.Native.pixConvertRGBToGray(_handle, rwt, gwt, bwt);
-            if (resultPixHandle == IntPtr.Zero) throw new TesseractException("Failed to convert to grayscale.");
+
+            if (resultPixHandle == IntPtr.Zero)
+            {
+                const string message = "Failed to convert image to grayscale";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation("Converted RGB image to grayscale");
+
             return new Image(resultPixHandle);
         }
 
@@ -631,7 +755,8 @@ namespace TesseractOCR.Pix
         ///     The algorithm is based on Leptonica <code>lineremoval.c</code> example.
         ///     See <a href="http://www.leptonica.com/line-removal.html">line-removal</a>.
         /// </summary>
-        /// <returns>image with lines removed</returns>
+        /// <returns>Image with lines removed</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image RemoveLines()
         {
             // ReSharper disable once JoinDeclarationAndInitializer
@@ -641,12 +766,16 @@ namespace TesseractOCR.Pix
             try
             {
                 // Threshold to binary, extracting much of the lines
+
+                Logger.LogInformation("Remove lines from image");
+
                 pix1 = LeptonicaApi.Native.pixThresholdToBinary(_handle, 170);
 
                 // Find the skew angle and deskew using an interpolated
                 // rotator for anti-aliasing (to avoid jaggies)
 
                 LeptonicaApi.Native.pixFindSkew(new HandleRef(this, pix1), out var angle, out _);
+
                 pix2 = LeptonicaApi.Native.pixRotateAMGray(_handle, Deg2Rad * angle, 255);
 
                 // Extract the lines to be removed
@@ -656,11 +785,9 @@ namespace TesseractOCR.Pix
                 pix4 = LeptonicaApi.Native.pixErodeGray(new HandleRef(this, pix3), 1, 5);
 
                 // Clean the background of those lines
-                pix5 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero),
-                    new HandleRef(this, pix4), 210, 255);
+                pix5 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4), 210, 255);
 
-                pix6 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero),
-                    new HandleRef(this, pix5), 200, 0);
+                pix6 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix5), 200, 0);
 
                 // Get paint-through mask for changed pixels */
                 pix7 = LeptonicaApi.Native.pixThresholdToBinary(new HandleRef(this, pix6), 210);
@@ -670,14 +797,19 @@ namespace TesseractOCR.Pix
                 LeptonicaApi.Native.pixInvert(new HandleRef(this, pix6), new HandleRef(this, pix6));
 
                 pix8 = LeptonicaApi.Native.pixAddGray(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix2), new HandleRef(this, pix6));
-
+                
                 pix9 = LeptonicaApi.Native.pixOpenGray(new HandleRef(this, pix8), 1, 9);
 
-                LeptonicaApi.Native.pixCombineMasked(new HandleRef(this, pix8), new HandleRef(this, pix9),
-                    new HandleRef(this, pix7));
+                LeptonicaApi.Native.pixCombineMasked(new HandleRef(this, pix8), new HandleRef(this, pix9), new HandleRef(this, pix7));
 
                 if (pix8 == IntPtr.Zero)
-                    throw new TesseractException("Failed to remove lines from image.");
+                {
+                    const string message = "Failed to remove lines from image";
+                    Logger.LogError(message);
+                    throw new LeptonicaException(message);
+                }
+
+                Logger.LogInformation("Lines removed from image");
 
                 return new Image(pix8);
             }
@@ -705,9 +837,12 @@ namespace TesseractOCR.Pix
         /// </summary>
         /// <param name="selStr">hit-miss sels in 2D layout; SEL_STR2 and SEL_STR3 are predefined values</param>
         /// <param name="selSize">2 for 2x2, 3 for 3x3</param>
-        /// <returns></returns>
+        /// <returns>Despeckled image</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image Despeckle(string selStr, int selSize)
         {
+            Logger.LogInformation("Despeckle image");
+
             /*  Normalize for rapidly varying background */
             var pix1 = LeptonicaApi.Native.pixBackgroundNormFlex(_handle, 7, 7, 1, 1, 10);
 
@@ -736,8 +871,15 @@ namespace TesseractOCR.Pix
             LeptonicaApi.Native.pixDestroy(ref pix4);
             LeptonicaApi.Native.pixDestroy(ref pix5);
 
-            if (pix6 == IntPtr.Zero) throw new TesseractException("Failed to despeckle image.");
+            if (pix6 == IntPtr.Zero)
+            {
+                const string message = "Failed to despeckle image";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
 
+            Logger.LogInformation("Image despeckled");
+            
             return new Image(pix6);
         }
         #endregion
@@ -752,7 +894,8 @@ namespace TesseractOCR.Pix
         ///     angle is large enough and there is sufficient confidence,
         ///     it returns a deskewed image; otherwise, it returns a clone.
         /// </remarks>
-        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
+        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image Deskew()
         {
             return Deskew(DefaultBinarySearchReduction, out _);
@@ -760,7 +903,7 @@ namespace TesseractOCR.Pix
 
         /// <summary>
         ///     Determines the scew angle and if confidence is high enough returns the descewed image as the result, otherwise
-        ///     returns clone of original image.
+        ///     returns clone of original image
         /// </summary>
         /// <remarks>
         ///     This binarizes if necessary and finds the skew angle.  If the
@@ -768,7 +911,8 @@ namespace TesseractOCR.Pix
         ///     it returns a deskewed image; otherwise, it returns a clone.
         /// </remarks>
         /// <param name="scew">The scew angle and confidence</param>
-        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
+        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image Deskew(out Scew scew)
         {
             return Deskew(DefaultBinarySearchReduction, out scew);
@@ -776,16 +920,17 @@ namespace TesseractOCR.Pix
 
         /// <summary>
         ///     Determines the scew angle and if confidence is high enough returns the descewed image as the result, otherwise
-        ///     returns clone of original image.
+        ///     returns clone of original image
         /// </summary>
         /// <remarks>
         ///     This binarizes if necessary and finds the skew angle.  If the
         ///     angle is large enough and there is sufficient confidence,
-        ///     it returns a deskewed image; otherwise, it returns a clone.
+        ///     it returns a deskewed image; otherwise, it returns a clone
         /// </remarks>
-        /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or 4.</param>
+        /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or .</param>
         /// <param name="scew">The scew angle and confidence</param>
-        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
+        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image Deskew(int redSearch, out Scew scew)
         {
             return Deskew(ScewSweep.Default, redSearch, DefaultBinaryThreshold, out scew);
@@ -793,7 +938,7 @@ namespace TesseractOCR.Pix
 
         /// <summary>
         ///     Determines the scew angle and if confidence is high enough returns the descewed image as the result, otherwise
-        ///     returns clone of original image.
+        ///     returns clone of original image
         /// </summary>
         /// <remarks>
         ///     This binarizes if necessary and finds the skew angle.  If the
@@ -804,14 +949,23 @@ namespace TesseractOCR.Pix
         /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or 4.</param>
         /// <param name="thresh">The threshold value used for binarizing the image.</param>
         /// <param name="scew">The scew angle and confidence</param>
-        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix.</returns>
+        /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
         public Image Deskew(ScewSweep sweep, int redSearch, int thresh, out Scew scew)
         {
+            Logger.LogInformation("Getting image scew");
+            
             var resultPixHandle = LeptonicaApi.Native.pixDeskewGeneral(_handle, sweep.Reduction, sweep.Range,
                 sweep.Delta, redSearch, thresh, out var pAngle, out var pConf);
 
-            if (resultPixHandle == IntPtr.Zero) throw
-                new TesseractException("Failed to deskew image.");
+            if (resultPixHandle == IntPtr.Zero)
+            {
+                const string message = "Failed to deskew image";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation($"Image scew '{pAngle}', confidence '{pConf}'");
 
             scew = new Scew(pAngle, pConf);
             return new Image(resultPixHandle);
@@ -846,28 +1000,33 @@ namespace TesseractOCR.Pix
         /// <param name="fillColor">The fill color to use for pixels that are brought in from the outside.</param>
         /// <param name="width">The original width; use 0 to avoid embedding</param>
         /// <param name="height">The original height; use 0 to avoid embedding</param>
-        /// <returns>The image rotated around it's centre.</returns>
-        public Image Rotate(float angleInRadians, RotationMethod method = RotationMethod.AreaMap,
-            RotationFill fillColor = RotationFill.White, int? width = null, int? height = null)
+        /// <returns>The image rotated around it's centre</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
+        public Image Rotate(float angleInRadians, RotationMethod method = RotationMethod.AreaMap, RotationFill fillColor = RotationFill.White, int? width = null, int? height = null)
         {
             if (width == null) width = Width;
             if (height == null) height = Height;
 
-            if (Math.Abs(angleInRadians) < VerySmallAngle) return Clone();
-
-            IntPtr resultHandle;
+            if (Math.Abs(angleInRadians) < VerySmallAngle) 
+                return Clone();
 
             var rotations = 2 * angleInRadians / Math.PI;
-            if (Math.Abs(rotations - Math.Floor(rotations)) < VerySmallAngle)
-                // Handle special case of orthogonal rotations (90, 180, 270)
-                resultHandle = LeptonicaApi.Native.pixRotateOrth(_handle, (int)rotations);
-            else
-                // Handle general case
-                resultHandle = LeptonicaApi.Native.pixRotate(_handle, angleInRadians, method, fillColor, width.Value,
-                    height.Value);
 
-            if (resultHandle == IntPtr.Zero) throw new LeptonicaException("Failed to rotate image around its centre.");
+            Logger.LogInformation("Rotating image around its centre");
 
+            var resultHandle = Math.Abs(rotations - Math.Floor(rotations)) < VerySmallAngle
+                ? LeptonicaApi.Native.pixRotateOrth(_handle, (int)rotations)
+                : LeptonicaApi.Native.pixRotate(_handle, angleInRadians, method, fillColor, width.Value, height.Value);
+
+            if (resultHandle == IntPtr.Zero)
+            {
+                const string message = "Failed to rotate image around its centre";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation("Image rotated around its centre");
+            
             return new Image(resultHandle);
         }
         #endregion
@@ -877,13 +1036,33 @@ namespace TesseractOCR.Pix
         ///     90 degree rotation.
         /// </summary>
         /// <param name="direction">1 = clockwise,  -1 = counter-clockwise</param>
-        /// <returns>rotated image</returns>
-        public Image Rotate90(int direction)
+        /// <returns>Rotated image</returns>
+        /// <exception cref="LeptonicaException">Raised when something fails</exception>
+        public Image Rotate90(RotationDirection direction)
         {
-            var resultHandle = LeptonicaApi.Native.pixRotate90(_handle, direction);
+            var resultHandle = LeptonicaApi.Native.pixRotate90(_handle, (int) direction);
 
-            if (resultHandle == IntPtr.Zero) throw new LeptonicaException("Failed to rotate image.");
+            Logger.LogInformation($"Rotating image 90 degrees {direction}");
+
+            if (resultHandle == IntPtr.Zero)
+            {
+                const string message = "Failed to rotate image 90 degrees";
+                Logger.LogError(message);
+                throw new LeptonicaException(message);
+            }
+
+            Logger.LogInformation($"Image rotated 90 degrees {direction}");
+
             return new Image(resultHandle);
+        }
+        #endregion
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            var tmpHandle = _handle.Handle;
+            LeptonicaApi.Native.pixDestroy(ref tmpHandle);
+            _handle = new HandleRef(this, IntPtr.Zero);
         }
         #endregion
     }

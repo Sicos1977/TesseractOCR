@@ -172,7 +172,7 @@ namespace TesseractOCR.Renderers
             {
                 if (!disposing) return;
 
-                Guard.Verify(Equals(_renderer._currentDocumentHandle, this), "Expected the Result Render's active document to be this document.");
+                Guard.Verify(Equals(_renderer._currentDocumentHandle, this), "Expected the Result Render's active document to be this document");
 
                 // End the renderer
                 foreach (var child in _children)
