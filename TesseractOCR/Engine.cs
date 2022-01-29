@@ -63,20 +63,20 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
         /// <param name="language">The <see cref="Language"/> to load</param>
-        public Engine(string datapath, Language language) : this(datapath, language, EngineMode.Default, Array.Empty<string>(), new Dictionary<string, object>(), false)
+        public Engine(string dataPath, Language language) : this(dataPath, language, EngineMode.Default, Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -86,18 +86,18 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         ///     <para>
         ///         Note: That the config files MUST be encoded without the BOM using unix end of line characters.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
@@ -106,7 +106,7 @@ namespace TesseractOCR
         ///     An optional tesseract configuration file that is encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, Language language, string configFile) : this(datapath, language, EngineMode.Default, configFile != null ? new[] { configFile } : Array.Empty<string>(), new Dictionary<string, object>(), false)
+        public Engine(string dataPath, Language language, string configFile) : this(dataPath, language, EngineMode.Default, configFile != null ? new[] { configFile } : Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -116,15 +116,15 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
@@ -133,7 +133,7 @@ namespace TesseractOCR
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, Language language, IEnumerable<string> configFiles) : this(datapath, language, EngineMode.Default, configFiles, new Dictionary<string, object>(), false)
+        public Engine(string dataPath, Language language, IEnumerable<string> configFiles) : this(dataPath, language, EngineMode.Default, configFiles, new Dictionary<string, object>(), false)
         {
         }
 
@@ -142,21 +142,21 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
         /// <param name="language">The <see cref="Language"/> to load</param>
         /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine.</param>
-        public Engine(string datapath, Language language, EngineMode engineMode) : this(datapath, language, engineMode, Array.Empty<string>(), new Dictionary<string, object>(), false)
+        public Engine(string dataPath, Language language, EngineMode engineMode) : this(dataPath, language, engineMode, Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -166,18 +166,18 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         ///     <para>
         ///         Note: That the config files MUST be encoded without the BOM using unix end of line characters.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
@@ -187,7 +187,7 @@ namespace TesseractOCR
         ///     An optional tesseract configuration file that is encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, Language language, EngineMode engineMode, string configFile) : this(datapath, language, engineMode, configFile != null ? new[] { configFile } : Array.Empty<string>(), new Dictionary<string, object>(), false)
+        public Engine(string dataPath, Language language, EngineMode engineMode, string configFile) : this(dataPath, language, engineMode, configFile != null ? new[] { configFile } : Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
@@ -197,15 +197,15 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
@@ -215,7 +215,7 @@ namespace TesseractOCR
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public Engine(string datapath, Language language, EngineMode engineMode, IEnumerable<string> configFiles) : this(datapath, language, engineMode, configFiles, new Dictionary<string, object>(), false)
+        public Engine(string dataPath, Language language, EngineMode engineMode, IEnumerable<string> configFiles) : this(dataPath, language, engineMode, configFiles, new Dictionary<string, object>(), false)
         {
         }
 
@@ -225,15 +225,15 @@ namespace TesseractOCR
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         The <paramref name="datapath" /> parameter should point to the directory that contains the 'tessdata' folder
+        ///         The <paramref name="dataPath" /> parameter should point to the directory that contains the 'tessdata' folder
         ///         for example if your tesseract language data is installed in <c>C:\Tesseract\tessdata</c> the value of datapath
         ///         should
         ///         be <c>C:\Tesseract</c>. Note that tesseract will use the value of the <c>TESSDATA_PREFIX</c> environment
         ///         variable if defined,
-        ///         effectively ignoring the value of <paramref name="datapath" /> parameter.
+        ///         effectively ignoring the value of <paramref name="dataPath" /> parameter.
         ///     </para>
         /// </remarks>
-        /// <param name="datapath">
+        /// <param name="dataPath">
         ///     The path to the parent directory that contains the 'tessdata' directory, ignored if the
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
@@ -245,12 +245,12 @@ namespace TesseractOCR
         /// </param>
         /// <param name="initialOptions"></param>
         /// <param name="setOnlyNonDebugVariables"></param>
-        public Engine(string datapath, Language language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialOptions, bool setOnlyNonDebugVariables)
+        public Engine(string dataPath, Language language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialOptions, bool setOnlyNonDebugVariables)
         {
             DefaultPageSegMode = PageSegMode.Auto;
             _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
-            Initialize(datapath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
+            Initialize(dataPath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
         }
         #endregion
 
