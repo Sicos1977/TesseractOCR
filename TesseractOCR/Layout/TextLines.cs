@@ -22,28 +22,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
-using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Layout
 {
     /// <summary>
     ///     All the <see cref="TextLines"/> in the <see cref="Paragraph"/>
     /// </summary>
-    public sealed class TextLines : IEnumerable<TextLine>
+    public sealed class TextLines : EnumerableBase, IEnumerable<TextLine>
     {
-        #region Fields
-        /// <summary>
-        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
-        /// </summary>
-        private readonly HandleRef _iteratorHandle;
-        #endregion
-
         #region GetEnumerator
         /// <inheritdoc />
         public IEnumerator<TextLine> GetEnumerator()
         {
-            return new TextLine(_iteratorHandle);
+            return new TextLine(IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -54,9 +45,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal TextLines(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal TextLines(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            _iteratorHandle = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
         }
         #endregion
     }
@@ -80,13 +77,19 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="Words"/> in this <see cref="TextLine"/>
         /// </summary>
-        public Words Words => new Words(IteratorHandleRef);
+        public Words Words => new Words(IteratorHandleRef, ImageHandleRef);
         #endregion
 
         #region Constructor
-        internal TextLine(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal TextLine(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            IteratorHandleRef = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.TextLine;
         }
         #endregion

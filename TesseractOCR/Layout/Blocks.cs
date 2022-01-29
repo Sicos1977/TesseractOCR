@@ -33,11 +33,13 @@ namespace TesseractOCR.Layout
     public sealed class Blocks : EnumerableBase, IEnumerable<Block>
     {
         #region GetEnumerator
+        /// <inheritdoc />
         public IEnumerator<Block> GetEnumerator()
         {
             return new Block(IteratorHandleRef, ImageHandleRef);
         }
 
+        /// <inheritdoc />
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -81,7 +83,7 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="Paragraphs"/> in this <see cref="Block"/>
         /// </summary>
-        public Paragraphs Paragraphs => new Paragraphs(IteratorHandleRef);
+        public Paragraphs Paragraphs => new Paragraphs(IteratorHandleRef, ImageHandleRef);
         #endregion
 
         #region Constructor

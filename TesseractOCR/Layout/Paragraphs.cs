@@ -34,7 +34,7 @@ namespace TesseractOCR.Layout
         /// <inheritdoc />
         public IEnumerator<Paragraph> GetEnumerator()
         {
-            return new Paragraph(IteratorHandleRef);
+            return new Paragraph(IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -45,6 +45,11 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
         internal Paragraphs(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
             IteratorHandleRef = iteratorHandleRef;
@@ -72,13 +77,19 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="TextLines"/> in this <see cref="Paragraph"/>
         /// </summary>
-        public TextLines TextLines => new TextLines(IteratorHandleRef);
+        public TextLines TextLines => new TextLines(IteratorHandleRef, ImageHandleRef);
         #endregion
 
         #region Constructor
-        internal Paragraph(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal Paragraph(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            IteratorHandleRef = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Paragraph;
         }
         #endregion

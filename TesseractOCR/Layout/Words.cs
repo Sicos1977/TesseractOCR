@@ -25,27 +25,19 @@ using System.Runtime.InteropServices;
 using System.Text;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Layout
 {
     /// <summary>
     ///     All the <see cref="Words"/> in the <see cref="TextLine"/>
     /// </summary>
-    public sealed class Words : IEnumerable<Word>
+    public sealed class Words : EnumerableBase, IEnumerable<Word>
     {
-        #region Fields
-        /// <summary>
-        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
-        /// </summary>
-        private readonly HandleRef _iteratorHandle;
-        #endregion
-
         #region GetEnumerator
         /// <inheritdoc />
         public IEnumerator<Word> GetEnumerator()
         {
-            return new Word(_iteratorHandle);
+            return new Word(IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -56,9 +48,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal Words(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal Words(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            _iteratorHandle = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
         }
         #endregion
     }
@@ -82,7 +80,7 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="Symbols"/> in this <see cref="Word"/>
         /// </summary>
-        public Symbols Symbols => new Symbols(IteratorHandleRef);
+        public Symbols Symbols => new Symbols(IteratorHandleRef, ImageHandleRef);
 
         /// <summary>
         ///     Returns <c>true</c> when the <see cref="Word"/> is returned from a Tesseract dictionary
@@ -139,9 +137,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal Word(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal Word(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            IteratorHandleRef = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Word;
         }
         #endregion

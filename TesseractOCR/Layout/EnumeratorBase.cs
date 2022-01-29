@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
@@ -46,7 +43,7 @@ namespace TesseractOCR.Layout
         public float Confidence => TessApi.Native.ResultIteratorGetConfidence(IteratorHandleRef, PageIteratorLevel);
 
         /// <summary>
-        ///     Returns a binary (gray) <see cref="Pix.Image"/> at the current <see cref="Level"/>
+        ///     Returns a binary (gray) <see cref="Pix.Image"/> at the current <see cref="PageIteratorLevel"/>
         /// </summary>
         /// <returns>The <see cref="Pix.Image"/> or <c>null</c> when it fails</returns>
         public Image BinaryImage => Image.Create(TessApi.Native.PageIteratorGetBinaryImage(IteratorHandleRef, PageIteratorLevel));

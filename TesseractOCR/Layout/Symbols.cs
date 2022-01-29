@@ -23,27 +23,20 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
+// ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR.Layout
 {
     /// <summary>
     ///     All the <see cref="Symbols"/> in the <see cref="Word"/>
     /// </summary>
-    public sealed class Symbols : IEnumerable<Symbol>
+    public sealed class Symbols : EnumerableBase, IEnumerable<Symbol>
     {
-        #region Fields
-        /// <summary>
-        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
-        /// </summary>
-        private readonly HandleRef _iteratorHandle;
-        #endregion
-
         #region GetEnumerator
         /// <inheritdoc />
         public IEnumerator<Symbol> GetEnumerator()
         {
-            return new Symbol(_iteratorHandle);
+            return new Symbol(IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -54,9 +47,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal Symbols(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal Symbols(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            _iteratorHandle = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
         }
         #endregion
     }
@@ -101,9 +100,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal Symbol(HandleRef iteratorHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal Symbol(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            IteratorHandleRef = iteratorHandle;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Symbol;
         }
         #endregion
