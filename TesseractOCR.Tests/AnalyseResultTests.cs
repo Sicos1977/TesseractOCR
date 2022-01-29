@@ -17,7 +17,7 @@ namespace Tesseract.Tests
         #endregion
 
         #region Setup\TearDown
-        private TesseractEngine _engine;
+        private Engine _engine;
 
         [TestCleanup]
         public void Dispose()

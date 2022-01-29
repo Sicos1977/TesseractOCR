@@ -38,7 +38,7 @@ namespace TesseractOCR
     /// <summary>
     ///     The tesseract OCR engine.
     /// </summary>
-    public class TesseractEngine : DisposableBase
+    public class Engine : DisposableBase
     {
         #region Fields
         private HandleRef _handle;
@@ -60,7 +60,7 @@ namespace TesseractOCR
 
         #region Constructors
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> using the <see cref="EngineMode.Default" /> mode.
+        ///     Creates a new instance of <see cref="Engine" /> using the <see cref="EngineMode.Default" /> mode.
         /// </summary>
         /// <remarks>
         ///     <para>
@@ -77,13 +77,13 @@ namespace TesseractOCR
         ///     <c>TESSDATA_PREFIX</c> environment variable is defined.
         /// </param>
         /// <param name="language">The language to load, for example 'eng' for English.</param>
-        public TesseractEngine(string datapath, string language) : this(datapath, language, EngineMode.Default,
+        public Engine(string datapath, string language) : this(datapath, language, EngineMode.Default,
             Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> with the specified <paramref name="configFile" />
+        ///     Creates a new instance of <see cref="Engine" /> with the specified <paramref name="configFile" />
         ///     using the <see cref="EngineMode.Default">Default Engine Mode</see>.
         /// </summary>
         /// <remarks>
@@ -108,14 +108,14 @@ namespace TesseractOCR
         ///     An optional tesseract configuration file that is encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public TesseractEngine(string datapath, string language, string configFile)
+        public Engine(string datapath, string language, string configFile)
             : this(datapath, language, EngineMode.Default, configFile != null ? new[] { configFile } : Array.Empty<string>(),
                 new Dictionary<string, object>(), false)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> with the specified <paramref name="configFiles" />
+        ///     Creates a new instance of <see cref="Engine" /> with the specified <paramref name="configFiles" />
         ///     using the <see cref="EngineMode.Default">Default Engine Mode</see>.
         /// </summary>
         /// <remarks>
@@ -137,13 +137,13 @@ namespace TesseractOCR
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public TesseractEngine(string datapath, string language, IEnumerable<string> configFiles)
+        public Engine(string datapath, string language, IEnumerable<string> configFiles)
             : this(datapath, language, EngineMode.Default, configFiles, new Dictionary<string, object>(), false)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> with the specified <paramref name="engineMode" />.
+        ///     Creates a new instance of <see cref="Engine" /> with the specified <paramref name="engineMode" />.
         /// </summary>
         /// <remarks>
         ///     <para>
@@ -161,13 +161,13 @@ namespace TesseractOCR
         /// </param>
         /// <param name="language">The language to load, for example 'eng' for English.</param>
         /// <param name="engineMode">The <see cref="EngineMode" /> value to use when initializing the tesseract engine.</param>
-        public TesseractEngine(string datapath, string language, EngineMode engineMode)
+        public Engine(string datapath, string language, EngineMode engineMode)
             : this(datapath, language, engineMode, Array.Empty<string>(), new Dictionary<string, object>(), false)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> with the specified <paramref name="engineMode" /> and
+        ///     Creates a new instance of <see cref="Engine" /> with the specified <paramref name="engineMode" /> and
         ///     <paramref name="configFile" />.
         /// </summary>
         /// <remarks>
@@ -193,14 +193,14 @@ namespace TesseractOCR
         ///     An optional tesseract configuration file that is encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public TesseractEngine(string datapath, string language, EngineMode engineMode, string configFile)
+        public Engine(string datapath, string language, EngineMode engineMode, string configFile)
             : this(datapath, language, engineMode, configFile != null ? new[] { configFile } : Array.Empty<string>(),
                 new Dictionary<string, object>(), false)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> with the specified <paramref name="engineMode" /> and
+        ///     Creates a new instance of <see cref="Engine" /> with the specified <paramref name="engineMode" /> and
         ///     <paramref name="configFiles" />.
         /// </summary>
         /// <remarks>
@@ -223,13 +223,13 @@ namespace TesseractOCR
         ///     An optional sequence of tesseract configuration files to load, encoded using UTF8 without BOM
         ///     with Unix end of line characters you can use an advanced text editor such as Notepad++ to accomplish this.
         /// </param>
-        public TesseractEngine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles)
+        public Engine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles)
             : this(datapath, language, engineMode, configFiles, new Dictionary<string, object>(), false)
         {
         }
 
         /// <summary>
-        ///     Creates a new instance of <see cref="TesseractEngine" /> with the specified <paramref name="engineMode" /> and
+        ///     Creates a new instance of <see cref="Engine" /> with the specified <paramref name="engineMode" /> and
         ///     <paramref name="configFiles" />.
         /// </summary>
         /// <remarks>
@@ -254,7 +254,7 @@ namespace TesseractOCR
         /// </param>
         /// <param name="initialOptions"></param>
         /// <param name="setOnlyNonDebugVariables"></param>
-        public TesseractEngine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles,
+        public Engine(string datapath, string language, EngineMode engineMode, IEnumerable<string> configFiles,
             IDictionary<string, object> initialOptions, bool setOnlyNonDebugVariables)
         {
             Guard.RequireNotNullOrEmpty("language", language);

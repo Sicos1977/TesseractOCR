@@ -11,7 +11,7 @@ namespace Tesseract.Tests
     public class ResultTests : TesseractTestBase
     {
         #region Test setup and teardown
-        private TesseractEngine _engine;
+        private Engine _engine;
 
         [TestInitialize]
         public void Initialize()

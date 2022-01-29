@@ -85,9 +85,9 @@ namespace TesseractOCR
 
         #region Properties
         /// <summary>
-        ///     Returns a reference to the <see cref="TesseractEngine"/>
+        ///     Returns a reference to the <see cref="TesseractOCR.Engine"/>
         /// </summary>
-        public TesseractEngine Engine { get; }
+        public Engine Engine { get; }
 
         /// <summary>
         ///     Returns the <see cref="Pix"/> <see cref="Image" /> that is being ocr'd
@@ -302,14 +302,14 @@ namespace TesseractOCR
         /// <summary>
         ///     Creates the <see cref="Page"/> object
         /// </summary>
-        /// <param name="engine"><see cref="TesseractEngine"/></param>
+        /// <param name="engine"><see cref="TesseractOCR.Engine"/></param>
         /// <param name="image">The <see cref="Pix"/> <see cref="Image" /> that is being ocr'd</param>
         /// <param name="imageName">The name of the <see cref="Image" /> being ocr'd</param>
         /// <param name="regionOfInterest">The current region of interest being parsed</param>
         /// <param name="segmentMode">The <see cref="PageSegMode"/> used to OCR the specified <see cref="Image" /></param>
         /// <param name="number">The page number</param>
         internal Page(
-            TesseractEngine engine,
+            Engine engine,
             Pix.Image image,
             string imageName,
             Rect regionOfInterest,

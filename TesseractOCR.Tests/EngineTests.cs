@@ -566,7 +566,7 @@ namespace Tesseract.Tests
         [TestMethod]
         public void Initialise_CanLoadConfigFile()
         {
-            using (var engine = new TesseractEngine(DataPath, "eng", EngineMode.Default, "bazzar"))
+            using (var engine = new Engine(DataPath, "eng", EngineMode.Default, "bazzar"))
             {
                 // verify that the config file was loaded
                 if (engine.TryGetStringVariable("user_words_suffix", out var userPatternsSuffix))
@@ -595,7 +595,7 @@ namespace Tesseract.Tests
             {
                 { "load_system_dawg", false }
             };
-            using (var engine = new TesseractEngine(DataPath, "eng", EngineMode.Default, Enumerable.Empty<string>(),
+            using (var engine = new Engine(DataPath, "eng", EngineMode.Default, Enumerable.Empty<string>(),
                        initVars, false))
             {
                 if (!engine.TryGetBoolVariable("load_system_dawg", out var loadSystemDawg))
@@ -607,7 +607,7 @@ namespace Tesseract.Tests
         [Ignore("Missing russian language data")]
         public static void Initialise_Rus_ShouldStartEngine()
         {
-            using (new TesseractEngine(DataPath, "rus", EngineMode.Default))
+            using (new Engine(DataPath, "rus", EngineMode.Default))
             {
             }
         }
@@ -617,7 +617,7 @@ namespace Tesseract.Tests
         {
             const string dataPath = "tessdata";
 
-            using (new TesseractEngine(dataPath, "eng", EngineMode.Default))
+            using (new Engine(dataPath, "eng", EngineMode.Default))
             {
             }
         }
@@ -626,7 +626,7 @@ namespace Tesseract.Tests
         [ExpectedException(typeof(TesseractException))]
         public void Initialize_ShouldThrowErrorIfDatapathNotCorrect()
         {
-            using (new TesseractEngine(AbsolutePath(@"./IDontExist"), "eng", EngineMode.Default))
+            using (new Engine(AbsolutePath(@"./IDontExist"), "eng", EngineMode.Default))
             {
             }
         }
