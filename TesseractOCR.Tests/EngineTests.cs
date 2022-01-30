@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
@@ -144,7 +145,7 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanGetSegmentedRegions()
         {
-            var expectedCount = 8; // number of text lines in test image
+            const int expectedCount = 8; // number of text lines in test image
 
             using var engine = CreateEngine();
             var imgPath = TestFilePath(TestImagePath);
@@ -165,24 +166,48 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanProcessEmptyPixUsingResultIterator()
         {
-            string actualResult;
-            using (var engine = CreateEngine())
+            var result = new StringBuilder();
+            using var engine = CreateEngine();
+            using var img = LoadTestPix("ocr/empty.png");
+            using var page = engine.Process(img);
+
+            foreach (var block in page.Layout)
             {
-                using (var img = LoadTestPix("ocr/empty.png"))
+                result.AppendLine($"Block text: {block.Text}");
+                result.AppendLine($"Block confidence: {block.Confidence}");
+
+                foreach (var paragraph in block.Paragraphs)
                 {
-                    using (var page = engine.Process(img))
+                    result.AppendLine($"Paragraph text: {paragraph.Text}");
+                    result.AppendLine($"Paragraph confidence: {paragraph.Confidence}");
+
+                    foreach (var textLine in paragraph.TextLines)
                     {
-                        // TODO : Fix this
-                        actualResult = "";
+                        result.AppendLine($"Text line text: {textLine.Text}");
+                        result.AppendLine($"Text line confidence: {textLine.Confidence}");
+
+                        foreach (var word in textLine.Words)
+                        {
+                            result.AppendLine($"Word text: {word.Text}");
+                            result.AppendLine($"Word confidence: {word.Confidence}");
+                            result.AppendLine($"Word is from dictionary: {word.IsFromDictionary}");
+                            result.AppendLine($"Word is numeric: {word.IsNumeric}");
+                            result.AppendLine($"Word language: {word.Language}");
+
+                            //foreach (var symbol in word.Symbols)
+                            //{
+                            //    Debug.Print($"Symbol text: {symbol.Text}");
+                            //    Debug.Print($"Symbol confidence: {symbol.Confidence}");
+                            //    Debug.Print($"Symbol is superscript: {symbol.IsSuperscript}");
+                            //    Debug.Print($"Symbol is dropcap: {symbol.IsDropcap}");
+                            //}
+                        }
                     }
                 }
+
             }
 
-            Assert.AreEqual(actualResult,
-                NormalizeNewLine(@"</word></line>
-</para>
-</block>
-"));
+            Assert.AreEqual(result.ToString(), "");
         }
 
         [TestMethod]
@@ -225,16 +250,19 @@ namespace Tesseract.Tests
                         {
                             Debug.Print($"Block text: {block.Text}");
                             Debug.Print($"Block confidence: {block.Confidence}");
+                            var test0 = block.BlockType;
 
                             foreach (var paragraph in block.Paragraphs)
                             {
                                 Debug.Print($"Paragraph text: {paragraph.Text}");
                                 Debug.Print($"Paragraph confidence: {paragraph.Confidence}");
+                                var test1 = block.BlockType;
 
                                 foreach (var textLine in paragraph.TextLines)
                                 {
                                     Debug.Print($"Text line text: {textLine.Text}");
                                     Debug.Print($"Text line confidence: {textLine.Confidence}");
+                                    var tes2 = block.BlockType;
 
                                     foreach (var word in textLine.Words)
                                     {
@@ -243,6 +271,7 @@ namespace Tesseract.Tests
                                         Debug.Print($"Word is from dictionary: {word.IsFromDictionary}");
                                         Debug.Print($"Word is numeric: {word.IsNumeric}");
                                         Debug.Print($"Word language: {word.Language}");
+                                        var test3 = block.BlockType;
 
                                         //foreach (var symbol in word.Symbols)
                                         //{
@@ -579,7 +608,7 @@ namespace Tesseract.Tests
                 { "load_system_dawg", false }
             };
             using var engine = new Engine(DataPath, Language.English, EngineMode.Default, Enumerable.Empty<string>(),
-                initVars, false, TODO);
+                initVars, false);
             if (!engine.TryGetBoolVariable("load_system_dawg", out var loadSystemDawg))
                 Assert.Fail("Failed to get 'load_system_dawg'");
             Assert.IsFalse(loadSystemDawg);

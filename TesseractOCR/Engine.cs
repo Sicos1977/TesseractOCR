@@ -600,7 +600,7 @@ namespace TesseractOCR
 
             if (TessApi.BaseApiInit(_handle, dataPath, languageString, (int)engineMode,
                     configFiles ?? new List<string>(),
-                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.True)
+                    initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.False)
             {
                 Logger.LogInformation("Tesseract engine initialized");
                 return;

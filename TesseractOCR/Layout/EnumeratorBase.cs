@@ -72,12 +72,12 @@ namespace TesseractOCR.Layout
         public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtBeginningOf(IteratorHandleRef, PageIteratorLevel) == Constants.True;
 
         /// <summary>
-        ///     Returns the text for the <see cref="Block"/>
+        ///     Returns the text for the current <see cref="PageIteratorLevel"/>
         /// </summary>
         public string Text => TessApi.ResultIteratorGetUTF8Text(IteratorHandleRef, PageIteratorLevel);
 
         /// <summary>
-        ///     Returns the confidence for the <see cref="Block"/>
+        ///     Returns the confidence for the current <see cref="PageIteratorLevel"/>
         /// </summary>
         /// <returns></returns>
         public float Confidence => TessApi.Native.ResultIteratorGetConfidence(IteratorHandleRef, PageIteratorLevel);

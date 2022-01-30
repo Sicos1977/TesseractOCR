@@ -25,7 +25,6 @@ using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Layout
 {
@@ -100,6 +99,12 @@ namespace TesseractOCR.Layout
         ///     All the available <see cref="Paragraphs"/> in this <see cref="Block"/>
         /// </summary>
         public Paragraphs Paragraphs => new Paragraphs(IteratorHandleRef, ImageHandleRef);
+
+        /// <summary>
+        ///     Returns the <see cref="PolyBlockType"/>
+        /// </summary>
+        /// <returns></returns>
+        public PolyBlockType BlockType => TessApi.Native.PageIteratorBlockType(IteratorHandleRef);
         #endregion
 
         #region Constructor
