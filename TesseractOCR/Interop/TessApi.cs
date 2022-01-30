@@ -837,7 +837,16 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorOrientation")]
         void PageIteratorOrientation(HandleRef handle, out Orientation orientation, out WritingDirection writing_direction, out TextLineOrder textLineOrder, out float deskew_angle);
 
-        // TODO: Add support for : TESS_API void TessPageIteratorParagraphInfo(TessPageIterator* handle, TessParagraphJustification* justification, BOOL* is_list_item, BOOL* is_crown, int* first_line_indent);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="handle">The TessPageIterator instance</param>
+        /// <param name="justification"></param>
+        /// <param name="is_list_item"></param>
+        /// <param name="is_crown"></param>
+        /// <param name="first_line_indent"></param>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorParagraphInfo")]
+        void PageIteratorParagraphInfo(HandleRef handle, out ParagraphJustification justification, bool is_list_item, bool is_crown, int first_line_indent);
         #endregion
 
         #region Result iterator
