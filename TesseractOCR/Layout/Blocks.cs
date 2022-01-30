@@ -18,6 +18,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -30,8 +31,15 @@ namespace TesseractOCR.Layout
     /// <summary>
     ///     All the <see cref="Blocks"/> on the <see cref="Page"/>
     /// </summary>
-    public sealed class Blocks : EnumerableBase, IEnumerable<Block>
+    public sealed class Blocks : EnumerableBase, IEnumerable<Block>, IDisposable
     {
+        #region Fields
+        /// <summary>
+        ///     Flag to check if we already disposed everything
+        /// </summary>
+        private bool _disposed;
+        #endregion
+
         #region GetEnumerator
         /// <inheritdoc />
         public IEnumerator<Block> GetEnumerator()
@@ -58,6 +66,19 @@ namespace TesseractOCR.Layout
             TessApi.Native.PageIteratorBegin(IteratorHandleRef);
         }
         #endregion
+
+        #region Dispose
+        /// <summary>
+        ///     Cleans up the page iterator
+        /// </summary>
+        public void Dispose()
+        {
+            if (_disposed) return;
+            Logger.LogInformation("Disposing page iterator");
+            TessApi.Native.PageIteratorDelete(IteratorHandleRef);
+            _disposed = true;
+        }
+        #endregion
     }
 
     /// <summary>
@@ -65,10 +86,6 @@ namespace TesseractOCR.Layout
     /// </summary>
     public sealed class Block : EnumeratorBase, IEnumerator<Block>
     {
-        #region Fields
-        private bool _disposed;
-        #endregion
-
         #region Properties
         /// <summary>
         ///     Returns the current <see cref="Block"/> object
@@ -92,19 +109,6 @@ namespace TesseractOCR.Layout
             IteratorHandleRef = iteratorHandle;
             ImageHandleRef = imageHandle;
             PageIteratorLevel = PageIteratorLevel.Block;
-        }
-        #endregion
-
-        #region Dispose
-        /// <summary>
-        ///     Cleans up the page iterator
-        /// </summary>
-        public new void Dispose()
-        {
-            if (_disposed) return;
-            Logger.LogInformation("Disposing page iterator");
-            TessApi.Native.PageIteratorDelete(IteratorHandleRef);
-            _disposed = true;
         }
         #endregion
     }

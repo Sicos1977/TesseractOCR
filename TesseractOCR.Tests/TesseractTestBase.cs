@@ -7,10 +7,9 @@ namespace Tesseract.Tests
 {
     public abstract class TesseractTestBase
     {
-        protected static Engine CreateEngine(string lang = "eng", EngineMode mode = EngineMode.Default)
+        protected static Engine CreateEngine(Language language = Language.English, EngineMode mode = EngineMode.Default)
         {
-            var datapath = DataPath;
-            return new Engine(datapath, lang, mode);
+            return new Engine(DataPath, language, mode);
         }
 
         protected static string DataPath => AbsolutePath("tessdata");
