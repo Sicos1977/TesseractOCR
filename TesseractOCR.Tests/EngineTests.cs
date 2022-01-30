@@ -207,7 +207,17 @@ namespace Tesseract.Tests
 
             }
 
-            Assert.AreEqual(result.ToString(), "");
+            Assert.AreEqual(result.ToString(), "Block text: \r\n" +
+                                               "Block confidence: 0\r\n" +
+                                               "Paragraph text: \r\n" +
+                                               "Paragraph confidence: 0\r\n" +
+                                               "Text line text: \r\n" +
+                                               "Text line confidence: 0\r\n" +
+                                               "Word text: \r\n" +
+                                               "Word confidence: 0\r\n" +
+                                               "Word is from dictionary: False\r\n" +
+                                               "Word is numeric: False\r\n" +
+                                               "Word language: Unknown\r\n");
         }
 
         [TestMethod]
@@ -238,6 +248,7 @@ namespace Tesseract.Tests
         public void CanProcessPixUsingResultIterator()
         {
             const string resultPath = @"EngineTests\CanProcessPixUsingResultIterator.txt";
+            var result = new StringBuilder();
 
             string actualResult;
             using (var engine = CreateEngine())
@@ -248,34 +259,33 @@ namespace Tesseract.Tests
                     {
                         foreach (var block in page.Layout)
                         {
-                            Debug.Print($"Block text: {block.Text}");
-                            Debug.Print($"Block confidence: {block.Confidence}");
+                            result.AppendLine($"Block text: {block.Text}");
+                            result.AppendLine($"Block confidence: {block.Confidence}");
 
                             foreach (var paragraph in block.Paragraphs)
                             {
-                                Debug.Print($"Paragraph text: {paragraph.Text}");
-                                Debug.Print($"Paragraph confidence: {paragraph.Confidence}");
+                                result.AppendLine($"Paragraph text: {paragraph.Text}");
+                                result.AppendLine($"Paragraph confidence: {paragraph.Confidence}");
 
                                 foreach (var textLine in paragraph.TextLines)
                                 {
-                                    Debug.Print($"Text line text: {textLine.Text}");
-                                    Debug.Print($"Text line confidence: {textLine.Confidence}");
+                                    result.AppendLine($"Text line text: {textLine.Text}");
+                                    result.AppendLine($"Text line confidence: {textLine.Confidence}");
 
                                     foreach (var word in textLine.Words)
                                     {
-                                        Debug.Print($"Word text: {word.Text}");
-                                        Debug.Print($"Word confidence: {word.Confidence}");
-                                        Debug.Print($"Word is from dictionary: {word.IsFromDictionary}");
-                                        Debug.Print($"Word is numeric: {word.IsNumeric}");
-                                        Debug.Print($"Word is valid: {word.IsValid}");
-                                        Debug.Print($"Word language: {word.Language}");
+                                        result.AppendLine($"Word text: {word.Text}");
+                                        result.AppendLine($"Word confidence: {word.Confidence}");
+                                        result.AppendLine($"Word is from dictionary: {word.IsFromDictionary}");
+                                        result.AppendLine($"Word is numeric: {word.IsNumeric}");
+                                        result.AppendLine($"Word language: {word.Language}");
 
                                         //foreach (var symbol in word.Symbols)
                                         //{
-                                        //    Debug.Print($"Symbol text: {symbol.Text}");
-                                        //    Debug.Print($"Symbol confidence: {symbol.Confidence}");
-                                        //    Debug.Print($"Symbol is superscript: {symbol.IsSuperscript}");
-                                        //    Debug.Print($"Symbol is dropcap: {symbol.IsDropcap}");
+                                        //    result.AppendLine($"Symbol text: {symbol.Text}");
+                                        //    result.AppendLine($"Symbol confidence: {symbol.Confidence}");
+                                        //    result.AppendLine($"Symbol is superscript: {symbol.IsSuperscript}");
+                                        //    result.AppendLine($"Symbol is dropcap: {symbol.IsDropcap}");
                                         //}
                                     }
                                 }
@@ -284,7 +294,8 @@ namespace Tesseract.Tests
 
                         // TODO : Do some checking here
 
-                        actualResult = "";
+                        actualResult = result.ToString();
+                        File.WriteAllText("d:\\result.txt", actualResult);
                     }
                 }
             }

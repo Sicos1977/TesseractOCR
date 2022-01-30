@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 // ReSharper disable UnusedMember.Global
 
@@ -80,6 +81,12 @@ namespace TesseractOCR.Layout
         Symbol IEnumerator<Symbol>.Current => this;
 
         /// <summary>
+        ///     Returns <c>true</c> if the iterator is at the final <see cref="Symbol"/> in the current <see cref="Word"/>
+        /// </summary>
+        /// <returns><c>true</c> when at the end</returns>
+        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.Word, PageIteratorLevel) == Constants.True;
+
+        /// <summary>
         ///     Returns <c>true</c> when the <see cref="Symbol"/> is in superscript
         /// </summary>
         /// <returns></returns>
@@ -117,6 +124,28 @@ namespace TesseractOCR.Layout
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Symbol;
             LogDebug = true;
+        }
+        #endregion
+
+        #region MoveNext
+        /// <summary>
+        ///     Moves to the next <see cref="Symbol"/> in the current <see cref="Word"/>
+        /// </summary>
+        /// <returns><c>true</c> when there is a next <see cref="Symbol"/>, otherwise <c>false</c></returns>
+        public new bool MoveNext()
+        {
+            if (First)
+            {
+                First = false;
+                return true;
+            }
+
+            if (!IsAtFinalElement) return base.MoveNext();
+
+            if (LogDebug)
+                Logger.LogInformation($"At final '{PageIteratorLevel}' element");
+
+            return false;
         }
         #endregion
     }

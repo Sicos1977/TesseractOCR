@@ -754,7 +754,8 @@ namespace TesseractOCR.Interop
         /// </summary>
         /// <remarks>
         ///     1 if true
-        /// </remarks>        /// <param name="handle">The TessPageIterator instance</param>
+        /// </remarks>
+        /// <param name="handle">The TessPageIterator instance</param>
         /// <param name="level"></param>
         /// <param name="element"></param>
         /// <returns></returns>

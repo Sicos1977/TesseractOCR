@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 
 namespace TesseractOCR.Layout
@@ -83,6 +84,12 @@ namespace TesseractOCR.Layout
         ///     All the available <see cref="Symbols"/> in this <see cref="Word"/>
         /// </summary>
         public Symbols Symbols => new Symbols(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
+
+        /// <summary>
+        ///     Returns <c>true</c> if the iterator is at the final <see cref="Word"/> in the current <see cref="TextLine"/>
+        /// </summary>
+        /// <returns><c>true</c> when at the end</returns>
+        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.Word, PageIteratorLevel) == Constants.True;
 
         /// <summary>
         ///     Returns <c>true</c> when the <see cref="Word"/> is returned from a Tesseract dictionary
@@ -164,6 +171,25 @@ namespace TesseractOCR.Layout
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Word;
+        }
+        #endregion
+
+        #region MoveNext
+        /// <summary>
+        ///     Moves to the next <see cref="Word"/> in the current <see cref="TextLine"/>
+        /// </summary>
+        /// <returns><c>true</c> when there is a next <see cref="Word"/>, otherwise <c>false</c></returns>
+        public new bool MoveNext()
+        {
+            if (First)
+            {
+                First = false;
+                return true;
+            }
+
+            if (!IsAtFinalElement) return base.MoveNext();
+            Logger.LogInformation($"At final '{PageIteratorLevel}' element");
+            return false;
         }
         #endregion
     }

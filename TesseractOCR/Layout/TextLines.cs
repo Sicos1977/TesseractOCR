@@ -22,6 +22,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
+using TesseractOCR.Interop;
 
 namespace TesseractOCR.Layout
 {
@@ -81,6 +83,12 @@ namespace TesseractOCR.Layout
         ///     All the available <see cref="Words"/> in this <see cref="TextLine"/>
         /// </summary>
         public Words Words => new Words(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
+
+        /// <summary>
+        ///     Returns <c>true</c> if the iterator is at the final <see cref="TextLine"/> in the current <see cref="Paragraph"/>
+        /// </summary>
+        /// <returns><c>true</c> when at the end</returns>
+        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.Paragraph, PageIteratorLevel) == Constants.True;
         #endregion
 
         #region Constructor
@@ -96,6 +104,25 @@ namespace TesseractOCR.Layout
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.TextLine;
+        }
+        #endregion
+
+        #region MoveNext
+        /// <summary>
+        ///     Moves to the next <see cref="Word"/> in the current <see cref="TextLine"/>
+        /// </summary>
+        /// <returns><c>true</c> when there is a next <see cref="TextLine"/>, otherwise <c>false</c></returns>
+        public new bool MoveNext()
+        {
+            if (First)
+            {
+                First = false;
+                return true;
+            }
+
+            if (!IsAtFinalElement) return base.MoveNext();
+            Logger.LogInformation($"At final '{PageIteratorLevel}' element");
+            return false;
         }
         #endregion
     }

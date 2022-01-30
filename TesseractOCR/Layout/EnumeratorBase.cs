@@ -54,12 +54,12 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Flag to check if we are doing our first enumeration
         /// </summary>
-        private bool _first = true;
+        protected bool First = true;
 
         /// <summary>
-        ///     When set then logging is performed at the debug level instead of information level
+        ///     When set then we log at a debug level
         /// </summary>
-        protected bool LogDebug = false;
+        protected bool LogDebug;
         #endregion
 
         #region Properties
@@ -68,12 +68,6 @@ namespace TesseractOCR.Layout
         /// </summary>
         /// <returns><c>true</c> when at the beginning</returns>
         public bool IsAtBeginning => TessApi.Native.PageIteratorIsAtBeginningOf(IteratorHandleRef, PageIteratorLevel) == Constants.True;
-
-        /// <summary>
-        ///     Returns <c>true</c> if the iterator is at the final element at the current <see cref="PageIteratorLevel"/>
-        /// </summary>
-        /// <returns><c>true</c> when at the beginning</returns>
-        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtBeginningOf(IteratorHandleRef, PageIteratorLevel) == Constants.True;
 
         /// <summary>
         ///     Returns the text for the current <see cref="PageIteratorLevel"/>
@@ -162,45 +156,39 @@ namespace TesseractOCR.Layout
         }
         #endregion
 
+        #region Reset
+        /// <summary>
+        ///     Resets the enumerator to the first element
+        /// </summary>
+        public void Reset()
+        {
+            throw new NotSupportedException($"Not supported at the '{PageIteratorLevel}'");
+        }
+        #endregion
+
         #region MoveNext
         /// <summary>
-        ///     Moves to the next <see cref="Symbol"/> in the <see cref="Word"/>
+        ///     Moves to the next element at the current <see cref="PageIteratorLevel"/>
         /// </summary>
-        /// <returns><c>true</c> when there is a next <see cref="Symbol"/>, otherwise <c>false</c></returns>
+        /// <returns><c>true</c> when there is a next <see cref="Paragraph"/>, otherwise <c>false</c></returns>
         public bool MoveNext()
         {
-            if (_first)
-            {
-                _first = false;
-                return true;
-            }
-
             var result = TessApi.Native.PageIteratorNext(IteratorHandleRef, PageIteratorLevel) == Constants.True;
 
-            var message = result
-                ? $"Moving to next '{PageIteratorLevel}' element"
-                : $"At final '{PageIteratorLevel}' element";
-
-            if (LogDebug)
-                Logger.LogDebug(message);
+            if (result)
+            {
+                if (LogDebug)
+                    Logger.LogDebug($"Moved to the next '{PageIteratorLevel}' element");
+                else
+                    Logger.LogInformation($"Moved to the next '{PageIteratorLevel}' element");
+            }
             else
-                Logger.LogInformation(message);
+                Logger.LogError($"Failed to move to the next '{PageIteratorLevel}' element");
 
             return result;
         }
         #endregion
 
-        #region Reset
-        /// <summary>
-        ///     Resets the enumerator to the first <see cref="Symbol"/> in the <see cref="Word"/>
-        /// </summary>
-        public void Reset()
-        {
-            Logger.LogInformation($"Resetting to the first '{PageIteratorLevel}' element");
-            _first = true;
-            TessApi.Native.PageIteratorBegin(IteratorHandleRef);
-        }
-        #endregion
 
         #region Dispose
         /// <summary>

@@ -130,5 +130,22 @@ namespace TesseractOCR.Layout
             PageIteratorLevel = PageIteratorLevel.Block;
         }
         #endregion
+
+        #region MoveNext
+        /// <summary>
+        ///     Moves to the next <see cref="Block"/> in the <see cref="Blocks"/>
+        /// </summary>
+        /// <returns><c>true</c> when there is a next <see cref="Block"/>, otherwise <c>false</c></returns>
+        public new bool MoveNext()
+        {
+            if (First)
+            {
+                First = false;
+                return true;
+            }
+
+            return base.MoveNext();
+        }
+        #endregion
     }
 }
