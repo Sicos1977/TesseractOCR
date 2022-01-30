@@ -28,7 +28,7 @@ namespace TesseractOCR
     ///     scheme we're using for FontInfo objects, we can't simply augment that class since
     ///     these extra properties are not accounted for by the FontInfo's unique ID.
     /// </summary>
-    public readonly struct FontAttributes
+    public class FontAttributes
     {
         #region Properties
         /// <summary>
