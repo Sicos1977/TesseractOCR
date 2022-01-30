@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
@@ -42,7 +43,7 @@ namespace Tesseract.Tests
         public void AnalyseLayout_RotatedImage(float? angle)
         {
             using var img = LoadTestImage(ExampleImagePath);
-            using var rotatedImage = angle.HasValue ? img.Rotate(MathHelper.ToRadians(angle.Value)) : img.Clone();
+            using var rotatedImage = angle.HasValue ? img.Rotate(TesseractOCR.Helpers.Math.ToRadians(angle.Value)) : img.Clone();
             rotatedImage.Save(TestResultRunFile($@"AnalyseResult\AnalyseLayout_RotateImage_{angle}.png"));
 
             _engine.DefaultPageSegMode = PageSegMode.AutoOsd;

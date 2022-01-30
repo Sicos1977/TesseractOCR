@@ -20,6 +20,7 @@
 // limitations under the License.
 
 using System;
+using TesseractOCR.Helpers;
 using TesseractOCR.Loggers;
 
 namespace TesseractOCR

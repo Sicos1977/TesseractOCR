@@ -28,6 +28,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using TesseractOCR.Helpers;
 using TesseractOCR.Loggers;
 using File = System.IO.File;
 

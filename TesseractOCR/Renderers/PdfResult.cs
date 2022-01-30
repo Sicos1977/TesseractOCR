@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
 

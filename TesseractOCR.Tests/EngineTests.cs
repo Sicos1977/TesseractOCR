@@ -579,7 +579,7 @@ namespace Tesseract.Tests
                 { "load_system_dawg", false }
             };
             using var engine = new Engine(DataPath, Language.English, EngineMode.Default, Enumerable.Empty<string>(),
-                initVars, false);
+                initVars, false, TODO);
             if (!engine.TryGetBoolVariable("load_system_dawg", out var loadSystemDawg))
                 Assert.Fail("Failed to get 'load_system_dawg'");
             Assert.IsFalse(loadSystemDawg);

@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
 

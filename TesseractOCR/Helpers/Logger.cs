@@ -27,7 +27,7 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace TesseractOCR.Loggers
+namespace TesseractOCR.Helpers
 {
     internal static class Logger
     {
@@ -45,6 +45,14 @@ namespace TesseractOCR.Loggers
         ///     calling the code from multiple threads and writing all the logging to the same file
         /// </summary>
         public static string InstanceId { get; set; }
+
+        /// <summary>
+        ///     Sets the logger interface
+        /// </summary>
+        public static ILogger LoggerInterface
+        {
+            set => _logger = value;
+        }
         #endregion
 
         #region LogInformation
@@ -87,24 +95,24 @@ namespace TesseractOCR.Loggers
         }
         #endregion
 
-        #region LogInformation
-        /// <summary>
-        ///     Writes a debug line to the <see cref="_logger" />
-        /// </summary>
-        /// <param name="message">The message to write</param>
-        internal static void LogDebug(string message)
-        {
-            try
-            {
-                if (_logger == null) return;
-                using (_logger.BeginScope(InstanceId))
-                    _logger.LogDebug(message);
-            }
-            catch (ObjectDisposedException)
-            {
-                // Ignore
-            }
-        }
-        #endregion
+        //#region LogInformation
+        ///// <summary>
+        /////     Writes a debug line to the <see cref="_logger" />
+        ///// </summary>
+        ///// <param name="message">The message to write</param>
+        //internal static void LogDebug(string message)
+        //{
+        //    try
+        //    {
+        //        if (_logger == null) return;
+        //        using (_logger.BeginScope(InstanceId))
+        //            _logger.LogDebug(message);
+        //    }
+        //    catch (ObjectDisposedException)
+        //    {
+        //        // Ignore
+        //    }
+        //}
+        //#endregion
     }
 }

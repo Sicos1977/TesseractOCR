@@ -19,15 +19,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR
+namespace TesseractOCR.Helpers
 {
     /// <summary>
     ///     Math helpers
     /// </summary>
-    public static class MathHelper
+    public static class Math
     {
         #region ToRadians
         /// <summary>
@@ -47,20 +46,7 @@ namespace TesseractOCR
         /// <returns></returns>
         public static double ToRadians(double angleInDegrees)
         {
-            return angleInDegrees * Math.PI / 180.0;
-        }
-        #endregion
-
-        #region DivRoundUp
-        /// <summary>
-        ///     Calculates the smallest integer greater than the quot-ant of dividend and divisor.
-        /// </summary>
-        /// <see href="http://stackoverflow.com/questions/921180/how-can-i-ensure-that-a-division-of-integers-is-always-rounded-up" />
-        public static int DivRoundUp(int dividend, int divisor)
-        {
-            var result = dividend / divisor;
-
-            return dividend % divisor != 0 && divisor > 0 == dividend > 0 ? result + 1 : result;
+            return angleInDegrees * System.Math.PI / 180.0;
         }
         #endregion
     }

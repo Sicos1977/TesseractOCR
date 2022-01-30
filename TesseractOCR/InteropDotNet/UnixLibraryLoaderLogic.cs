@@ -26,6 +26,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using TesseractOCR.Helpers;
 using TesseractOCR.Loggers;
 
 namespace TesseractOCR.InteropDotNet

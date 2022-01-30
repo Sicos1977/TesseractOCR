@@ -21,6 +21,7 @@
 
 using System;
 using System.Diagnostics;
+using TesseractOCR.Helpers;
 using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global

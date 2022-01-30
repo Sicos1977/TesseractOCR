@@ -3,6 +3,7 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
 
 namespace Tesseract.Tests.Leptonica.PixTests
 {
@@ -78,7 +79,7 @@ namespace Tesseract.Tests.Leptonica.PixTests
         public void Rotate_ShouldBeAbleToRotateImageByXDegrees(float angle)
         {
             const string fileNameFormat = "rotation_{0}degrees.jpg";
-            var angleAsRadians = MathHelper.ToRadians(angle);
+            var angleAsRadians = TesseractOCR.Helpers.Math.ToRadians(angle);
 
             var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
             using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
@@ -120,8 +121,8 @@ namespace Tesseract.Tests.Leptonica.PixTests
             foreach (var scale in new[] { 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.5f, 1.75f, 2, 4, 8 })
             {
                 using var result = sourcePix.Scale(scale, scale);
-                Assert.AreEqual(result.Width, (int)Math.Round(sourcePix.Width * scale));
-                Assert.AreEqual(result.Height, (int)Math.Round(sourcePix.Height * scale));
+                Assert.AreEqual(result.Width, (int)System.Math.Round(sourcePix.Width * scale));
+                Assert.AreEqual(result.Height, (int)System.Math.Round(sourcePix.Height * scale));
                 var filename = string.Format(fileNameFormat, scale);
                 SaveResult(result, filename);
             }

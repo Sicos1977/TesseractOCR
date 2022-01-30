@@ -27,6 +27,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using TesseractOCR.Exceptions;
 using TesseractOCR.Enums;
+using TesseractOCR.Helpers;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
 using TesseractOCR.Layout;
