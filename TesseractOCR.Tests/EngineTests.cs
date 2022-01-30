@@ -250,19 +250,16 @@ namespace Tesseract.Tests
                         {
                             Debug.Print($"Block text: {block.Text}");
                             Debug.Print($"Block confidence: {block.Confidence}");
-                            var test0 = block.BlockType;
 
                             foreach (var paragraph in block.Paragraphs)
                             {
                                 Debug.Print($"Paragraph text: {paragraph.Text}");
                                 Debug.Print($"Paragraph confidence: {paragraph.Confidence}");
-                                var test1 = block.BlockType;
 
                                 foreach (var textLine in paragraph.TextLines)
                                 {
                                     Debug.Print($"Text line text: {textLine.Text}");
                                     Debug.Print($"Text line confidence: {textLine.Confidence}");
-                                    var tes2 = block.BlockType;
 
                                     foreach (var word in textLine.Words)
                                     {
@@ -270,8 +267,8 @@ namespace Tesseract.Tests
                                         Debug.Print($"Word confidence: {word.Confidence}");
                                         Debug.Print($"Word is from dictionary: {word.IsFromDictionary}");
                                         Debug.Print($"Word is numeric: {word.IsNumeric}");
+                                        Debug.Print($"Word is valid: {word.IsValid}");
                                         Debug.Print($"Word language: {word.Language}");
-                                        var test3 = block.BlockType;
 
                                         //foreach (var symbol in word.Symbols)
                                         //{

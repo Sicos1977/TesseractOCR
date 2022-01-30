@@ -26,6 +26,8 @@ using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 
+// ReSharper disable UnusedMember.Global
+
 namespace TesseractOCR.Layout
 {
     /// <summary>
@@ -44,7 +46,7 @@ namespace TesseractOCR.Layout
         /// <inheritdoc />
         public IEnumerator<Block> GetEnumerator()
         {
-            return new Block(IteratorHandleRef, ImageHandleRef);
+            return new Block(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -55,9 +57,15 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
         internal Blocks(HandleRef engineHandleRef, HandleRef imageHandleRef)
         {
             Logger.LogInformation("Getting iterator");
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = new HandleRef(this, TessApi.Native.BaseApiGetIterator(engineHandleRef));
             ImageHandleRef = imageHandleRef;
             Logger.LogInformation("Begin iterator");
@@ -98,7 +106,7 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="Paragraphs"/> in this <see cref="Block"/>
         /// </summary>
-        public Paragraphs Paragraphs => new Paragraphs(IteratorHandleRef, ImageHandleRef);
+        public Paragraphs Paragraphs => new Paragraphs(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
 
         /// <summary>
         ///     Returns the <see cref="PolyBlockType"/>
@@ -108,10 +116,17 @@ namespace TesseractOCR.Layout
         #endregion
 
         #region Constructor
-        internal Block(HandleRef iteratorHandle, HandleRef imageHandle)
+        /// <summary>
+        ///     Creates this object
+        /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
+        /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
+        /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
+        internal Block(HandleRef engineHandleRef, HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
-            IteratorHandleRef = iteratorHandle;
-            ImageHandleRef = imageHandle;
+            EngineHandleRef = engineHandleRef;
+            IteratorHandleRef = iteratorHandleRef;
+            ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Block;
         }
         #endregion

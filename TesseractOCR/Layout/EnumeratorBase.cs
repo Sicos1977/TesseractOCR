@@ -23,7 +23,6 @@ using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 
@@ -32,6 +31,11 @@ namespace TesseractOCR.Layout
     public class EnumeratorBase
     {
         #region Fields
+        /// <summary>
+        ///     Handle that is returned by Tesseract engine
+        /// </summary>
+        protected HandleRef EngineHandleRef;
+
         /// <summary>
         ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
         /// </summary>

@@ -395,7 +395,7 @@ namespace TesseractOCR
         {
             Logger.LogInformation("Detection orientation and script name");
 
-            if (TessApi.Native.TessBaseAPIDetectOrientationScript(Engine.Handle, out var orientDeg, out var orientConf, out var scriptNameHandle, out var scriptConf) != 0)
+            if (TessApi.Native.BaseAPIDetectOrientationScript(Engine.Handle, out var orientDeg, out var orientConf, out var scriptNameHandle, out var scriptConf) != 0)
             {
                 orientation = orientDeg;
                 confidence = orientConf;

@@ -26,6 +26,11 @@ namespace TesseractOCR.Layout
     {
         #region Fields
         /// <summary>
+        ///     Handle that is returned by Tesseract engine
+        /// </summary>
+        protected HandleRef EngineHandleRef;
+        
+        /// <summary>
         ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
         /// </summary>
         protected HandleRef IteratorHandleRef;

@@ -34,7 +34,7 @@ namespace TesseractOCR.Layout
         /// <inheritdoc />
         public IEnumerator<Paragraph> GetEnumerator()
         {
-            return new Paragraph(IteratorHandleRef, ImageHandleRef);
+            return new Paragraph(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -48,10 +48,12 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Creates this object
         /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
         /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
         /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
-        internal Paragraphs(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
+        internal Paragraphs(HandleRef engineHandleRef , HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
         }
@@ -77,17 +79,19 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="TextLines"/> in this <see cref="Paragraph"/>
         /// </summary>
-        public TextLines TextLines => new TextLines(IteratorHandleRef, ImageHandleRef);
+        public TextLines TextLines => new TextLines(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
         #endregion
 
         #region Constructor
         /// <summary>
         ///     Creates this object
         /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
         /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
         /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
-        internal Paragraph(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
+        internal Paragraph(HandleRef engineHandleRef, HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Paragraph;

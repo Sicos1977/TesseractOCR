@@ -36,7 +36,7 @@ namespace TesseractOCR.Layout
         /// <inheritdoc />
         public IEnumerator<Symbol> GetEnumerator()
         {
-            return new Symbol(IteratorHandleRef, ImageHandleRef);
+            return new Symbol(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -50,10 +50,13 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Creates this object
         /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
         /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
         /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
-        internal Symbols(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
+
+        internal Symbols(HandleRef engineHandleRef, HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
         }
@@ -103,10 +106,13 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Creates this object
         /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
         /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
         /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
-        internal Symbol(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
+
+        internal Symbol(HandleRef engineHandleRef, HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Symbol;

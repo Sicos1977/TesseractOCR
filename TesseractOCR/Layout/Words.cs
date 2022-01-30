@@ -37,7 +37,7 @@ namespace TesseractOCR.Layout
         /// <inheritdoc />
         public IEnumerator<Word> GetEnumerator()
         {
-            return new Word(IteratorHandleRef, ImageHandleRef);
+            return new Word(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
         }
 
         /// <inheritdoc />
@@ -51,10 +51,12 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     Creates this object
         /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
         /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
         /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
-        internal Words(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
+        internal Words(HandleRef engineHandleRef, HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
         }
@@ -80,7 +82,7 @@ namespace TesseractOCR.Layout
         /// <summary>
         ///     All the available <see cref="Symbols"/> in this <see cref="Word"/>
         /// </summary>
-        public Symbols Symbols => new Symbols(IteratorHandleRef, ImageHandleRef);
+        public Symbols Symbols => new Symbols(EngineHandleRef, IteratorHandleRef, ImageHandleRef);
 
         /// <summary>
         ///     Returns <c>true</c> when the <see cref="Word"/> is returned from a Tesseract dictionary
@@ -134,16 +136,31 @@ namespace TesseractOCR.Layout
                 return new FontAttributes(fontInfo, isUnderlined, isSmallCaps, pointSize);
             }
         }
+
+        /// <summary>
+        ///     Returns <c>true</c> when a word is valid according to Tesseract's language model
+        /// </summary>
+        public bool IsValid
+        {
+            get
+            {
+                var word = Text;
+                return TessApi.Native.BaseAPIIsValidWord(IteratorHandleRef, word) != Constants.False;
+            }
+        }
         #endregion
 
         #region Constructor
         /// <summary>
         ///     Creates this object
         /// </summary>
+        /// <param name="engineHandleRef">A handle reference to the Tesseract engine</param>
         /// <param name="iteratorHandleRef">A handle reference to the page iterator</param>
         /// <param name="imageHandleRef">A handle reference to the <see cref="Pix.Image"/></param>
-        internal Word(HandleRef iteratorHandleRef, HandleRef imageHandleRef)
+
+        internal Word(HandleRef engineHandleRef, HandleRef iteratorHandleRef, HandleRef imageHandleRef)
         {
+            EngineHandleRef = engineHandleRef;
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Word;
