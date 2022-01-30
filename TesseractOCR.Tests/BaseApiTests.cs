@@ -8,11 +8,9 @@ namespace Tesseract.Tests
         [TestMethod]
         public void GetVersion_Is500()
         {
-            using (var engine = CreateEngine())
-            {
-                var version = engine.Version;
-                Assert.IsTrue(version.StartsWith("5.0.0"));
-            }
+            using var engine = CreateEngine();
+            var version = engine.Version;
+            Assert.IsTrue(version.StartsWith("5.0.0"));
         }
     }
 }

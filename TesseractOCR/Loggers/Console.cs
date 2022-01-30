@@ -20,6 +20,8 @@
 
 using Microsoft.Extensions.Logging;
 
+// ReSharper disable UnusedMember.Global
+
 namespace TesseractOCR.Loggers
 {
     /// <summary>

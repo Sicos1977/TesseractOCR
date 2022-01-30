@@ -22,7 +22,7 @@
 namespace TesseractOCR
 {
     /// <summary>
-    ///     Represents the parameters for a sweep search used by scew algorithms.
+    ///     Represents the parameters for a sweep search used by scew algorithms
     /// </summary>
     public struct ScewSweep
     {

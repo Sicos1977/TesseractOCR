@@ -41,52 +41,44 @@ namespace Tesseract.Tests
         [DataRow(180f)]
         public void AnalyseLayout_RotatedImage(float? angle)
         {
-            using (var img = LoadTestImage(ExampleImagePath))
+            using var img = LoadTestImage(ExampleImagePath);
+            using var rotatedImage = angle.HasValue ? img.Rotate(MathHelper.ToRadians(angle.Value)) : img.Clone();
+            rotatedImage.Save(TestResultRunFile($@"AnalyseResult\AnalyseLayout_RotateImage_{angle}.png"));
+
+            _engine.DefaultPageSegMode = PageSegMode.AutoOsd;
+            using var page = _engine.Process(rotatedImage);
+            using var layout = page.Layout;
+            foreach(var block in layout)
             {
-                using (var rotatedImage = angle.HasValue ? img.Rotate(MathHelper.ToRadians(angle.Value)) : img.Clone())
+                var properties = block.Properties;
+
+                ExpectedOrientation(angle ?? 0, out var orient);
+                Assert.AreEqual(properties.Orientation, orient);
+
+                if (angle.HasValue)
                 {
-                    rotatedImage.Save(TestResultRunFile($@"AnalyseResult\AnalyseLayout_RotateImage_{angle}.png"));
-
-                    _engine.DefaultPageSegMode = PageSegMode.AutoOsd;
-                    using (var page = _engine.Process(rotatedImage))
+                    switch (angle)
                     {
-                        using (var layout = page.Layout)
-                        {
-                            foreach(var block in layout)
-                            {
-                                var properties = block.Properties;
+                        case 180f:
+                            // This isn't correct...
+                            Assert.AreEqual(properties.WritingDirection, WritingDirection.LeftToRight);
+                            Assert.AreEqual(properties.TextLineOrder, TextLineOrder.TopToBottom);
+                            break;
 
-                                ExpectedOrientation(angle ?? 0, out var orient);
-                                Assert.AreEqual(properties.Orientation, orient);
+                        case 90f:
+                            Assert.AreEqual(properties.WritingDirection, WritingDirection.LeftToRight);
+                            Assert.AreEqual(properties.TextLineOrder, TextLineOrder.TopToBottom);
+                            break;
 
-                                if (angle.HasValue)
-                                {
-                                    switch (angle)
-                                    {
-                                        case 180f:
-                                            // This isn't correct...
-                                            Assert.AreEqual(properties.WritingDirection, WritingDirection.LeftToRight);
-                                            Assert.AreEqual(properties.TextLineOrder, TextLineOrder.TopToBottom);
-                                            break;
-
-                                        case 90f:
-                                            Assert.AreEqual(properties.WritingDirection, WritingDirection.LeftToRight);
-                                            Assert.AreEqual(properties.TextLineOrder, TextLineOrder.TopToBottom);
-                                            break;
-
-                                        default:
-                                            Assert.Fail("Angle not supported.");
-                                            break;
-                                    }
-                                }
-                                else
-                                {
-                                    Assert.AreEqual(properties.WritingDirection, WritingDirection.LeftToRight);
-                                    Assert.AreEqual(properties.TextLineOrder, TextLineOrder.TopToBottom);
-                                }
-                            }
-                        }
+                        default:
+                            Assert.Fail("Angle not supported.");
+                            break;
                     }
+                }
+                else
+                {
+                    Assert.AreEqual(properties.WritingDirection, WritingDirection.LeftToRight);
+                    Assert.AreEqual(properties.TextLineOrder, TextLineOrder.TopToBottom);
                 }
             }
         }

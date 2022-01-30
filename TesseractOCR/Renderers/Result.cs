@@ -78,9 +78,6 @@ namespace TesseractOCR.Renderers
             Guard.RequireNotNull("page", page);
             VerifyNotDisposed();
 
-            // TODO: Force page to do a recognize run to ensure the underlying base api is full of state note if
-            // your implementing your own renderer you won't need to do this since all the page operations will do it
-            // implicitly if required. This is why I've only made Page.Recognize internal not public.
             page.Recognize();
 
             return TessApi.Native.ResultRendererAddImage(Handle, page.Engine.Handle) != 0;

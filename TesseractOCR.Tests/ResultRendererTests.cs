@@ -238,70 +238,64 @@ namespace Tesseract.Tests
         private void ProcessMultiPageTiff(IResult renderer, string filename)
         {
             var imageName = Path.GetFileNameWithoutExtension(filename);
-            using (var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(filename))
+            using var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(filename);
+            var expectedPageNumber = -1;
+            using (renderer.BeginDocument(imageName))
             {
-                var expectedPageNumber = -1;
-                using (renderer.BeginDocument(imageName))
-                {
-                    Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
-                    foreach (var pix in pixA)
-                        using (var page = _engine.Process(pix))
-                        {
-                            var addedPage = renderer.AddPage(page);
-                            expectedPageNumber++;
-
-                            Assert.IsTrue(addedPage);
-                            Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
-                        }
-                }
-
                 Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
+                foreach (var pix in pixA)
+                {
+                    using var page = _engine.Process(pix);
+                    var addedPage = renderer.AddPage(page);
+                    expectedPageNumber++;
+
+                    Assert.IsTrue(addedPage);
+                    Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
+                }
             }
+
+            Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
         }
 
         private void ProcessFile(IResult renderer, string filename)
         {
             var imageName = Path.GetFileNameWithoutExtension(filename);
-            using (var pix = TesseractOCR.Pix.Image.LoadFromFile(filename))
+            using var pix = TesseractOCR.Pix.Image.LoadFromFile(filename);
+            using (renderer.BeginDocument(imageName))
             {
-                using (renderer.BeginDocument(imageName))
+                Assert.AreEqual(renderer.PageNumber, -1);
+                using (var page = _engine.Process(pix))
                 {
-                    Assert.AreEqual(renderer.PageNumber, -1);
-                    using (var page = _engine.Process(pix))
-                    {
-                        var addedPage = renderer.AddPage(page);
+                    var addedPage = renderer.AddPage(page);
 
-                        Assert.IsTrue(addedPage);
-                        Assert.AreEqual(renderer.PageNumber, 0);
-                    }
+                    Assert.IsTrue(addedPage);
+                    Assert.AreEqual(renderer.PageNumber, 0);
                 }
-
-                Assert.AreEqual(renderer.PageNumber, 0);
             }
+
+            Assert.AreEqual(renderer.PageNumber, 0);
         }
 
         private void ProcessImageFile(IResult renderer, string filename)
         {
             var imageName = Path.GetFileNameWithoutExtension(filename);
-            using (var pixA = ReadImageFileIntoPixArray(filename))
+            using var pixA = ReadImageFileIntoPixArray(filename);
+            var expectedPageNumber = -1;
+            using (renderer.BeginDocument(imageName))
             {
-                var expectedPageNumber = -1;
-                using (renderer.BeginDocument(imageName))
-                {
-                    Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
-                    foreach (var pix in pixA)
-                        using (var page = _engine.Process(pix))
-                        {
-                            var addedPage = renderer.AddPage(page);
-                            expectedPageNumber++;
-
-                            Assert.IsTrue(addedPage);
-                            Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
-                        }
-                }
-
                 Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
+                foreach (var pix in pixA)
+                {
+                    using var page = _engine.Process(pix);
+                    var addedPage = renderer.AddPage(page);
+                    expectedPageNumber++;
+
+                    Assert.IsTrue(addedPage);
+                    Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
+                }
             }
+
+            Assert.AreEqual(renderer.PageNumber, expectedPageNumber);
         }
 
         private static TesseractOCR.Pix.Array ReadImageFileIntoPixArray(string filename)

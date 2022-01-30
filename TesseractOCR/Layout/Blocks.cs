@@ -59,9 +59,7 @@ namespace TesseractOCR.Layout
         {
             Logger.LogInformation("Getting iterator");
             IteratorHandleRef = new HandleRef(this, TessApi.Native.BaseApiGetIterator(engineHandleRef));
-
             ImageHandleRef = imageHandleRef;
-
             Logger.LogInformation("Begin iterator");
             TessApi.Native.PageIteratorBegin(IteratorHandleRef);
         }

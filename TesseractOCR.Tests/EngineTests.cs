@@ -21,24 +21,20 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanParseMultiPageTif()
         {
-            using (var engine = CreateEngine())
+            using var engine = CreateEngine();
+            using var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(TestFilePath("./processing/multi-page.tif"));
+            var i = 1;
+            foreach (var pix in pixA)
             {
-                using (var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(TestFilePath("./processing/multi-page.tif")))
+                using (var page = engine.Process(pix))
                 {
-                    var i = 1;
-                    foreach (var pix in pixA)
-                    {
-                        using (var page = engine.Process(pix))
-                        {
-                            var text = page.Text.Trim();
+                    var text = page.Text.Trim();
 
-                            var expectedText = $"Page {i}";
-                            Assert.AreEqual(text, expectedText);
-                        }
-
-                        i++;
-                    }
+                    var expectedText = $"Page {i}";
+                    Assert.AreEqual(text, expectedText);
                 }
+
+                i++;
             }
         }
 
@@ -53,88 +49,66 @@ namespace Tesseract.Tests
         //[DataRow(PageSegMode.SingleBlockVertText, "A line of text", Ignore = "Vertical data missing")]
         public void CanParseText_UsingMode(PageSegMode mode, string expectedText)
         {
-            using (var engine = CreateEngine(mode: EngineMode.TesseractAndLstm))
-            {
-                var demoFilename = $"./Ocr/PSM_{mode}.png";
-                using (var pix = LoadTestPix(demoFilename))
-                using (var page = engine.Process(pix, mode))
-                {
-                    var text = page.Text.Trim();
-                    Assert.AreEqual(text, expectedText);
-                }
-            }
+            using var engine = CreateEngine(mode: EngineMode.TesseractAndLstm);
+            var demoFilename = $"./Ocr/PSM_{mode}.png";
+            using var pix = LoadTestPix(demoFilename);
+            using var page = engine.Process(pix, mode);
+            var text = page.Text.Trim();
+            Assert.AreEqual(text, expectedText);
         }
 
         [TestMethod]
         public void CanParseText()
         {
-            using (var engine = CreateEngine())
-            {
-                using (var img = LoadTestPix(TestImagePath))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        var text = page.Text;
+            using var engine = CreateEngine();
+            using var img = LoadTestPix(TestImagePath);
+            using var page = engine.Process(img);
+            var text = page.Text;
 
-                        const string expectedText =
-                            "This is a lot of 12 point text to test the\n" +
-                            "ocr code and see if it works on all types\n" +
-                            "of file format.\n\n" +
-                            "The quick brown dog jumped over the\n" +
-                            "lazy fox. The quick brown dog jumped\n" +
-                            "over the lazy fox. The quick brown dog\n" +
-                            "jumped over the lazy fox. The quick\n" +
-                            "brown dog jumped over the lazy fox.\n";
+            const string expectedText =
+                "This is a lot of 12 point text to test the\n" +
+                "ocr code and see if it works on all types\n" +
+                "of file format.\n\n" +
+                "The quick brown dog jumped over the\n" +
+                "lazy fox. The quick brown dog jumped\n" +
+                "over the lazy fox. The quick brown dog\n" +
+                "jumped over the lazy fox. The quick\n" +
+                "brown dog jumped over the lazy fox.\n";
 
-                        Assert.AreEqual(text, expectedText);
-                    }
-                }
-            }
+            Assert.AreEqual(text, expectedText);
         }
 
         [TestMethod]
         public void CanParseUznFile()
         {
-            using (var engine = CreateEngine())
-            {
-                var inputFilename = TestFilePath(@"Ocr\uzn-test.png");
-                using (var img = TesseractOCR.Pix.Image.LoadFromFile(inputFilename))
-                {
-                    using (var page = engine.Process(img, PageSegMode.AutoOnly))
-                    {
-                        var text = page.Text;
+            using var engine = CreateEngine();
+            var inputFilename = TestFilePath(@"Ocr\uzn-test.png");
+            using var img = TesseractOCR.Pix.Image.LoadFromFile(inputFilename);
+            using var page = engine.Process(img, PageSegMode.AutoOnly);
+            var text = page.Text;
 
-                        const string expectedText =
-                            "This is another test\n";
+            const string expectedText =
+                "This is another test\n";
 
-                        Assert.IsTrue(text.Contains(expectedText));
-                    }
-                }
-            }
+            Assert.IsTrue(text.Contains(expectedText));
         }
 
 
         [TestMethod]
         public void CanProcessSpecifiedRegionInImage()
         {
-            using (var engine = CreateEngine(mode: EngineMode.LstmOnly))
-            {
-                using (var img = LoadTestPix(TestImagePath))
-                {
-                    // See other tests about this bug on coords 0,0
-                    using (var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188)))
-                    {
-                        var region1Text = page.Text;
+            using var engine = CreateEngine(mode: EngineMode.LstmOnly);
+            using var img = LoadTestPix(TestImagePath);
+            // See other tests about this bug on coords 0,0
+            using var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188));
+            var region1Text = page.Text;
 
-                        const string expectedTextRegion1 =
-                            "This is a lot of 12 point text to test the\n" +
-                            "ocr code and see if it works on all types\n" +
-                            "of file format.\n";
+            const string expectedTextRegion1 =
+                "This is a lot of 12 point text to test the\n" +
+                "ocr code and see if it works on all types\n" +
+                "of file format.\n";
 
-                        Assert.AreEqual(region1Text, expectedTextRegion1);
-                    }
-                }
-            }
+            Assert.AreEqual(region1Text, expectedTextRegion1);
         }
 
         /// <summary>
@@ -144,33 +118,27 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanProcessDifferentRegionsInSameImage()
         {
-            using (var engine = CreateEngine())
-            {
-                using (var img = LoadTestPix(TestImagePath))
-                {
-                    using (var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188)))
-                    {
-                        var region1Text = page.Text;
+            using var engine = CreateEngine();
+            using var img = LoadTestPix(TestImagePath);
+            using var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188));
+            var region1Text = page.Text;
 
-                        const string expectedTextRegion1 = "This is a lot of 12 point text to test the\n" +
-                                                           "ocr code and see if it works on all types\n" +
-                                                           "of file format.\n";
+            const string expectedTextRegion1 = "This is a lot of 12 point text to test the\n" +
+                                               "ocr code and see if it works on all types\n" +
+                                               "of file format.\n";
 
-                        Assert.AreEqual(region1Text, expectedTextRegion1);
+            Assert.AreEqual(region1Text, expectedTextRegion1);
 
-                        page.RegionOfInterest = Rect.FromCoords(0, 188, img.Width, img.Height);
+            page.RegionOfInterest = Rect.FromCoords(0, 188, img.Width, img.Height);
 
-                        var region2Text = page.Text;
-                        const string expectedTextRegion2 = "The quick brown dog jumped over the\n" +
-                                                           "lazy fox. The quick brown dog jumped\n" +
-                                                           "over the lazy fox. The quick brown dog\n" +
-                                                           "jumped over the lazy fox. The quick\n" +
-                                                           "brown dog jumped over the lazy fox.\n";
+            var region2Text = page.Text;
+            const string expectedTextRegion2 = "The quick brown dog jumped over the\n" +
+                                               "lazy fox. The quick brown dog jumped\n" +
+                                               "over the lazy fox. The quick brown dog\n" +
+                                               "jumped over the lazy fox. The quick\n" +
+                                               "brown dog jumped over the lazy fox.\n";
 
-                        Assert.AreEqual(region2Text, expectedTextRegion2);
-                    }
-                }
-            }
+            Assert.AreEqual(region2Text, expectedTextRegion2);
         }
 
         [TestMethod]
@@ -178,26 +146,20 @@ namespace Tesseract.Tests
         {
             var expectedCount = 8; // number of text lines in test image
 
-            using (var engine = CreateEngine())
+            using var engine = CreateEngine();
+            var imgPath = TestFilePath(TestImagePath);
+            using var img = TesseractOCR.Pix.Image.LoadFromFile(imgPath);
+            using var page = engine.Process(img);
+            var boxes = page.GetSegmentedRegions(PageIteratorLevel.TextLine);
+
+            for (var i = 0; i < boxes.Count; i++)
             {
-                var imgPath = TestFilePath(TestImagePath);
-                using (var img = TesseractOCR.Pix.Image.LoadFromFile(imgPath))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        var boxes = page.GetSegmentedRegions(PageIteratorLevel.TextLine);
-
-                        for (var i = 0; i < boxes.Count; i++)
-                        {
-                            var box = boxes[i];
-                            Console.WriteLine("Box[{0}]: x={1}, y={2}, w={3}, h={4}", i, box.X, box.Y, box.Width,
-                                box.Height);
-                        }
-
-                        Assert.AreEqual(boxes.Count, expectedCount);
-                    }
-                }
+                var box = boxes[i];
+                Console.WriteLine("Box[{0}]: x={1}, y={2}, w={3}, h={4}", i, box.X, box.Y, box.Width,
+                    box.Height);
             }
+
+            Assert.AreEqual(boxes.Count, expectedCount);
         }
 
         [TestMethod]
@@ -226,28 +188,24 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanProcessMultiplePixs()
         {
-            using (var engine = CreateEngine())
+            using var engine = CreateEngine();
+            for (var i = 0; i < 3; i++)
             {
-                for (var i = 0; i < 3; i++)
-                    using (var img = LoadTestPix(TestImagePath))
-                    {
-                        using (var page = engine.Process(img))
-                        {
-                            var text = page.Text;
+                using var img = LoadTestPix(TestImagePath);
+                using var page = engine.Process(img);
+                var text = page.Text;
 
-                            const string expectedText =
-                                "This is a lot of 12 point text to test the\n" +
-                                "ocr code and see if it works on all types\n" +
-                                "of file format.\n\n" +
-                                "The quick brown dog jumped over the" +
-                                "\nlazy fox. The quick brown dog jumped\n" +
-                                "over the lazy fox. The quick brown dog\n" +
-                                "jumped over the lazy fox. The quick\n" +
-                                "brown dog jumped over the lazy fox.\n";
+                const string expectedText =
+                    "This is a lot of 12 point text to test the\n" +
+                    "ocr code and see if it works on all types\n" +
+                    "of file format.\n\n" +
+                    "The quick brown dog jumped over the" +
+                    "\nlazy fox. The quick brown dog jumped\n" +
+                    "over the lazy fox. The quick brown dog\n" +
+                    "jumped over the lazy fox. The quick\n" +
+                    "brown dog jumped over the lazy fox.\n";
 
-                            Assert.AreEqual(text, expectedText);
-                        }
-                    }
+                Assert.AreEqual(text, expectedText);
             }
         }
 
@@ -590,33 +548,27 @@ namespace Tesseract.Tests
         [TestMethod]
         public void Initialise_CanLoadConfigFile()
         {
-            using (var engine = new Engine(DataPath, Language.English, EngineMode.Default, "bazzar"))
-            {
-                // verify that the config file was loaded
-                if (engine.TryGetStringVariable("user_words_suffix", out var userPatternsSuffix))
-                    Assert.AreEqual(userPatternsSuffix, "user-words");
-                else
-                    Assert.Fail("Failed to retrieve value for 'user_words_suffix'.");
+            using var engine = new Engine(DataPath, Language.English, EngineMode.Default, "bazzar");
+            // verify that the config file was loaded
+            if (engine.TryGetStringVariable("user_words_suffix", out var userPatternsSuffix))
+                Assert.AreEqual(userPatternsSuffix, "user-words");
+            else
+                Assert.Fail("Failed to retrieve value for 'user_words_suffix'.");
 
-                using (var img = LoadTestPix(TestImagePath))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        var text = page.Text;
+            using var img = LoadTestPix(TestImagePath);
+            using var page = engine.Process(img);
+            var text = page.Text;
 
-                        const string expectedText =
-                            "This is a lot of 12 point text to test the\n" +
-                            "ocr code and see if it works on all types\n" +
-                            "of file format.\n\n" +
-                            "The quick brown dog jumped over the\n" +
-                            "lazy fox. The quick brown dog jumped\n" +
-                            "over the lazy fox. The quick brown dog\n" +
-                            "jumped over the lazy fox. The quick\n" +
-                            "brown dog jumped over the lazy fox.\n";
-                        Assert.AreEqual(text, expectedText);
-                    }
-                }
-            }
+            const string expectedText =
+                "This is a lot of 12 point text to test the\n" +
+                "ocr code and see if it works on all types\n" +
+                "of file format.\n\n" +
+                "The quick brown dog jumped over the\n" +
+                "lazy fox. The quick brown dog jumped\n" +
+                "over the lazy fox. The quick brown dog\n" +
+                "jumped over the lazy fox. The quick\n" +
+                "brown dog jumped over the lazy fox.\n";
+            Assert.AreEqual(text, expectedText);
         }
 
         [TestMethod]
@@ -626,13 +578,11 @@ namespace Tesseract.Tests
             {
                 { "load_system_dawg", false }
             };
-            using (var engine = new Engine(DataPath, Language.English, EngineMode.Default, Enumerable.Empty<string>(),
-                       initVars, false))
-            {
-                if (!engine.TryGetBoolVariable("load_system_dawg", out var loadSystemDawg))
-                    Assert.Fail("Failed to get 'load_system_dawg'");
-                Assert.IsFalse(loadSystemDawg);
-            }
+            using var engine = new Engine(DataPath, Language.English, EngineMode.Default, Enumerable.Empty<string>(),
+                initVars, false);
+            if (!engine.TryGetBoolVariable("load_system_dawg", out var loadSystemDawg))
+                Assert.Fail("Failed to get 'load_system_dawg'");
+            Assert.IsFalse(loadSystemDawg);
         }
 
         [Ignore("Missing russian language data")]
@@ -669,16 +619,14 @@ namespace Tesseract.Tests
         public void CanSetBooleanVariable(bool variableValue)
         {
             const string variableName = "classify_enable_learning";
-            using (var engine = CreateEngine())
-            {
-                var variableWasSet = engine.SetVariable(variableName, variableValue);
-                Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
+            using var engine = CreateEngine();
+            var variableWasSet = engine.SetVariable(variableName, variableValue);
+            Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
                 
-                if (engine.TryGetBoolVariable(variableName, out var result))
-                    Assert.AreEqual(result, variableValue);
-                else
-                    Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
-            }
+            if (engine.TryGetBoolVariable(variableName, out var result))
+                Assert.AreEqual(result, variableValue);
+            else
+                Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
         }
 
         /// <summary>
@@ -687,22 +635,16 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanSetClassifyBlnNumericModeVariable()
         {
-            using (var engine = CreateEngine())
-            {
-                engine.SetVariable("classify_bln_numeric_mode", 1);
+            using var engine = CreateEngine();
+            engine.SetVariable("classify_bln_numeric_mode", 1);
 
-                using (var img = TesseractOCR.Pix.Image.LoadFromFile(TestFilePath("./processing/numbers.png")))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        var text = page.Text;
+            using var img = TesseractOCR.Pix.Image.LoadFromFile(TestFilePath("./processing/numbers.png"));
+            using var page = engine.Process(img);
+            var text = page.Text;
 
-                        const string expectedText = "1234567890\n";
+            const string expectedText = "1234567890\n";
 
-                        Assert.AreEqual(text, expectedText);
-                    }
-                }
-            }
+            Assert.AreEqual(text, expectedText);
         }
 
         [DataTestMethod]
@@ -711,16 +653,14 @@ namespace Tesseract.Tests
         [DataRow("edges_boxarea", -0.9)]
         public void CanSetDoubleVariable(string variableName, double variableValue)
         {
-            using (var engine = CreateEngine())
-            {
-                var variableWasSet = engine.SetVariable(variableName, variableValue);
-                Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
+            using var engine = CreateEngine();
+            var variableWasSet = engine.SetVariable(variableName, variableValue);
+            Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
                 
-                if (engine.TryGetDoubleVariable(variableName, out var result))
-                    Assert.AreEqual(result, variableValue);
-                else
-                    Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
-            }
+            if (engine.TryGetDoubleVariable(variableName, out var result))
+                Assert.AreEqual(result, variableValue);
+            else
+                Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
         }
 
         [DataTestMethod]
@@ -730,16 +670,14 @@ namespace Tesseract.Tests
         [DataRow("textord_testregion_left", -20)]
         public void CanSetIntegerVariable(string variableName, int variableValue)
         {
-            using (var engine = CreateEngine())
-            {
-                var variableWasSet = engine.SetVariable(variableName, variableValue);
-                Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
+            using var engine = CreateEngine();
+            var variableWasSet = engine.SetVariable(variableName, variableValue);
+            Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
                 
-                if (engine.TryGetIntVariable(variableName, out var result))
-                    Assert.AreEqual(result, variableValue);
-                else
-                    Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
-            }
+            if (engine.TryGetIntVariable(variableName, out var result))
+                Assert.AreEqual(result, variableValue);
+            else
+                Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
         }
 
         [DataTestMethod]
@@ -749,27 +687,23 @@ namespace Tesseract.Tests
         [DataRow("tessedit_char_whitelist", "chinese 漢字")] // Issue 68
         public void CanSetStringVariable(string variableName, string variableValue)
         {
-            using (var engine = CreateEngine())
-            {
-                var variableWasSet = engine.SetVariable(variableName, variableValue);
-                Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
+            using var engine = CreateEngine();
+            var variableWasSet = engine.SetVariable(variableName, variableValue);
+            Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
                 
-                if (engine.TryGetStringVariable(variableName, out var result))
-                    Assert.AreEqual(result, variableValue);
-                else
-                    Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
-            }
+            if (engine.TryGetStringVariable(variableName, out var result))
+                Assert.AreEqual(result, variableValue);
+            else
+                Assert.Fail("Failed to retrieve value for '{0}'.", variableName);
         }
 
         [TestMethod]
         public void CanGetStringVariableThatDoesNotExist()
         {
-            using (var engine = CreateEngine())
-            {
-                var success = engine.TryGetStringVariable("illegal-variable", out var result);
-                Assert.IsFalse(success);
-                Assert.IsNull(result);
-            }
+            using var engine = CreateEngine();
+            var success = engine.TryGetStringVariable("illegal-variable", out var result);
+            Assert.IsFalse(success);
+            Assert.IsNull(result);
         }
         #endregion Variable set\get
 
@@ -779,20 +713,18 @@ namespace Tesseract.Tests
         {
             const string resultFilename = @"EngineTests\CanPrintVariables.txt";
 
-            using (var engine = CreateEngine())
-            {
-                var actualResultsFilename = TestResultRunFile(resultFilename);
-                Assert.IsTrue(engine.TryPrintVariablesToFile(actualResultsFilename));
-                var actualResult = NormalizeNewLine(File.ReadAllText(actualResultsFilename));
+            using var engine = CreateEngine();
+            var actualResultsFilename = TestResultRunFile(resultFilename);
+            Assert.IsTrue(engine.TryPrintVariablesToFile(actualResultsFilename));
+            var actualResult = NormalizeNewLine(File.ReadAllText(actualResultsFilename));
 
-                // Load the expected results and verify that they match
-                var expectedResultFilename = TestResultPath(resultFilename);
-                var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultFilename));
+            // Load the expected results and verify that they match
+            var expectedResultFilename = TestResultPath(resultFilename);
+            var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultFilename));
 
-                if (expectedResult != actualResult)
-                    Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultFilename,
-                        actualResultsFilename);
-            }
+            if (expectedResult != actualResult)
+                Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultFilename,
+                    actualResultsFilename);
         }
         #endregion
     }
