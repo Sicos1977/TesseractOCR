@@ -51,6 +51,11 @@ namespace TesseractOCR.Layout
         ///     Flag to check if we are doing our first enumeration
         /// </summary>
         private bool _first = true;
+
+        /// <summary>
+        ///     When set then logging is performed at the debug level instead of information level
+        /// </summary>
+        protected bool LogDebug = false;
         #endregion
 
         #region Properties
@@ -168,9 +173,14 @@ namespace TesseractOCR.Layout
 
             var result = TessApi.Native.PageIteratorNext(IteratorHandleRef, PageIteratorLevel) == Constants.True;
 
-            Logger.LogInformation(result
+            var message = result
                 ? $"Moving to next '{PageIteratorLevel}' element"
-                : $"At final '{PageIteratorLevel}' element");
+                : $"At final '{PageIteratorLevel}' element";
+
+            if (LogDebug)
+                Logger.LogDebug(message);
+            else
+                Logger.LogInformation(message);
 
             return result;
         }

@@ -70,6 +70,15 @@ namespace TesseractOCR.Loggers
         #endregion
 
         #region Log
+        /// <summary>
+        ///     Writes logging to the log
+        /// </summary>
+        /// <typeparam name="TState"></typeparam>
+        /// <param name="logLevel"></param>
+        /// <param name="eventId"></param>
+        /// <param name="state"></param>
+        /// <param name="exception"></param>
+        /// <param name="formatter"></param>
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             switch (logLevel)

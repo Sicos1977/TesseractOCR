@@ -110,6 +110,7 @@ namespace TesseractOCR.Layout
             IteratorHandleRef = iteratorHandleRef;
             ImageHandleRef = imageHandleRef;
             PageIteratorLevel = PageIteratorLevel.Symbol;
+            LogDebug = true;
         }
         #endregion
     }

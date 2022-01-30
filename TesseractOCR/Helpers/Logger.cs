@@ -95,24 +95,24 @@ namespace TesseractOCR.Helpers
         }
         #endregion
 
-        //#region LogInformation
-        ///// <summary>
-        /////     Writes a debug line to the <see cref="_logger" />
-        ///// </summary>
-        ///// <param name="message">The message to write</param>
-        //internal static void LogDebug(string message)
-        //{
-        //    try
-        //    {
-        //        if (_logger == null) return;
-        //        using (_logger.BeginScope(InstanceId))
-        //            _logger.LogDebug(message);
-        //    }
-        //    catch (ObjectDisposedException)
-        //    {
-        //        // Ignore
-        //    }
-        //}
-        //#endregion
+        #region LogInformation
+        /// <summary>
+        ///     Writes a debug line to the <see cref="_logger" />
+        /// </summary>
+        /// <param name="message">The message to write</param>
+        internal static void LogDebug(string message)
+        {
+            try
+            {
+                if (_logger == null) return;
+                using (_logger.BeginScope(InstanceId))
+                    _logger.LogDebug(message);
+            }
+            catch (ObjectDisposedException)
+            {
+                // Ignore
+            }
+        }
+        #endregion
     }
 }
