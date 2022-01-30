@@ -31,7 +31,6 @@ using TesseractOCR.Helpers;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
 using TesseractOCR.Layout;
-using TesseractOCR.Loggers;
 
 // ReSharper disable UnusedMember.Global
 
