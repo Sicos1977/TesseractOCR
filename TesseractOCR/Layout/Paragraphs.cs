@@ -88,6 +88,18 @@ namespace TesseractOCR.Layout
         /// </summary>
         /// <returns><c>true</c> when at the end</returns>
         public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.Block, PageIteratorLevel) == Constants.True;
+
+        /// <summary>
+        ///     Returns information about the <see cref="Paragraph"/>
+        /// </summary>
+        public ParagraphInfo Info
+        {
+            get
+            {
+                TessApi.Native.PageIteratorParagraphInfo(IteratorHandleRef, out var justification, out var isListItem, out var isCrown, out var firstLineIndent);
+                return new ParagraphInfo(justification, isListItem, isCrown, firstLineIndent);
+            }
+        }
         #endregion
 
         #region Constructor

@@ -27,7 +27,7 @@ namespace TesseractOCR
     ///     since we don't have any way of getting it (and
     ///     it's probably not all that useful anyway)
     /// </summary>
-    public class FontInfo
+    public readonly struct FontInfo
     {
         #region Properties
         /// <summary>

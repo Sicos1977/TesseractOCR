@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Extensions.Logging;
@@ -528,7 +529,11 @@ namespace TesseractOCR
             }
 
             if (_processCount > 0)
-                throw new InvalidOperationException("Only one image can be processed at once. Please make sure you dispose of the page once your finished with it");
+            {
+                const string message = "Only one image can be processed at once. Please make sure you dispose of the page once your finished with it";
+                Logger.LogError(message);
+                throw new InvalidOperationException(message);
+            }
 
             _processCount++;
 
@@ -540,16 +545,15 @@ namespace TesseractOCR
                 TessApi.Native.BaseApiSetInputName(_handle, inputName);
             
             var page = new Page(this, image, inputName, region, actualPageSegmentMode, 1);
+            page.Disposed += OnIteratorDisposed;
             return page;
         }
         #endregion
 
-        #region Dispose
-        protected override void Dispose(bool disposing)
+        #region OnIteratorDisposed
+        private void OnIteratorDisposed(object sender, EventArgs e)
         {
-            if (_handle.Handle == IntPtr.Zero) return;
-            TessApi.Native.BaseApiDelete(_handle);
-            _handle = new HandleRef(this, IntPtr.Zero);
+            _processCount--;
         }
         #endregion
 
@@ -581,19 +585,28 @@ namespace TesseractOCR
         /// <exception cref="TesseractException"></exception>
         private void Initialize(string dataPath, Language language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialValues, bool setOnlyNonDebugVariables)
         {
+            if (string.IsNullOrEmpty(dataPath))
+                dataPath = GetTessDataPrefix();
+            
             // Do some minor processing on datapath to fix some common errors (this basically mirrors what tesseract does as of 3.04)
-            if (!string.IsNullOrEmpty(dataPath))
-            {
-                // Remove any excess whitespace
-                dataPath = dataPath.Trim();
+            // Remove any excess whitespace
+            dataPath = dataPath.Trim();
 
-                dataPath = dataPath.TrimEnd('/');
-                dataPath = dataPath.TrimEnd('\\');
-            }
+            dataPath = dataPath.TrimEnd('/');
+            dataPath = dataPath.TrimEnd('\\');
 
             var languageString = LanguageHelper.EnumToString(language);
 
             Logger.LogInformation($"Initializing Tesseract engine, using data path '{dataPath}', language '{languageString}' and engine mode '{engineMode}'");
+
+            var languageFile = Path.Combine(dataPath, $"{languageString}.traineddata");
+
+            if (!File.Exists(languageFile))
+            {
+                var languageFileMessage = $"Could not find the language file '{languageFile}'";
+                Logger.LogError(languageFileMessage);
+                throw new TesseractException(languageFileMessage);
+            }
 
             if (setOnlyNonDebugVariables)
                 Logger.LogInformation("Setting only no debug variables");
@@ -614,37 +627,6 @@ namespace TesseractOCR
             const string message = "Failed to initialize Tesseract engine";
             Logger.LogInformation(message);
             throw new TesseractException(message);
-        }
-        #endregion
-
-        #region Public class PageDisposalHandle
-        /// <summary>
-        ///     Ties the specified pix to the lifecycle of a page.
-        /// </summary>
-        public class PageDisposalHandle
-        {
-            #region Fields
-            private readonly Page _page;
-            private readonly Pix.Image _pix;
-            #endregion
-
-            #region PageDisposalHandle
-            public PageDisposalHandle(Page page, Pix.Image pix)
-            {
-                _page = page;
-                _pix = pix;
-                page.Disposed += OnPageDisposed;
-            }
-            #endregion
-
-            #region OnPageDisposed
-            private void OnPageDisposed(object sender, EventArgs e)
-            {
-                _page.Disposed -= OnPageDisposed;
-                // dispose the pix when the page is disposed.
-                _pix.Dispose();
-            }
-            #endregion
         }
         #endregion
 
@@ -821,5 +803,14 @@ namespace TesseractOCR
             return false;
         }
         #endregion Config
+
+        #region Dispose
+        protected override void Dispose(bool disposing)
+        {
+            if (_handle.Handle == IntPtr.Zero) return;
+            TessApi.Native.BaseApiDelete(_handle);
+            _handle = new HandleRef(this, IntPtr.Zero);
+        }
+        #endregion
     }
 }

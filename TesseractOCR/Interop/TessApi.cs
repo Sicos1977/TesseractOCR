@@ -535,7 +535,13 @@ namespace TesseractOCR.Interop
         // Get the given level kind of components (block, textline, word etc.) as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize. If blockids is not NULL, the block-id of each component is also returned as an array of one element per component. delete [] after use. If paraids is not NULL, the paragraph-id of each component with its block is also returned as an array of one element per component. delete [] after use. If raw_image is true, then portions of the original image are extracted instead of the thresholded image and padded with raw_padding. If text_only is true, then only text components are returned.
         // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetComponentImages1(TessBaseAPI* handle, TessPageIteratorLevel level, BOOL text_only, BOOL raw_image, int raw_padding, struct Pixa **pixa, int** blockids, int** paraids);
 
-        // TODO: Add support for : TESS_API int TessBaseAPIGetThresholdedImageScaleFactor(const TessBaseAPI* handle);
+        /// <summary>
+        ///     Scale factor from original image
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImageScaleFactor")]
+        int BaseAPIGetThresholdedImageScaleFactor(HandleRef handle);
 
         /// <summary>
         ///     Runs page layout analysis in the mode set by SetPageSegMode
@@ -628,7 +634,18 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIAllWordConfidences")]
         int BaseAPIAllWordConfidences(HandleRef handle);
 
-        // TODO: Add support for : TESS_API BOOL TessBaseAPIAdaptToWordStr(TessBaseAPI *handle, TessPageSegMode mode, const char* wordstr);
+        /// <summary>
+        ///     Applies the given word to the adaptive classifier if possible. The word must be SPACE-DELIMITED UTF-8 - l i k e t h i s ,
+        ///     so it can tell the boundaries of the graphemes. Assumes that SetImage/SetRectangle have been used to set the image to the
+        ///     given word. The mode arg should be PSM_SINGLE_WORD or PSM_CIRCLE_WORD, as that will be used to control layout analysis.
+        ///     The currently set PageSegMode is preserved. Returns false if adaption was not possible for some reason
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="mode"><see cref="PageSegMode"/></param>
+        /// <param name="wordstr"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIAdaptToWordStr")]
+        int BaseAPIAdaptToWordStr(HandleRef handle, PageSegMode mode, string wordstr);
 
         /// <summary>
         ///     Free up recognition results and any stored image data, without actually freeing any recognition data that would be time-consuming to reload
@@ -689,13 +706,34 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDetectOrientationScript")]
         int BaseAPIDetectOrientationScript(HandleRef handle, out int orient_deg, out float orient_conf, out IntPtr script_name, out float script_conf);
 
-        // TODO: Add support for : TESS_API void TessBaseAPISetMinOrientationMargin(TessBaseAPI *handle, double margin);
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDetectOrientationScript")]
+        void BaseAPISetMinOrientationMargin(HandleRef handle, double margin);
 
-        // TODO: Add support for : TESS_API int TessBaseAPINumDawgs(const TessBaseAPI *handle);
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPINumDawgs")]
+        int BaseAPINumDawgs(HandleRef handle);
 
-        // TODO: Add support for : TESS_API TessOcrEngineMode TessBaseAPIOem(const TessBaseAPI *handle);
+        /// <summary>
+        ///     Returns the current engine mode
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIOem")]
+        EngineMode BaseAPIOem(HandleRef handle);
 
-        // TODO: Add support for : TESS_API void TessBaseGetBlockTextOrientations(TessBaseAPI *handle, int** block_orientation, bool** vertical_writing);
+        /// <summary>
+        ///     Return text orientation of each block as determined in an earlier page layout analysis operation.
+        ///     Orientation is returned as the number of ccw 90-degree rotations (in [0..3]) required to make the
+        ///     text in the block upright (readable). Note that this may not necessary be the block orientation preferred
+        ///     for recognition (such as the case of vertical CJK text). Also returns whether the text in the block is
+        ///     believed to have vertical writing direction (when in an upright page orientation).
+        ///     The returned array is of length equal to the number of text blocks, which may be less than the total number of blocks.
+        ///     The ordering is intended to be consistent with GetTextLines().
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="block_orientation"></param>
+        /// <param name="vertical_writing"></param>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseGetBlockTextOrientations")]
+        void BaseGetBlockTextOrientations(HandleRef handle, out int[] block_orientation, out bool[] vertical_writing);
         #endregion
 
         #region Page iterator
@@ -841,12 +879,12 @@ namespace TesseractOCR.Interop
         /// 
         /// </summary>
         /// <param name="handle">The TessPageIterator instance</param>
-        /// <param name="justification"></param>
-        /// <param name="is_list_item"></param>
-        /// <param name="is_crown"></param>
-        /// <param name="first_line_indent"></param>
+        /// <param name="justification"><see cref="ParagraphJustification"/></param>
+        /// <param name="is_list_item">List item</param>
+        /// <param name="is_crown">Very first or continuation</param>
+        /// <param name="first_line_indent">First line indentation</param>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorParagraphInfo")]
-        void PageIteratorParagraphInfo(HandleRef handle, out ParagraphJustification justification, bool is_list_item, bool is_crown, int first_line_indent);
+        void PageIteratorParagraphInfo(HandleRef handle, out ParagraphJustification justification, out bool is_list_item, out bool is_crown, out int first_line_indent);
         #endregion
 
         #region Result iterator
@@ -883,11 +921,18 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetChoiceIterator")]
         IntPtr ResultIteratorGetChoiceIterator(HandleRef handle);
 
-        // TODO: Add support for : TESS_API BOOL TessResultIteratorNext(TessResultIterator* handle, TessPageIteratorLevel level);
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorNext")]
+        IntPtr ResultIteratorNext(HandleRef handle, PageIteratorLevel level);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetUTF8Text")]
         IntPtr ResultIteratorGetUTF8TextInternal(HandleRef handle, PageIteratorLevel level);
 
+        /// <summary>
+        ///    Returns the mean confidence of the current object at the given level. The number should be interpreted as a percent probability (0.0f-100.0f) 
+        /// </summary>
+        /// <param name="handle">The TessResultIterator instance</param>
+        /// <param name="level"><see cref="PageIteratorLevel"/></param>
+        /// <returns></returns>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorConfidence")]
         float ResultIteratorGetConfidence(HandleRef handle, PageIteratorLevel level);
 
@@ -929,8 +974,7 @@ namespace TesseractOCR.Interop
         /// <returns>1 if word is numeric</returns>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordIsNumeric")]
         bool ResultIteratorWordIsNumeric(HandleRef handle);
-
-
+        
         /// <summary>
         ///     Returns TRUE if the current symbol is a superscript. If iterating at a higher level object than symbols, e.g., words, then this
         ///     will return the attributes of the first symbol in that word
@@ -1191,10 +1235,7 @@ namespace TesseractOCR.Interop
         #region ResultIteratorWordRecognitionLanguage
         public static string ResultIteratorWordRecognitionLanguage(HandleRef handle)
         {
-            // per docs (ltrresultiterator.h:118 as of 4897796 in github:tesseract-ocr/tesseract)
-            // this return value should *NOT* be deleted.
-            var txtHandle =
-                Native.ResultIteratorWordRecognitionLanguageInternal(handle);
+            var txtHandle = Native.ResultIteratorWordRecognitionLanguageInternal(handle);
 
             return txtHandle != IntPtr.Zero
                 ? MarshalHelper.PtrToString(txtHandle, Encoding.UTF8)

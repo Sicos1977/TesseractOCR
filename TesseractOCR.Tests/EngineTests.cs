@@ -255,21 +255,50 @@ namespace Tesseract.Tests
             foreach (var block in page.Layout)
             {
                 result.AppendLine($"Block confidence: {block.Confidence}");
+                if (block.BoundingBox != null)
+                {
+                    var boundingBox = block.BoundingBox.Value;
+                    result.AppendLine($"Block bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
+                                      $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
+                }
                 result.AppendLine($"Block text: {block.Text}");
 
                 foreach (var paragraph in block.Paragraphs)
                 {
                     result.AppendLine($"Paragraph confidence: {paragraph.Confidence}");
+                    if (paragraph.BoundingBox != null)
+                    {
+                        var boundingBox = paragraph.BoundingBox.Value;
+                        result.AppendLine($"Paragraph bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
+                                          $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
+                    }
+                    var info = paragraph.Info;
+                    result.AppendLine($"Paragraph info justification: {info.Justification}");
+                    result.AppendLine($"Paragraph info is list item: {info.IsListItem}");
+                    result.AppendLine($"Paragraph info is crown: {info.IsCrown}");
+                    result.AppendLine($"Paragraph info first line ident: {info.FirstLineIdent}");
                     result.AppendLine($"Paragraph text: {paragraph.Text}");
-
+                    
                     foreach (var textLine in paragraph.TextLines)
                     {
+                        if (textLine.BoundingBox != null)
+                        {
+                            var boundingBox = textLine.BoundingBox.Value;
+                            result.AppendLine($"Text line bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
+                                              $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
+                        }
                         result.AppendLine($"Text line confidence: {textLine.Confidence}");
                         result.AppendLine($"Text line text: {textLine.Text}");
 
                         foreach (var word in textLine.Words)
                         {
                             result.AppendLine($"Word confidence: {word.Confidence}");
+                            if (word.BoundingBox != null)
+                            {
+                                var boundingBox = word.BoundingBox.Value;
+                                result.AppendLine($"Word bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
+                                                  $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
+                            }
                             result.AppendLine($"Word is from dictionary: {word.IsFromDictionary}");
                             result.AppendLine($"Word is numeric: {word.IsNumeric}");
                             result.AppendLine($"Word language: {word.Language}");
@@ -278,6 +307,12 @@ namespace Tesseract.Tests
                             foreach (var symbol in word.Symbols)
                             {
                                 result.AppendLine($"Symbol confidence: {symbol.Confidence}");
+                                if (symbol.BoundingBox != null)
+                                {
+                                    var boundingBox = symbol.BoundingBox.Value;
+                                    result.AppendLine($"Symbol bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
+                                                      $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
+                                }
                                 result.AppendLine($"Symbol is superscript: {symbol.IsSuperscript}");
                                 result.AppendLine($"Symbol is dropcap: {symbol.IsDropcap}");
                                 result.AppendLine($"Symbol text: {symbol.Text}");
@@ -287,11 +322,7 @@ namespace Tesseract.Tests
                 }
             }
 
-            // TODO : Do some checking here
-
-            var actualResult = result.ToString();
-            File.WriteAllText("d:\\result.txt", actualResult);
-
+            var actualResult = NormalizeNewLine(result.ToString());
             var expectedResultPath = TestResultPath(resultPath);
             var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultPath));
             
@@ -318,11 +349,9 @@ namespace Tesseract.Tests
             if (File.Exists(expectedFilename))
             {
                 var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
-                if (expectedResult != actualResult)
-                {
-                    var actualFilename = TestResultRunFile(resultFilename);
-                    Assert.Fail("Expected results to be {0} but was {1}", expectedFilename, actualFilename);
-                }
+                if (expectedResult == actualResult) return;
+                var actualFilename = TestResultRunFile(resultFilename);
+                Assert.Fail("Expected results to be {0} but was {1}", expectedFilename, actualFilename);
             }
             else
             {
@@ -386,23 +415,20 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanGenerateBoxOutput()
         {
-            string actualResult;
             using var engine = CreateEngine();
             using var img = LoadTestPix(TestImagePath);
             using var page = engine.Process(img);
-            actualResult = NormalizeNewLine(page.BoxText);
+            var actualResult = NormalizeNewLine(page.BoxText);
 
-            var resultFilename = "EngineTests/CanGenerateBoxOutput.txt";
+            const string resultFilename = "EngineTests/CanGenerateBoxOutput.txt";
             var expectedFilename = TestResultPath(resultFilename);
 
             if (File.Exists(expectedFilename))
             {
                 var expectedResult = NormalizeNewLine(File.ReadAllText(expectedFilename));
-                if (expectedResult != actualResult)
-                {
-                    var actualFilename = TestResultRunFile(resultFilename);
-                    Assert.Fail("Expected results to be {0} but was {1}", expectedFilename, actualFilename);
-                }
+                if (expectedResult == actualResult) return;
+                var actualFilename = TestResultRunFile(resultFilename);
+                Assert.Fail("Expected results to be {0} but was {1}", expectedFilename, actualFilename);
             }
             else
             {
@@ -440,17 +466,10 @@ namespace Tesseract.Tests
         [TestMethod]
         public void CanGenerateWordStrBoxOutput()
         {
-            string actualResult;
-            using (var engine = CreateEngine())
-            {
-                using (var img = LoadTestPix(TestImagePath))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        actualResult = NormalizeNewLine(page.WordStrBoxText);
-                    }
-                }
-            }
+            using var engine = CreateEngine();
+            using var img = LoadTestPix(TestImagePath);
+            using var page = engine.Process(img);
+            var actualResult = NormalizeNewLine(page.WordStrBoxText);
 
             const string resultFilename = "EngineTests/CanGenerateWordStrBoxOutput.txt";
             var expectedFilename = TestResultPath(resultFilename);
@@ -536,7 +555,7 @@ namespace Tesseract.Tests
             Assert.IsFalse(loadSystemDawg);
         }
 
-        [Ignore("Missing russian language data")]
+        [TestMethod]
         public static void Initialise_Rus_ShouldStartEngine()
         {
             using var engine = new Engine(DataPath, Language.Russian, EngineMode.Default);
