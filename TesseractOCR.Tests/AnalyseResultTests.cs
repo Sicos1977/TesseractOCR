@@ -3,7 +3,6 @@ using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
-using TesseractOCR.Helpers;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 
@@ -232,16 +231,24 @@ namespace Tesseract.Tests
             rotation %= 360f;
             rotation = rotation < 0 ? rotation + 360 : rotation;
 
-            if (rotation >= 315 || rotation < 45)
-                orientation = Orientation.PageUp;
-            else if (rotation >= 45 && rotation < 135)
-                orientation = Orientation.PageRight;
-            else if (rotation >= 135 && rotation < 225)
-                orientation = Orientation.PageDown;
-            else if (rotation >= 225 && rotation < 315)
-                orientation = Orientation.PageLeft;
-            else
-                throw new ArgumentOutOfRangeException(nameof(rotation));
+            switch (rotation)
+            {
+                case >= 315:
+                case < 45:
+                    orientation = Orientation.PageUp;
+                    break;
+                case >= 45 and < 135:
+                    orientation = Orientation.PageRight;
+                    break;
+                case >= 135 and < 225:
+                    orientation = Orientation.PageDown;
+                    break;
+                case >= 225 and < 315:
+                    orientation = Orientation.PageLeft;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(rotation));
+            }
         }
 
         private static TesseractOCR.Pix.Image LoadTestImage(string path)
