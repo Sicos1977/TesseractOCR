@@ -85,28 +85,6 @@ namespace TesseractOCR.Layout
         /// </summary>
         /// <returns><c>true</c> when at the end</returns>
         public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.Word, PageIteratorLevel) == Constants.True;
-
-        /// <summary>
-        ///     Returns <c>true</c> when the <see cref="Symbol"/> is in superscript
-        /// </summary>
-        /// <returns></returns>
-        /// <remarks>
-        ///     A subscript or superscript is a character (such as a number or letter) that is set slightly below or
-        ///     above the normal line of type, respectively. It is usually smaller than the rest of the text.
-        ///     Subscripts appear at or below the baseline, while superscripts are above. Subscripts and superscripts
-        ///     are perhaps most often used in formulas, mathematical expressions, and specifications of chemical
-        ///     compounds and isotopes, but have many other uses as well.
-        /// </remarks>
-        public bool IsSuperscript => TessApi.Native.ResultIteratorSymbolIsSuperscript(IteratorHandleRef);
-
-        /// <summary>
-        ///     Returns <c>true</c> when the <see cref="Symbol"/> is dropcap
-        /// </summary>
-        /// <remarks>
-        ///     A Drop Cap is the initial letter of a paragraph which sits within the margins and runs several
-        ///     lines deep into the paragraph, indenting some normal-sized text in these lines
-        /// </remarks>
-        public bool IsDropcap => TessApi.Native.ResultIteratorSymbolIsDropcap(IteratorHandleRef);
         #endregion
 
         #region Constructor
