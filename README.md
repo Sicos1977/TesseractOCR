@@ -30,6 +30,7 @@ using var page = engine.Process(img)
 using var engine = CreateEngine();
 using var img = LoadTestPix(TestImageFileColumn);
 using var page = engine.Process(img);
+
 foreach (var block in page.Layout)
 {
     result.AppendLine($"Block confidence: {block.Confidence}");
