@@ -12,7 +12,7 @@ How to use
 You need trained data in tessdata by language
 You can get them at https://github.com/tesseract-ocr/tessdata or https://github.com/tesseract-ocr/tessdata_fast
 
-##OCR a page
+## OCR a page
 
 ```c#
 using var engine = new TesseractEngine(@"./tessdata", Language.English, EngineMode.Default)
@@ -24,7 +24,7 @@ using var page = engine.Process(img)
 }
 ```
 
-##Iterate through the layout of a page
+## Iterate through the layout of a page
 
 ```c#
 using var engine = CreateEngine();
