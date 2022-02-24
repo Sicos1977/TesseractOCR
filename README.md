@@ -28,7 +28,7 @@ using var page = engine.Process(img)
 
 ```c#
 using var engine = CreateEngine();
-using var img = LoadTestPix(TestImageFileColumn);
+using var img = Pix.Image.LoadFromFile(testImagePath)
 using var page = engine.Process(img);
 
 foreach (var block in page.Layout)
