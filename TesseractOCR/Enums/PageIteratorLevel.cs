@@ -26,31 +26,29 @@ namespace TesseractOCR.Enums
     /// </summary>
     public enum PageIteratorLevel
     {
-        Unknown = -1,
-
         /// <summary>
         ///		Block
         /// </summary>
-        Block = 0,
+        Block,
 
         /// <summary>
         ///		Paragraph
         /// </summary>
-        Paragraph = 1,
+        Paragraph,
 
         /// <summary>
         ///		Text line
         /// </summary>
-        TextLine = 2,
+        TextLine,
 
         /// <summary>
         ///		Word
         /// </summary>
-        Word = 3,
+        Word,
 
         /// <summary>
         ///		Symbol
         /// </summary>
-        Symbol = 4
+        Symbol
     }
 }

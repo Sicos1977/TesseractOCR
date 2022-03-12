@@ -89,7 +89,7 @@ namespace TesseractOCR.Layout
         ///     Returns <c>true</c> if the iterator is at the final <see cref="Word"/> in the current <see cref="TextLine"/>
         /// </summary>
         /// <returns><c>true</c> when at the end</returns>
-        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.Word, PageIteratorLevel) == Constants.True;
+        public bool IsAtFinalElement => TessApi.Native.PageIteratorIsAtFinalElement(IteratorHandleRef, PageIteratorLevel.TextLine, PageIteratorLevel) == Constants.True;
 
         /// <summary>
         ///     Returns <c>true</c> when the <see cref="Word"/> is returned from a Tesseract dictionary

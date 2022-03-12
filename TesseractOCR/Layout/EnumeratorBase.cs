@@ -154,6 +154,50 @@ namespace TesseractOCR.Layout
                 return new ElementProperties(orientation, textLineOrder, writingDirection, deskewAngle);
             }
         }
+
+        /// <summary>
+        ///     Returns <c>true</c> when the <see cref="Symbol"/> is superscript
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        ///     <b>If iterating at a higher level object than <see cref="Symbols"/>, e.g., <see cref="Words"/>, then this
+        ///     will return the attributes of the first symbol in that <see cref="Word"/></b>
+        ///     <br/>
+        ///     A subscript or superscript is a character (such as a number or letter) that is set slightly below or
+        ///     above the normal line of type, respectively. It is usually smaller than the rest of the text.
+        ///     Subscripts appear at or below the baseline, while superscripts are above. Subscripts and superscripts
+        ///     are perhaps most often used in formulas, mathematical expressions, and specifications of chemical
+        ///     compounds and isotopes, but have many other uses as well.
+        /// </remarks>
+        public bool IsSuperscript => TessApi.Native.ResultIteratorSymbolIsSuperscript(IteratorHandleRef);
+
+        /// <summary>
+        ///     Returns <c>true</c> when the <see cref="Symbol"/> is subscript
+        /// </summary>
+        /// <returns></returns>
+        /// <remarks>
+        ///     <b>If iterating at a higher level object than <see cref="Symbols"/>, e.g., <see cref="Words"/>, then this
+        ///     will return the attributes of the first symbol in that <see cref="Word"/></b>
+        ///     <br/>
+        ///     A subscript or superscript is a character (such as a number or letter) that is set slightly below or
+        ///     above the normal line of type, respectively. It is usually smaller than the rest of the text.
+        ///     Subscripts appear at or below the baseline, while superscripts are above. Subscripts and superscripts
+        ///     are perhaps most often used in formulas, mathematical expressions, and specifications of chemical
+        ///     compounds and isotopes, but have many other uses as well.
+        /// </remarks>
+        public bool IsSubscript => TessApi.Native.ResultIteratorSymbolIsSubscript(IteratorHandleRef);
+
+        /// <summary>
+        ///     Returns <c>true</c> when the <see cref="Symbol"/> is dropcap
+        /// </summary>
+        /// <remarks>
+        ///     <b>If iterating at a higher level object than <see cref="Symbols"/>, e.g., <see cref="Words"/>, then this
+        ///     will return the attributes of the first symbol in that <see cref="Word"/></b>
+        ///     <br/>
+        ///     A Drop Cap is the initial letter of a paragraph which sits within the margins and runs several
+        ///     lines deep into the paragraph, indenting some normal-sized text in these lines
+        /// </remarks>
+        public bool IsDropcap => TessApi.Native.ResultIteratorSymbolIsDropcap(IteratorHandleRef);
         #endregion
 
         #region Reset
@@ -188,8 +232,7 @@ namespace TesseractOCR.Layout
             return result;
         }
         #endregion
-
-
+        
         #region Dispose
         /// <summary>
         ///     Does not do a thing, we have to implement it because of the IEnumerator interface

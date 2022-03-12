@@ -14,6 +14,6 @@ namespace Tesseract.Tests
 
         public DateTime StartedAt { get; }
 
-        public static readonly TestRun Current = new TestRun();
+        public static readonly TestRun Current = new();
     }
 }

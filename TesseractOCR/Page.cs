@@ -129,6 +129,30 @@ namespace TesseractOCR
         }
 
         /// <summary>
+        ///     Return text orientation of each block as determined in an earlier page layout analysis operation.
+        ///     Orientation is returned as the number of ccw 90-degree rotations (in [0..3]) required to make the
+        ///     text in the block upright (readable). Note that this may not necessary be the block orientation preferred
+        ///     for recognition (such as the case of vertical CJK text). Also returns whether the text in the block is
+        ///     believed to have vertical writing direction (when in an upright page orientation).
+        ///     The returned array is of length equal to the number of text blocks, which may be less than the total number of blocks.
+        ///     The ordering is intended to be consistent with GetTextLines().
+        /// </summary>
+        /// <remarks>
+        ///     Item1 = Orientation as the number of ccw 90-degree rotations (in [0..3]) required to make the
+        ///     text in the block upright (readable),br/>
+        ///     Item2 = Returns whether the text in the block is believed to have vertical writing direction
+        ///     (when in an upright page orientation)
+        /// </remarks>
+        public Tuple<int[], bool[]> BlockTextOrientations
+        {
+            get
+            {
+                TessApi.Native.BaseGetBlockTextOrientations(Engine.Handle, out var orientation, out var writing);
+                return new Tuple<int[], bool[]>(orientation, writing);
+            }
+        }
+
+        /// <summary>
         ///     Returns the segmentation mode used to OCR the specified <see cref="Image"/>
         /// </summary>
         public PageSegMode SegmentMode { get; }
@@ -154,6 +178,12 @@ namespace TesseractOCR
                 return Pix.Image.Create(pixHandle);
             }
         }
+
+        /// <summary>
+        ///     Returns the scale factor for thresholded <see cref="Image"/> that was OCR'd
+        /// </summary>
+        /// <returns>The scale factor</returns>
+        public int ThresholdedImageScaleFactor => TessApi.Native.BaseAPIGetThresholdedImageScaleFactor(Engine.Handle);
 
         /// <summary>
         ///     Returns a <see cref="Blocks" /> object that is used to iterate over the page's layout as defined by the
