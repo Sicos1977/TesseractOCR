@@ -28,11 +28,11 @@
 	<ItemGroup>
 		<Content Include="x64/**/*.*" copyToOutput="true">
 			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>x64;content</PackagePath>
+			<PackagePath>x64;lib</PackagePath>
 		</Content>
 		<Content Include="x86/**/*.*" copyToOutput="true">
 			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>x86;content</PackagePath>
+			<PackagePath>x86;lib</PackagePath>
 		</Content>
 	</ItemGroup>
 
