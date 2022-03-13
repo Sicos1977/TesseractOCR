@@ -15,13 +15,11 @@ You can get them at https://github.com/tesseract-ocr/tessdata or https://github.
 ## OCR a page
 
 ```c#
-using var engine = new TesseractEngine(@"./tessdata", Language.English, EngineMode.Default)
-using var img = Pix.Image.LoadFromFile(testImagePath)
-using var page = engine.Process(img)
-{
-     Console.WriteLine("Mean confidence: {0}", page.MeanConfidence);
-     Console.WriteLine("Text: \r\n{0}", page.Text);
-}
+using var engine = new Engine(@"./tessdata", Language.English, EngineMode.Default);
+using var img = TesseractOCR.Pix.Image.LoadFromFile(testImagePath);
+using var page = engine.Process(img);
+Console.WriteLine("Mean confidence: {0}", page.MeanConfidence);
+Console.WriteLine("Text: \r\n{0}", page.Text);
 ```
 
 ## Iterate through the layout of a page
