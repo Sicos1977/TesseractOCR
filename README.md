@@ -26,7 +26,7 @@ Console.WriteLine("Text: \r\n{0}", page.Text);
 
 ```c#
 using var engine = CreateEngine();
-using var img = Pix.Image.LoadFromFile(testImagePath)
+using var img = Pix.Image.LoadFromFile(testImagePath);
 using var page = engine.Process(img);
 
 foreach (var block in page.Layout)
