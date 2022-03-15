@@ -95,7 +95,7 @@ namespace TesseractOCR.Helpers
         }
         #endregion
 
-        #region LogInformation
+        #region LogDebug
         /// <summary>
         ///     Writes a debug line to the <see cref="_logger" />
         /// </summary>
