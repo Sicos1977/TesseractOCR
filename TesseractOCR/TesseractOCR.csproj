@@ -12,12 +12,12 @@
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<SignAssembly>false</SignAssembly>
-		<TargetFrameworks>net48;net5.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard21;net48;net5.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.1.0.0</FileVersion>
-		<AssemblyVersion>5.1.0.0</AssemblyVersion>
+		<FileVersion>5.1.1.0</FileVersion>
+		<AssemblyVersion>5.1.1.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.1.0</Version>
+		<Version>5.1.1</Version>
 		<PackageIcon>ocr.png</PackageIcon>
 	</PropertyGroup>
 	<ItemGroup>
@@ -37,8 +37,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1" />
-		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
+		<PackageReference Include="System.Reflection.Emit" Version="4.6.0" />
 	</ItemGroup>
 
 	<ItemGroup>

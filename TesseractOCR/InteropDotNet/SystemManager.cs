@@ -25,6 +25,7 @@
 //
 
 using System;
+using System.Runtime.InteropServices;
 
 namespace TesseractOCR.InteropDotNet
 {
@@ -53,7 +54,7 @@ namespace TesseractOCR.InteropDotNet
         #region GetOperatingSystem
         public static OperatingSystem GetOperatingSystem()
         {
-#if(NETCORE || NETSTANDARD)
+#if(NETCORE)
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 return OperatingSystem.Windows;
             if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
