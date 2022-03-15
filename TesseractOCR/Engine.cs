@@ -453,11 +453,11 @@ namespace TesseractOCR
         /// <param name="logger">When set then logging is written to this <see cref="ILogger"/> interface</param>
         public Engine(string dataPath, Language language, EngineMode engineMode, IEnumerable<string> configFiles, IDictionary<string, object> initialOptions, bool setOnlyNonDebugVariables, ILogger logger)
         {
-            DefaultPageSegMode = PageSegMode.Auto;
-            _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
-
             if (logger != null)
                 Logger.LoggerInterface = logger;
+
+            DefaultPageSegMode = PageSegMode.Auto;
+            _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
             Initialize(dataPath, language, engineMode, configFiles, initialOptions, setOnlyNonDebugVariables);
         }
