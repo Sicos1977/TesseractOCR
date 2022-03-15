@@ -262,7 +262,7 @@ namespace TesseractOCR.Enums
     /// <summary>
     ///     A helper class to work with the <see cref="ScriptName"/>
     /// </summary>
-    internal static class ScriptNameHelper
+    public static class ScriptNameHelper
     {
         #region StringToEnum
         /// <summary>
@@ -272,7 +272,7 @@ namespace TesseractOCR.Enums
         /// <param name="scriptNameString">The language string</param>
         /// <returns><see cref="Language"/></returns>
 
-        internal static ScriptName StringToEnum(string scriptNameString)
+        public static ScriptName StringToEnum(string scriptNameString)
         {
             foreach (var scriptName in (ScriptName[])Enum.GetValues(typeof(ScriptName)))
             {

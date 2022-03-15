@@ -791,7 +791,7 @@ namespace TesseractOCR.Enums
     /// <summary>
     ///     A helper class for working with the <see cref="Language"/>
     /// </summary>
-    internal static class LanguageHelper
+    public static class LanguageHelper
     {
         #region StringToEnum
         /// <summary>
@@ -800,7 +800,7 @@ namespace TesseractOCR.Enums
         /// </summary>
         /// <param name="languageString">The language string</param>
         /// <returns><see cref="Language"/></returns>
-        internal static Language StringToEnum(string languageString)
+        public static Language StringToEnum(string languageString)
         {
             foreach (var language in (Language[])Enum.GetValues(typeof(Language)))
             {
@@ -820,7 +820,7 @@ namespace TesseractOCR.Enums
         /// </summary>
         /// <param name="language"></param>
         /// <returns></returns>
-        internal static string EnumToString(Language language)
+        public static string EnumToString(Language language)
         {
             return language.GetAttributeOfType<StringAttribute>().Value;
         }
