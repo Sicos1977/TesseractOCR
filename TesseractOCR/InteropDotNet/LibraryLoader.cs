@@ -29,7 +29,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using TesseractOCR.Helpers;
-using TesseractOCR.Loggers;
 using File = System.IO.File;
 
 // ReSharper disable UnusedMember.Global
@@ -103,8 +102,11 @@ namespace TesseractOCR.InteropDotNet
                     platformName = SystemManager.GetPlatformName();
                 
                 Logger.LogInformation($"Current platform is {platformName}");
+
+                var dllHandle = CheckCodeBase(fileName, platformName);
                 
-                var dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
+                if (dllHandle == IntPtr.Zero)
+                    dllHandle = CheckExecutingAssemblyDomain(fileName, platformName);
                 
                 if (dllHandle == IntPtr.Zero)
                     dllHandle = CheckCurrentAppDomain(fileName, platformName);
@@ -125,6 +127,24 @@ namespace TesseractOCR.InteropDotNet
             }
         }
         #endregion
+
+        #region CheckCodeBase
+        private IntPtr CheckCodeBase(string fileName, string platformName)
+        {
+            var assemblyLocation = Assembly.GetExecutingAssembly().GetName().CodeBase;
+
+            if (string.IsNullOrEmpty(assemblyLocation))
+            {
+                Logger.LogInformation("Code base was empty");
+                return IntPtr.Zero;
+            }
+
+            assemblyLocation = assemblyLocation.Substring(8);
+            var baseDirectory = Path.GetDirectoryName(assemblyLocation);
+            return InternalLoadLibrary(baseDirectory, platformName, fileName);
+        }
+        #endregion
+
 
         #region CheckExecutingAssemblyDomain
         private IntPtr CheckExecutingAssemblyDomain(string fileName, string platformName)
