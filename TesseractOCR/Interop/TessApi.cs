@@ -148,8 +148,6 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDelete")]
         void BaseApiDelete(HandleRef handle);
 
-        // TODO: Add support for : TESS_API size_t TessBaseAPIGetOpenCLDevice(TessBaseAPI* handle, void** device);
-
         /// <summary>
         ///     Set the name of the input file. Needed only for training and reading a UNLV zone file, and for searchable PDF output
         /// </summary>
