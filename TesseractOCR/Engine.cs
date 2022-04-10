@@ -71,7 +71,7 @@ namespace TesseractOCR
         /// <summary>
         ///     Returns the data path
         /// </summary>
-        public string DataPath => MarshalHelper.PtrToString(TessApi.Native.BaseApiGetDatapath(_handle)).Replace('/', Path.DirectorySeparatorChar);
+        public string DataPath => MarshalHelper.PtrToString(TessApi.Native.BaseApiGetDatapath(_handle)).TrimEnd('/');
 
         /// <summary>
         ///     Returns a list of loaded <see cref="Language"/>'s
