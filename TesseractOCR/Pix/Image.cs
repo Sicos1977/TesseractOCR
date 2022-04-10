@@ -28,7 +28,6 @@ using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
 using Math = System.Math;
 
 // ReSharper disable InconsistentNaming

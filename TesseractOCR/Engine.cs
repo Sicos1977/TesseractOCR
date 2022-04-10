@@ -57,6 +57,31 @@ namespace TesseractOCR
         ///     Gets or sets default <see cref="PageSegMode" /> mode used by one of the Process methods
         /// </summary>
         public PageSegMode DefaultPageSegMode { get; set; }
+
+        /// <summary>
+        ///     Returns the current engine mode
+        /// </summary>
+        public EngineMode CurrentEngineMode => TessApi.Native.BaseAPIOem(_handle);
+
+        /// <summary>
+        ///     Returns the <see cref="Language"/> used in the last valid initialization
+        /// </summary>
+        public Language InitLanguage => LanguageHelper.StringToEnum(MarshalHelper.PtrToString(TessApi.Native.BaseApiGetDatapath(_handle)));
+
+        /// <summary>
+        ///     Returns the data path
+        /// </summary>
+        public string DataPath => MarshalHelper.PtrToString(TessApi.Native.BaseApiGetDatapath(_handle)).Replace('/', Path.DirectorySeparatorChar);
+
+        /// <summary>
+        ///     Returns a list of loaded <see cref="Language"/>'s
+        /// </summary>
+        public List<Language> LoadedLanguages => TessApi.BaseApiLoadedLanguages(_handle);
+
+        /// <summary>
+        ///     Returns a list of available <see cref="Language"/>'s
+        /// </summary>
+        public List<Language> AvailableLanguages => TessApi.BaseAPIGetAvailableLanguagesAsVector(_handle);
         #endregion
 
         #region Constructors
@@ -630,7 +655,35 @@ namespace TesseractOCR
         }
         #endregion
 
-        #region BaseApiSetDebugVariable
+        #region ClearAdaptiveClassifier
+        /// <summary>
+        ///     Call between pages or documents etc to free up memory and forget adaptive data
+        /// </summary>
+        public void ClearAdaptiveClassifier()
+        {
+            TessApi.Native.BaseAPIClearAdaptiveClassifier(_handle);
+        }
+        #endregion
+
+        #region ClearPersistentCache
+        /// <summary>
+        ///     Clear any library-level memory caches. There are a variety of expensive-to-load constant data structures
+        ///     (mostly language dictionaries) that are cached globally -- surviving the Init() and End() of individual TessBaseAPI's.
+        ///     This function allows the clearing of these caches
+        /// </summary>
+        public void ClearPersistentCache()
+        {
+            TessApi.Native.BaseAPIClearPersistentCache(_handle);
+        }
+        #endregion
+
+        #region SetDebugVariable
+        /// <summary>
+        ///     Sets a debug variable.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public bool SetDebugVariable(string name, string value)
         {
             return TessApi.BaseApiSetDebugVariable(_handle, name, value) != 0;

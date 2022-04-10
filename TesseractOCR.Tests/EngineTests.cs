@@ -142,27 +142,6 @@ namespace Tesseract.Tests
         }
 
         [TestMethod]
-        public void CanGetSegmentedRegions()
-        {
-            const int expectedCount = 8; // number of text lines in test image
-
-            using var engine = CreateEngine();
-            var imgPath = TestFilePath(TestImagePath);
-            using var img = TesseractOCR.Pix.Image.LoadFromFile(imgPath);
-            using var page = engine.Process(img);
-            var boxes = page.GetSegmentedRegions(PageIteratorLevel.TextLine);
-
-            for (var i = 0; i < boxes.Count; i++)
-            {
-                var box = boxes[i];
-                Console.WriteLine("Box[{0}]: x={1}, y={2}, w={3}, h={4}", i, box.X, box.Y, box.Width,
-                    box.Height);
-            }
-
-            Assert.AreEqual(boxes.Count, expectedCount);
-        }
-
-        [TestMethod]
         public void CanProcessEmptyPixUsingResultIterator()
         {
             var result = new StringBuilder();
@@ -265,6 +244,7 @@ namespace Tesseract.Tests
 
                 foreach (var paragraph in block.Paragraphs)
                 {
+                    var regions = block.SegmentedRegions;
                     result.AppendLine($"Paragraph confidence: {paragraph.Confidence}");
                     if (paragraph.BoundingBox != null)
                     {

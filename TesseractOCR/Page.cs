@@ -20,8 +20,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -352,43 +350,6 @@ namespace TesseractOCR
             RegionOfInterest = regionOfInterest;
             SegmentMode = segmentMode;
             Number = number;
-        }
-        #endregion
-
-        #region GetSegmentedRegions
-        /// <summary>
-        ///     Get segmented regions at specified page iterator level
-        /// </summary>
-        /// <param name="pageIteratorLevel">PageIteratorLevel enum</param>
-        /// <remarks>
-        ///     This method can be called without triggering the <see cref="Recognize"/> method
-        /// </remarks>
-        /// <returns>A list with <see cref="Rectangle"/>'s</returns>
-        public List<Rectangle> GetSegmentedRegions(PageIteratorLevel pageIteratorLevel)
-        {
-            Logger.LogInformation("Getting segmented regions");
-
-            var boxArray = TessApi.Native.BaseApiGetComponentImages(Engine.Handle, pageIteratorLevel, Constants.True, IntPtr.Zero, IntPtr.Zero);
-            var boxCount = LeptonicaApi.Native.boxaGetCount(new HandleRef(this, boxArray));
-            var boxList = new List<Rectangle>();
-
-            for (var i = 0; i < boxCount; i++)
-            {
-                var box = LeptonicaApi.Native.boxaGetBox(new HandleRef(this, boxArray), i, PixArrayAccessType.Clone);
-
-                if (box == IntPtr.Zero)
-                    continue;
-
-                LeptonicaApi.Native.boxGetGeometry(new HandleRef(this, box), out var px, out var py, out var pw, out var ph);
-                boxList.Add(new Rectangle(px, py, pw, ph));
-                LeptonicaApi.Native.boxDestroy(ref box);
-            }
-
-            LeptonicaApi.Native.boxaDestroy(ref boxArray);
-
-            Logger.LogInformation($"Found {boxList.Count} region{(boxList.Count == 1 ? string.Empty : "s")}");
-
-            return boxList;
         }
         #endregion
 
