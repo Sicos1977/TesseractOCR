@@ -383,6 +383,12 @@ namespace TesseractOCR.Enums
         /// </summary>
         [String("jpn")] 
         Japanese,
+        
+        /// <summary>
+        ///     Japanese (vertical)
+        /// </summary>
+        [String("jpn_vert")] 
+        JapaneseVertical,
 
         /// <summary>
         ///     Kannada
