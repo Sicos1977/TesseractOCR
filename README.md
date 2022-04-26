@@ -126,6 +126,21 @@ Tesseract uses the Leptonica library to read images with one of these formats:
 
 **I have dropped support for the Windows.Drawing.Image namespace since this only works good on Windows and not on other systems. You should be fine with Leptonica**
 
+Logging
+=======
+
+TesseractOCR uses the Microsoft ILogger interface (https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.ilogger?view=dotnet-plat-ext-5.0). You can use any logging library that uses this interface.
+
+TesseractOCR has some build in loggers that can be found in the ```TesseractOCR.Logger``` namespace. 
+
+For example
+
+```csharp
+var logger = !string.IsNullOrWhiteSpace(<some logfile>)
+                ? new TesseractOCR.Loggers.Stream(File.OpenWrite(<some logfile>))
+                : new TesseractOCR.Loggers.Console();
+```
+
 Installing via NuGet
 ====================
 
