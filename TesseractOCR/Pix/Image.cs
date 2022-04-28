@@ -204,12 +204,36 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region LoadFromMemory
+        /// <summary>
+        ///     Loads an image from a MemoryStream
+        /// </summary>
+        /// <param name="memoryStream">The memory stream</param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
+        public static Image LoadFromMemory(MemoryStream memoryStream)
+        {
+            Logger.LogInformation("Loading image from memory stream");
+            return LoadFromMemoryInternal(memoryStream.GetBuffer());
+        }
+
+        /// <summary>
+        ///     Loads an image from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array</param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
         public static Image LoadFromMemory(byte[] bytes)
         {
-            Logger.LogInformation("Loading image from memory");
+            Logger.LogInformation("Loading image from byte array");
+            return LoadFromMemoryInternal(bytes);
+        }
+        #endregion
 
+        #region LoadFromMemoryInternal
+        public static Image LoadFromMemoryInternal(byte[] bytes)
+        {
             IntPtr handle;
-            
+
             fixed (byte* ptr = bytes)
             {
                 handle = LeptonicaApi.Native.pixReadMem(ptr, bytes.Length);
