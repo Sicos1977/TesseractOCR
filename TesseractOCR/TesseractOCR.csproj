@@ -14,13 +14,15 @@
 		<SignAssembly>false</SignAssembly>
 		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.1.7.0</FileVersion>
-		<AssemblyVersion>5.1.7.0</AssemblyVersion>
+		<FileVersion>5.1.8.0</FileVersion>
+		<AssemblyVersion>5.1.8.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.1.7</Version>
+		<Version>5.1.8</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	<ItemGroup>
 		<Folder Include="x86\" />
@@ -44,6 +46,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Include="ocr.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
