@@ -28,7 +28,6 @@ using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
 using TesseractOCR.Internal;
 using TesseractOCR.Interop;
-using TesseractOCR.Loggers;
 using Math = System.Math;
 
 // ReSharper disable InconsistentNaming
@@ -205,16 +204,62 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region LoadFromMemory
+        /// <summary>
+        ///     Loads an image from a MemoryStream
+        /// </summary>
+        /// <param name="memoryStream">The memory stream</param>
+        /// <returns><see cref="Image"/></returns>
+        /// <exception cref="IOException"></exception>
+        public static Image LoadFromMemory(MemoryStream memoryStream)
+        {
+            Logger.LogInformation("Loading image from memory stream");
+            var buffer = memoryStream.GetBuffer();
+            return LoadFromMemoryInternal(buffer, 0, buffer.Length);
+        }
+
+        /// <summary>
+        ///     Loads an image from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array</param>
+        /// <returns><see cref="Image"/></returns>
+        /// <exception cref="IOException"></exception>
         public static Image LoadFromMemory(byte[] bytes)
         {
-            Logger.LogInformation("Loading image from memory");
+            Logger.LogInformation("Loading image from byte array");
+            return LoadFromMemoryInternal(bytes, 0 , bytes.Length);
+        }
 
+        /// <summary>
+        ///     Loads an image from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array</param>
+        /// <param name="offset">The offset</param>
+        /// <param name="length">The length</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static Image LoadFromMemory(byte[] bytes, int offset, int length)
+        {
+            if (offset < 0 || offset > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(offset));
+
+            if (length < 0 || length > bytes.Length)
+                throw new ArgumentOutOfRangeException(nameof(length));
+
+            if (offset + length > bytes.Length)
+                throw new ArgumentException("Offset + length is greater then the byte array length");
+
+            return LoadFromMemoryInternal(bytes, offset, length);
+        }
+
+        #endregion
+
+        #region LoadFromMemoryInternal
+        public static Image LoadFromMemoryInternal(byte[] bytes, int offset, int length)
+        {
             IntPtr handle;
-            
+
             fixed (byte* ptr = bytes)
-            {
-                handle = LeptonicaApi.Native.pixReadMem(ptr, bytes.Length);
-            }
+                handle = LeptonicaApi.Native.pixReadMem(ptr + offset, length);
 
             if (handle == IntPtr.Zero)
             {

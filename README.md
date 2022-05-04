@@ -14,7 +14,7 @@ You can get them at https://github.com/tesseract-ocr/tessdata or https://github.
 
 ## Microsoft Visual C++ runtimes
 
-The DLL's Tesseract51.dll (and exe) and leptonica-1.82.0.dll are compiled with Visual Studio 2022 you need these C++ runtimes for it on your server
+The DLL's Tesseract51.dll (and exe) and leptonica-1.82.0.dll are compiled with Visual Studio 2022 you need these C++ runtimes for it on your computer
 
 - X86: https://aka.ms/vs/17/release/vc_redist.x86.exe
 - X64: https://aka.ms/vs/17/release/vc_redist.x64.exe
@@ -32,7 +32,7 @@ Console.WriteLine("Text: \r\n{0}", page.Text);
 ## Iterate through the layout of a page
 
 ```c#
-using var engine = CreateEngine();
+using var engine = new Engine(@"./tessdata", Language.English, EngineMode.Default);
 using var img = Pix.Image.LoadFromFile(testImagePath);
 using var page = engine.Process(img);
 
@@ -125,6 +125,21 @@ Tesseract uses the Leptonica library to read images with one of these formats:
 * Except Leptonica
 
 **I have dropped support for the Windows.Drawing.Image namespace since this only works good on Windows and not on other systems. You should be fine with Leptonica**
+
+Logging
+=======
+
+TesseractOCR uses the Microsoft ILogger interface (https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.ilogger?view=dotnet-plat-ext-5.0). You can use any logging library that uses this interface.
+
+TesseractOCR has some build in loggers that can be found in the ```TesseractOCR.Logger``` namespace. 
+
+For example
+
+```csharp
+var logger = !string.IsNullOrWhiteSpace(<some logfile>)
+                ? new TesseractOCR.Loggers.Stream(File.OpenWrite(<some logfile>))
+                : new TesseractOCR.Loggers.Console();
+```
 
 Installing via NuGet
 ====================

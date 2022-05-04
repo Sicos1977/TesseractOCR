@@ -148,8 +148,6 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDelete")]
         void BaseApiDelete(HandleRef handle);
 
-        // TODO: Add support for : TESS_API size_t TessBaseAPIGetOpenCLDevice(TessBaseAPI* handle, void** device);
-
         /// <summary>
         ///     Set the name of the input file. Needed only for training and reading a UNLV zone file, and for searchable PDF output
         /// </summary>
@@ -266,8 +264,7 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetStringVariable")]
         IntPtr BaseApiGetStringVariableInternal(HandleRef handle, string name);
 
-        // TODO: No idea yet how to do this
-        // TODO: Add support for : TESS_API void TessBaseAPIPrintVariables(const TessBaseAPI *handle, FILE *fp);
+        // TESS_API void TessBaseAPIPrintVariables(const TessBaseAPI *handle, FILE *fp);
 
         /// <summary>
         ///     Print Tesseract parameters to the given file
@@ -382,9 +379,21 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetInitLanguagesAsString")]
         string BaseAPIGetInitLanguagesAsString(HandleRef handle);
 
-        // TODO: Add support for : TESS_API char** TessBaseAPIGetLoadedLanguagesAsVector(const TessBaseAPI* handle);
+        /// <summary>
+        ///     Returns the loaded languages
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetLoadedLanguagesAsVector")]
+        IntPtr BaseAPIGetLoadedLanguagesAsVector(HandleRef handle);
 
-        // TODO: Add support for : TESS_API char** TessBaseAPIGetAvailableLanguagesAsVector(const TessBaseAPI* handle);
+        /// <summary>
+        ///     Returns the available languages
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetAvailableLanguagesAsVector")]
+        IntPtr BaseAPIGetAvailableLanguagesAsVector(HandleRef handle);
 
         /// <summary>
         ///     Init only for page layout analysis. Use only for calls to SetImage and AnalysePage. Calls that attempt recognition will generate an error
@@ -431,18 +440,27 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetPageSegMode")]
         PageSegMode BaseApiGetPageSegMode(HandleRef handle);
 
-        // TODO: Add support for : TESS_API char* TessBaseAPIRect(TessBaseAPI* handle, const unsigned char* imagedata, int bytes_per_pixel, int bytes_per_line,int left, int top, int width, int height);
+        /// <summary>
+        ///     Recognize a rectangle from an image and return the result as a string
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="imagedata"></param>
+        /// <param name="bytes_per_pixel"></param>
+        /// <param name="bytes_per_line"></param>
+        /// <param name="left"></param>
+        /// <param name="top"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRect")]
+        void BaseAPIRect(HandleRef handle, byte[] imagedata, int bytes_per_pixel, int bytes_per_line, int left, int top, int width, int height);
 
         /// <summary>
         ///     Call between pages or documents etc to free up memory and forget adaptive data
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
-        /// <returns></returns>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIClearAdaptiveClassifier")]
         void BaseAPIClearAdaptiveClassifier(HandleRef handle);
-
-        // Call between pages or documents etc to free up memory and forget adaptive data
-        // TODO: Add support for : TESS_API void TessBaseAPIClearAdaptiveClassifier(TessBaseAPI* handle);
 
         /// <summary>
         ///     Provide an image for Tesseract to recognize. Format is as TesseractRect above. Does not copy the image buffer, or take ownership.
@@ -498,24 +516,74 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImage")]
         IntPtr BaseApiGetThresholdedImage(HandleRef handle);
 
-        // Get the result of page layout analysis as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetRegions(TessBaseAPI* handle, struct Pixa **pixa);
+        /// <summary>
+        ///     Get the result of page layout analysis as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="pixa"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetRegions")]
+        IntPtr BaseAPIGetRegions(HandleRef handle, IntPtr pixa);
 
-        // Get the textlines as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize. If blockids is not NULL, the block-id of each line is also returned as an array of one element per line. delete [] after use. If paraids is not NULL, the paragraph-id of each line within its block is also returned as an array of one element per line. delete [] after use.
-        // Helper method to extract from the thresholded image(most common usage).
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetTextlines(TessBaseAPI* handle, struct Pixa **pixa, int** blockids);
+        /// <summary>
+        ///     Get the textlines as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize. If blockids
+        ///     is not NULL, the block-id of each line is also returned as an array of one element per line. delete [] after use. If paraids
+        ///     is not NULL, the paragraph-id of each line within its block is also returned as an array of one element per line. delete [] after use.
+        ///     Helper method to extract from the thresholded image(most common usage).
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="pixa"></param>
+        /// <param name="blockids"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTextlines")]
+        IntPtr BaseAPIGetTextlines(HandleRef handle, IntPtr pixa, IntPtr blockids);
 
-        // Get the textlines as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize. If blockids is not NULL, the block-id of each line is also returned as an array of one element per line. delete [] after use. If paraids is not NULL, the paragraph-id of each line within its block is also returned as an array of one element per line. delete [] after use.
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetTextlines1(TessBaseAPI* handle, BOOL raw_image, int raw_padding, struct Pixa **pixa, int** blockids, int** paraids);
+        /// <summary>
+        ///     Get the textlines as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize. If blockids
+        ///     is not NULL, the block-id of each line is also returned as an array of one element per line. delete [] after use. If paraids is
+        ///     not NULL, the paragraph-id of each line within its block is also returned as an array of one element per line. delete [] after use.
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="raw_image"></param>
+        /// <param name="raw_padding"></param>
+        /// <param name="pixa"></param>
+        /// <param name="blockids"></param>
+        /// <param name="paraids"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTextlines1")]
+        IntPtr TessBaseAPIGetTextlines1(HandleRef handle, bool raw_image, int raw_padding, IntPtr pixa, IntPtr blockids, IntPtr paraids);
 
-        // Get textlines and strips of image regions as a Leptonica-style Boxa, Pixa pair, in reading order. Enables downstream handling of non-rectangular regions. Can be called before or after Recognize. If blockids is not NULL, the block-id of each line is also returned as an array of one element per line. delete [] after use.
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetStrips(TessBaseAPI* handle, struct Pixa **pixa, int** blockids);
+        /// <summary>
+        ///     Get textlines and strips of image regions as a Leptonica-style Boxa, Pixa pair, in reading order. Enables downstream handling
+        ///     of non-rectangular regions. Can be called before or after Recognize. If blockids is not NULL, the block-id of each line is
+        ///     also returned as an array of one element per line. delete [] after use.
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="pixa"></param>
+        /// <param name="blockids"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetStrips")]
+        IntPtr BaseAPIGetStrips(HandleRef handle, IntPtr pixa, IntPtr blockids);
 
-        // Get the words as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetWords(TessBaseAPI* handle, struct Pixa **pixa);
+        /// <summary>
+        ///     Get the words as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="pixa"></param>
+        /// <param name="blockids"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetWords")]
+        IntPtr BaseAPIGetWords(HandleRef handle, IntPtr pixa, IntPtr blockids);
 
-        // Gets the individual connected (text) components (created after pages segmentation step, but before recognition) as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetConnectedComponents(TessBaseAPI* handle, struct Pixa **cc);
+        /// <summary>
+        ///     Gets the individual connected (text) components (created after pages segmentation step, but before recognition) as a
+        ///     Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <param name="pixa"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetConnectedComponents")]
+        IntPtr BaseAPIGetConnectedComponents(HandleRef handle, IntPtr pixa);
 
         /// <summary>
         ///     Get the given level kind of components (block, textline, word etc.) as a Leptonica-style Boxa, Pixa pair, in reading order.
@@ -532,8 +600,23 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetComponentImages")]
         IntPtr BaseApiGetComponentImages(HandleRef handle, PageIteratorLevel level, int text_only, IntPtr pixa, IntPtr blockids);
 
-        // Get the given level kind of components (block, textline, word etc.) as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize. If blockids is not NULL, the block-id of each component is also returned as an array of one element per component. delete [] after use. If paraids is not NULL, the paragraph-id of each component with its block is also returned as an array of one element per component. delete [] after use. If raw_image is true, then portions of the original image are extracted instead of the thresholded image and padded with raw_padding. If text_only is true, then only text components are returned.
-        // TODO: Add support for : TESS_API struct Boxa *TessBaseAPIGetComponentImages1(TessBaseAPI* handle, TessPageIteratorLevel level, BOOL text_only, BOOL raw_image, int raw_padding, struct Pixa **pixa, int** blockids, int** paraids);
+        /// <summary>
+        ///     Get the given level kind of components (block, textline, word etc.) as a Leptonica-style Boxa, Pixa pair, in reading order.
+        ///     Can be called before or after Recognize. If blockids is not NULL, the block-id of each component is also returned as an array of
+        ///     one element per component. delete [] after use. If paraids is not NULL, the paragraph-id of each component with its block is also
+        ///     returned as an array of one element per component. delete [] after use. If raw_image is true, then portions of the original image
+        ///     are extracted instead of the thresholded image and padded with raw_padding. If text_only is true, then only text components are returned.
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="level"></param>
+        /// <param name="text_only"></param>
+        /// <param name="raw_image"></param>
+        /// <param name="pixa"></param>
+        /// <param name="blockids"></param>
+        /// <param name="paraids"></param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetComponentImages1")]
+        IntPtr BaseApiGetComponentImages1(HandleRef handle, PageIteratorLevel level, int text_only, bool raw_image, IntPtr pixa, IntPtr blockids, IntPtr paraids);
 
         /// <summary>
         ///     Scale factor from original image
@@ -592,7 +675,16 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetIterator")]
         IntPtr BaseApiGetIterator(HandleRef handle);
 
-        // TODO: Add support for : TESS_API TessMutableIterator *TessBaseAPIGetMutableIterator(TessBaseAPI* handle);
+        /// <summary>
+        ///     Get a mutable iterator to the results of LayoutAnalysis and/or Recognize. The returned iterator must be deleted after use.
+        ///     WARNING! This class points to data held within the TessBaseAPI class, and therefore can only be used while the TessBaseAPI
+        ///     class still exists and has not been subjected to a call of Init, SetImage, Recognize, Clear, End, DetectOS, or anything else
+        ///     that changes the internal PAGE_RES.
+        /// </summary>
+        /// <param name="handle">The TesseractAPI instance</param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetMutableIterator")]
+        IntPtr BaseAPIGetMutableIterator(HandleRef handle);
 
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUTF8Text")]
         IntPtr BaseApiGetUTF8TextInternal(HandleRef handle);
@@ -911,7 +1003,13 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetPageIterator")]
         IntPtr ResultIteratorGetPageIterator(HandleRef handle);
 
-        // TODO: Add support for : TESS_API const TessPageIterator *TessResultIteratorGetPageIteratorConst(const TessResultIterator* handle);
+        /// <summary>
+        ///     Gets the PageIterator of the specified ResultIterator instance.
+        /// </summary>
+        /// <param name="handle">The TessResultIterator instance</param>
+        /// <returns></returns>
+        [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetPageIterator")]
+        IntPtr TessResultIteratorGetPageIteratorConst(HandleRef handle);
 
         /// <summary>
         ///     Native API call to TessResultIteratorGetChoiceIterator
@@ -1053,6 +1151,46 @@ namespace TesseractOCR.Interop
             var versionHandle = Native.GetVersion();
             if (versionHandle == IntPtr.Zero) return null;
             var result = MarshalHelper.PtrToString(versionHandle, Encoding.UTF8);
+            return result;
+        }
+        #endregion
+
+        #region BaseApiLoadedLanguages
+        public static List<Language> BaseApiLoadedLanguages(HandleRef handle)
+        {
+            var languageHandle = Native.BaseAPIGetLoadedLanguagesAsVector(handle);
+            var result = new List<Language>();
+            var i = 0;
+            var size = Marshal.SizeOf(typeof(IntPtr));
+            var p = Marshal.ReadIntPtr(languageHandle, i);
+
+            while (p != IntPtr.Zero)
+            {
+                var str = MarshalHelper.PtrToString(p, Encoding.UTF8);
+                result.Add(LanguageHelper.StringToEnum(str));
+                p = Marshal.ReadIntPtr(languageHandle, i += size);
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region BaseAPIGetAvailableLanguagesAsVector
+        public static List<Language> BaseAPIGetAvailableLanguagesAsVector(HandleRef handle)
+        {
+            var languageHandle = Native.BaseAPIGetAvailableLanguagesAsVector(handle);
+            var result = new List<Language>();
+            var i = 0;
+            var size = Marshal.SizeOf(typeof(IntPtr));
+            var p = Marshal.ReadIntPtr(languageHandle, i);
+
+            while(p != IntPtr.Zero)
+            {
+                var str = MarshalHelper.PtrToString(p, Encoding.UTF8);
+                result.Add(LanguageHelper.StringToEnum(str));
+                p = Marshal.ReadIntPtr(languageHandle, i += size);
+            }
+
             return result;
         }
         #endregion

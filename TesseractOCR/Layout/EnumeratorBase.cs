@@ -19,6 +19,8 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
@@ -85,6 +87,39 @@ namespace TesseractOCR.Layout
         /// </summary>
         /// <returns>The <see cref="Pix.Image"/> or <c>null</c> when it fails</returns>
         public Pix.Image BinaryImage => Pix.Image.Create(TessApi.Native.PageIteratorGetBinaryImage(IteratorHandleRef, PageIteratorLevel));
+
+        /// <summary>
+        ///     Returns segmented regions at the current <see cref="PageIteratorLevel"/>
+        /// </summary>
+        public List<Rectangle> SegmentedRegions
+        {
+            get
+            {
+                Logger.LogInformation("Getting segmented regions");
+
+                var boxArray = TessApi.Native.BaseApiGetComponentImages(EngineHandleRef, PageIteratorLevel, Constants.True, IntPtr.Zero, IntPtr.Zero);
+                var boxCount = LeptonicaApi.Native.boxaGetCount(new HandleRef(this, boxArray));
+                var result = new List<Rectangle>();
+
+                for (var i = 0; i < boxCount; i++)
+                {
+                    var box = LeptonicaApi.Native.boxaGetBox(new HandleRef(this, boxArray), i, PixArrayAccessType.Clone);
+
+                    if (box == IntPtr.Zero)
+                        continue;
+
+                    LeptonicaApi.Native.boxGetGeometry(new HandleRef(this, box), out var px, out var py, out var pw, out var ph);
+                    result.Add(new Rectangle(px, py, pw, ph));
+                    LeptonicaApi.Native.boxDestroy(ref box);
+                }
+
+                LeptonicaApi.Native.boxaDestroy(ref boxArray);
+
+                Logger.LogInformation($"Found {result.Count} region{(result.Count == 1 ? string.Empty : "s")}");
+
+                return result;
+            }
+        }
 
         /// <summary>
         ///     Returns a <see cref="Pix.Image"/> from what is seen at the current <see cref="PageIteratorLevel"/>>
