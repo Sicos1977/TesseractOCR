@@ -6,7 +6,7 @@
 		<Product>Tesseract</Product>
 		<Description>Tesseract 5.1.0 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files which support the legacy engine, for example those from the tessdata repository.</Description>
 		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2022 Kees van Spelde</Copyright>
-		<PackageReleaseNotes>Added more overload methods to load an image from memory</PackageReleaseNotes>
+		<PackageReleaseNotes>Simplied Engine constructor (this can have a small breaking change) and added option to set languages manually</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
@@ -14,10 +14,10 @@
 		<SignAssembly>false</SignAssembly>
 		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.1.8.0</FileVersion>
-		<AssemblyVersion>5.1.8.0</AssemblyVersion>
+		<FileVersion>5.1.9.0</FileVersion>
+		<AssemblyVersion>5.1.9.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.1.8</Version>
+		<Version>5.1.9</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
