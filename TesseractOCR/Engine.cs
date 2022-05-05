@@ -325,7 +325,7 @@ namespace TesseractOCR
                 languageStrings.Add(languageString);
             }
 
-            Initialize(dataPath, string.Join('+', languageStrings), engineMode, configFiles, initialValues, setOnlyNonDebugVariables, logger);
+            Initialize(dataPath, string.Join("+", languageStrings), engineMode, configFiles, initialValues, setOnlyNonDebugVariables, logger);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace TesseractOCR
             dataPath = dataPath.TrimEnd('/');
             dataPath = dataPath.TrimEnd('\\');
 
-            var languageStrings = languages.Split('+', StringSplitOptions.RemoveEmptyEntries);
+            var languageStrings = languages.Split(new [] {'+'}, StringSplitOptions.RemoveEmptyEntries);
 
             foreach (var languageString in languageStrings)
             {
@@ -381,7 +381,7 @@ namespace TesseractOCR
             if (setOnlyNonDebugVariables)
                 Logger.LogInformation("Setting only no debug variables");
 
-            if (TessApi.BaseApiInit(_handle, dataPath, string.Join('+', languages), (int)engineMode, configFiles ?? new List<string>(), initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.False)
+            if (TessApi.BaseApiInit(_handle, dataPath, string.Join("+", languages), (int)engineMode, configFiles ?? new List<string>(), initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.False)
             {
                 Logger.LogInformation("Tesseract engine initialized");
                 return;

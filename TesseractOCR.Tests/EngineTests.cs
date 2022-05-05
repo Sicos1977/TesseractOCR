@@ -498,7 +498,7 @@ namespace Tesseract.Tests
         [TestMethod]
         public void Initialise_CanLoadConfigFile()
         {
-            using var engine = new Engine(DataPath, Language.English, EngineMode.Default, "bazzar");
+            using var engine = new Engine(DataPath, Language.English, EngineMode.Default, new []{"bazzar"});
             // verify that the config file was loaded
             if (engine.TryGetStringVariable("user_words_suffix", out var userPatternsSuffix))
                 Assert.AreEqual(userPatternsSuffix, "user-words");
