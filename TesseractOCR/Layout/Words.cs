@@ -26,6 +26,7 @@ using System.Text;
 using TesseractOCR.Enums;
 using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
+// ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR.Layout
 {
@@ -104,7 +105,8 @@ namespace TesseractOCR.Layout
         public bool IsNumeric => TessApi.Native.ResultIteratorWordIsNumeric(IteratorHandleRef);
 
         /// <summary>
-        ///     Returns the <see cref="Language"/> for the recognized <see cref="Word"/>
+        ///     Returns the <see cref="Language"/> for the recognized <see cref="Word"/>. Use the <see cref="LanguageAsString"/>
+        ///     method when you have set the language with a string value when initializing the <see cref="Engine"/>
         /// </summary>
         /// <returns></returns>
         public Language Language

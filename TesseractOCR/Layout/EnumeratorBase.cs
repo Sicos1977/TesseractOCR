@@ -30,6 +30,9 @@ using TesseractOCR.Interop;
 
 namespace TesseractOCR.Layout
 {
+    /// <summary>
+    ///     Base enumerator
+    /// </summary>
     public class EnumeratorBase
     {
         #region Fields

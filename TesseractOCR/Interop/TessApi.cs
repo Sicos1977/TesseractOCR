@@ -26,6 +26,7 @@ using System.Text;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
 using TesseractOCR.InteropDotNet;
+#pragma warning disable CS1591
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming

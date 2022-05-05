@@ -22,6 +22,9 @@ using System.Runtime.InteropServices;
 
 namespace TesseractOCR.Layout
 {
+    /// <summary>
+    ///     Base enumerable
+    /// </summary>
     public class EnumerableBase
     {
         #region Fields
