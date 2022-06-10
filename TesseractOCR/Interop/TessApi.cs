@@ -170,17 +170,17 @@ namespace TesseractOCR.Interop
         ///     Sets the input image
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
-        /// <param name="pix"></param>
+        /// <param name="pixHandle"><see cref="Pix.Image.Handle"/></param>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetInputImage")]
-        void BaseAPISetInputImage(HandleRef handle, Pix.Image pix);
+        void BaseAPISetInputImage(HandleRef handle, HandleRef pixHandle);
 
         /// <summary>
         ///     Gets the input image
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
-        /// <returns></returns>
+        /// <returns><see cref="Pix.Image.Handle"/></returns>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetInputImage")]
-        Pix.Image BaseAPIGetInputImage(HandleRef handle);
+        IntPtr BaseAPIGetInputImage(HandleRef handle);
 
         /// <summary>
         ///     Sets the Y-resolution for the image
@@ -485,7 +485,7 @@ namespace TesseractOCR.Interop
         ///     GetUTF8Text, and it will automatically perform recognition
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
-        /// <param name="pixHandle"></param>
+        /// <param name="pixHandle"><see cref="Pix.Image.Handle"/></param>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetImage2")]
         void BaseApiSetImage(HandleRef handle, HandleRef pixHandle);
 
@@ -655,7 +655,7 @@ namespace TesseractOCR.Interop
         ///     The recognized text is returned as a char* which is coded as UTF-8 and must be freed with the delete [] operator.
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
-        /// <param name="pix"></param>
+        /// <param name="pixHandle"><see cref="Pix.Image.Handle"/></param>
         /// <param name="page_index"></param>
         /// <param name="filename"></param>
         /// <param name="retry_config"></param>
@@ -663,7 +663,7 @@ namespace TesseractOCR.Interop
         /// <param name="renderer"></param>
         /// <returns></returns>
         [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIProcessPage")]
-        int BaseApiProcessPage(HandleRef handle, Pix.Image pix, int page_index, string filename, string retry_config, int timeout_millisec, HandleRef renderer);
+        int BaseApiProcessPage(HandleRef handle, HandleRef pixHandle, int page_index, string filename, string retry_config, int timeout_millisec, HandleRef renderer);
 
         /// <summary>
         ///     Get a reading-order iterator to the results of LayoutAnalysis and/or Recognize. The returned iterator must be deleted after use.
