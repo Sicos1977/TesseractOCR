@@ -289,8 +289,13 @@ namespace TesseractOCR.Interop
         ///
         ///     It is entirely safe(and eventually will be efficient too) to call Init multiple times on the same instance to change language,
         ///     or just to reset the classifier.Languages may specify internally that they want to be loaded with one or more other languages,
-        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should explicitly call End() and then use SetVariable before Init.
-        ///     This is only a very rare use case, since there are very few uses that require any parameters to be set before Init
+        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only
+        ///     hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both
+        ///     speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating
+        ///     incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary
+        ///     between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should
+        ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses that
+        ///     require any parameters to be set before Init
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
         /// <param name="datapath"></param>
@@ -312,8 +317,13 @@ namespace TesseractOCR.Interop
         ///
         ///     It is entirely safe(and eventually will be efficient too) to call Init multiple times on the same instance to change language,
         ///     or just to reset the classifier.Languages may specify internally that they want to be loaded with one or more other languages,
-        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should explicitly call End() and then use SetVariable before Init.
-        ///     This is only a very rare use case, since there are very few uses that require any parameters to be set before Init
+        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only
+        ///     hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both
+        ///     speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating
+        ///     incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary
+        ///     between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should
+        ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses that
+        ///     require any parameters to be set before Init
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
         /// <param name="datapath"></param>
@@ -333,8 +343,13 @@ namespace TesseractOCR.Interop
         ///
         ///     It is entirely safe(and eventually will be efficient too) to call Init multiple times on the same instance to change language,
         ///     or just to reset the classifier.Languages may specify internally that they want to be loaded with one or more other languages,
-        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should explicitly call End() and then use SetVariable before Init.
-        ///     This is only a very rare use case, since there are very few uses that require any parameters to be set before Init
+        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only
+        ///     hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both
+        ///     speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating
+        ///     incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary
+        ///     between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should
+        ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses that
+        ///     require any parameters to be set before Init
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
         /// <param name="datapath"></param>
@@ -353,8 +368,13 @@ namespace TesseractOCR.Interop
         /// 
         ///     It is entirely safe(and eventually will be efficient too) to call Init multiple times on the same instance to change language,
         ///     or just to reset the classifier.Languages may specify internally that they want to be loaded with one or more other languages,
-        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should explicitly call End() and then use SetVariable before Init.
-        ///     This is only a very rare use case, since there are very few uses that require any parameters to be set before Init
+        ///     so the ~sign is available to override that.E.g., if hin were set to load eng by default, then hin+~eng would force loading only
+        ///     hin.The number of loaded languages is limited only by memory, with the caveat that loading additional languages will impact both
+        ///     speed and accuracy, as there is more work to do to decide on the applicable language, and there is more chance of hallucinating
+        ///     incorrect words.WARNING: On changing languages, all Tesseract parameters are reset back to their default values. (Which may vary
+        ///     between languages.) If you have a rare need to set a Variable that controls initialization for a second call to Init you should
+        ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses
+        ///     that require any parameters to be set before Init
         /// </summary>
         /// <param name="handle">The TesseractAPI instance</param>
         /// <param name="datapath"></param>
