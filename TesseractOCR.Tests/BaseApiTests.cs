@@ -6,11 +6,11 @@ namespace Tesseract.Tests
     public class BaseApiTests : TesseractTestBase
     {
         [TestMethod]
-        public void GetVersion_Is510()
+        public void GetVersion_Is520()
         {
             using var engine = CreateEngine();
             var version = engine.Version;
-            Assert.IsTrue(version.StartsWith("5.1.0"));
+            Assert.IsTrue(version.StartsWith("5.2.0"));
         }
 
         [TestMethod]
