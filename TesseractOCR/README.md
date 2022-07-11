@@ -4,7 +4,7 @@
 What is TesseractOCR
 =========
 
-It is a .NET wrapper for Tesseract 5.1.0 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
+It is a .NET wrapper for Tesseract 5.2.0 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
 
 How to use
 ============
