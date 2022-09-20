@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security;
 using Microsoft.Extensions.Logging;
@@ -363,7 +364,7 @@ namespace TesseractOCR
             dataPath = dataPath.TrimEnd('/');
             dataPath = dataPath.TrimEnd('\\');
 
-            var languageStrings = languages.Split(new [] {'+'}, StringSplitOptions.RemoveEmptyEntries);
+            var languageStrings = languages.Split(new [] {'+'}, StringSplitOptions.RemoveEmptyEntries).ToList();
 
             foreach (var languageString in languageStrings)
             {
@@ -376,7 +377,7 @@ namespace TesseractOCR
                 throw new TesseractException(languageFileMessage);
             }
 
-            Logger.LogInformation($"Initializing Tesseract engine, using data path '{dataPath}', language(s) '{languageStrings}' and engine mode '{engineMode}'");
+            Logger.LogInformation($"Initializing Tesseract engine, using data path '{dataPath}', language(s) '{string.Join(", ", languageStrings)}' and engine mode '{engineMode}'");
 
             if (setOnlyNonDebugVariables)
                 Logger.LogInformation("Setting only no debug variables");
@@ -392,7 +393,7 @@ namespace TesseractOCR
             GC.SuppressFinalize(this);
             
             const string message = "Failed to initialize Tesseract engine";
-            Logger.LogInformation(message);
+            Logger.LogError(message);
             throw new TesseractException(message);
         }
         #endregion
@@ -499,7 +500,7 @@ namespace TesseractOCR
             if (TessApi.Native.BaseApiGetBoolVariable(_handle, name, out var val) == Constants.True)
             {
                 value = val != 0;
-                Logger.LogInformation($"Returned variable '{name}' with value ''{val}");
+                Logger.LogInformation($"Returned variable '{name}' with value '{val}'");
                 return true;
             }
 
@@ -523,7 +524,7 @@ namespace TesseractOCR
 
             if (result)
             {
-                Logger.LogInformation($"Returned double variable '{name}' with value ''{value}");
+                Logger.LogInformation($"Returned double variable '{name}' with value '{value}'");
                 return true;
             }
             
@@ -545,7 +546,7 @@ namespace TesseractOCR
 
             if (result)
             {
-                Logger.LogInformation($"Returned int variable '{name}' with value ''{value}");
+                Logger.LogInformation($"Returned int variable '{name}' with value '{value}'");
                 return true;
             }
 
@@ -569,7 +570,7 @@ namespace TesseractOCR
 
             if (result)
             {
-                Logger.LogInformation($"Returned string variable '{name}' with value ''{value}");
+                Logger.LogInformation($"Returned string variable '{name}' with value '{value}'");
                 return true;
             }
 
