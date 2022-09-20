@@ -27,7 +27,6 @@
 using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Helpers;
-using TesseractOCR.Loggers;
 
 namespace TesseractOCR.InteropDotNet
 {
@@ -47,7 +46,7 @@ namespace TesseractOCR.InteropDotNet
                 if (libraryHandle != IntPtr.Zero)
                     Logger.LogInformation($"Successfully loaded native library '{fileName}' with handle '{libraryHandle}'");
                 else
-                    Logger.LogError($"Failed to load native library '{fileName}', check logging");
+                    Logger.LogError($"Failed to load native library '{fileName}', set logging to debug level and check logging");
             }
             catch (Exception exception)
             {

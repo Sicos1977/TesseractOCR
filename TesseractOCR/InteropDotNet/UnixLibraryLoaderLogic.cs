@@ -27,7 +27,6 @@
 using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Helpers;
-using TesseractOCR.Loggers;
 
 namespace TesseractOCR.InteropDotNet
 {
@@ -55,7 +54,7 @@ namespace TesseractOCR.InteropDotNet
                 if (libraryHandle != IntPtr.Zero)
                     Logger.LogInformation($"Successfully loaded native library '{fileName}' with handle '{libraryHandle}'");
                 else
-                    Logger.LogError($"Failed to load native library '{fileName}', check logging");
+                    Logger.LogError($"Failed to load native library '{fileName}', set logging to debug level and check logging");
             }
             catch (Exception exception)
             {
@@ -79,7 +78,7 @@ namespace TesseractOCR.InteropDotNet
         {
             UnixGetLastError(); // Clearing previous errors
 
-            Logger.LogInformation($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
+            Logger.LogDebug($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
             
             var functionHandle = UnixGetProcAddress(libraryHandle, functionName);
             var errorPointer = UnixGetLastError();
@@ -88,7 +87,7 @@ namespace TesseractOCR.InteropDotNet
                 throw new Exception($"dlsym: {Marshal.PtrToStringAnsi(errorPointer)}");
             
             if (functionHandle != IntPtr.Zero && errorPointer == IntPtr.Zero)
-                Logger.LogInformation($"Successfully loaded native function '{functionName}' with handle '{libraryHandle}'");
+                Logger.LogDebug($"Successfully loaded native function '{functionName}' with handle '{libraryHandle}'");
             else
                 Logger.LogError($"Failed to load native function '{functionName}', function handle '{libraryHandle}', error pointer '{errorPointer}'");
             

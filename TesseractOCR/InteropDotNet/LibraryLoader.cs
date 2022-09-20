@@ -35,7 +35,7 @@ using File = System.IO.File;
 
 namespace TesseractOCR.InteropDotNet
 {
-    public class LibraryLoader
+    internal class LibraryLoader
     {
         #region Fields
         private readonly ILibraryLoaderLogic _logic;
@@ -145,7 +145,6 @@ namespace TesseractOCR.InteropDotNet
         }
         #endregion
 
-
         #region CheckExecutingAssemblyDomain
         private IntPtr CheckExecutingAssemblyDomain(string fileName, string platformName)
         {
@@ -199,7 +198,7 @@ namespace TesseractOCR.InteropDotNet
         {
             var fullPath = Path.Combine(baseDirectory, Path.Combine(platformName, fileName));
 
-            Logger.LogInformation($"Trying to load file from '{fullPath}'");
+            Logger.LogDebug($"Trying to load file from '{fullPath}'");
 
             return
                 File.Exists(fullPath) ? 
