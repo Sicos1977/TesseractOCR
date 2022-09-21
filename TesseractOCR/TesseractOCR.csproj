@@ -17,10 +17,10 @@
 		<SignAssembly>false</SignAssembly>
 		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.2.12.0</FileVersion>
-		<AssemblyVersion>5.2.12.0</AssemblyVersion>
+		<FileVersion>5.2.13.0</FileVersion>
+		<AssemblyVersion>5.2.13.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.2.12</Version>
+		<Version>5.2.13</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
