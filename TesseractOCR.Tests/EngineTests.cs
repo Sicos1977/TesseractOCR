@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -54,7 +53,7 @@ namespace Tesseract.Tests
             using var pix = LoadTestPix(demoFilename);
             using var page = engine.Process(pix, mode);
             var text = page.Text.Trim();
-            Assert.AreEqual(text, expectedText);
+            Assert.AreEqual(expectedText, text);
         }
 
         [TestMethod]
@@ -99,7 +98,6 @@ namespace Tesseract.Tests
         {
             using var engine = CreateEngine(mode: EngineMode.LstmOnly);
             using var img = LoadTestPix(TestImagePath);
-            // See other tests about this bug on coords 0,0
             using var page = engine.Process(img, Rect.FromCoords(1, 1, img.Width, 188));
             var region1Text = page.Text;
 
@@ -112,7 +110,7 @@ namespace Tesseract.Tests
         }
 
         /// <summary>
-        ///     Tesseract seems to have a bug processing a region from 0,0, but if you set it to 1,1 things work again. Not sure
+        ///     Tesseract seems to have a b u g processing a region from 0,0, but if you set it to 1,1 things work again. Not sure
         ///     why this is.
         /// </summary>
         [TestMethod]
@@ -244,7 +242,7 @@ namespace Tesseract.Tests
 
                 foreach (var paragraph in block.Paragraphs)
                 {
-                    var regions = block.SegmentedRegions;
+                    //var regions = block.SegmentedRegions;
                     result.AppendLine($"Paragraph confidence: {paragraph.Confidence}");
                     if (paragraph.BoundingBox != null)
                     {
@@ -529,7 +527,7 @@ namespace Tesseract.Tests
                 { "load_system_dawg", false }
             };
             using var engine = new Engine(DataPath, Language.English, EngineMode.Default, Enumerable.Empty<string>(),
-                initVars, false);
+                initVars);
             if (!engine.TryGetBoolVariable("load_system_dawg", out var loadSystemDawg))
                 Assert.Fail("Failed to get 'load_system_dawg'");
             Assert.IsFalse(loadSystemDawg);
@@ -538,7 +536,7 @@ namespace Tesseract.Tests
         [TestMethod]
         public static void Initialise_Rus_ShouldStartEngine()
         {
-            using var engine = new Engine(DataPath, Language.Russian, EngineMode.Default);
+            using var engine = new Engine(DataPath, Language.Russian);
         }
 
         [TestMethod]
@@ -546,7 +544,7 @@ namespace Tesseract.Tests
         {
             const string dataPath = "tessdata";
 
-            using (new Engine(dataPath, Language.English, EngineMode.Default))
+            using (new Engine(dataPath, Language.English))
             {
             }
         }
@@ -555,7 +553,7 @@ namespace Tesseract.Tests
         [ExpectedException(typeof(TesseractException))]
         public void Initialize_ShouldThrowErrorIfDatapathNotCorrect()
         {
-            using var engine = new Engine(AbsolutePath(@"./IDontExist"), Language.English, EngineMode.Default);
+            using var engine = new Engine(AbsolutePath(@"./IDontExist"), Language.English);
         }
         
         #region Variable set\get
@@ -576,7 +574,7 @@ namespace Tesseract.Tests
         }
 
         /// <summary>
-        ///     As per Bug #52 setting 'classify_bln_numeric_mode' variable to '1' causes the engine to fail on processing.
+        ///     As per b u g #52 setting 'classify_bln_numeric_mode' variable to '1' causes the engine to fail on processing.
         /// </summary>
         [TestMethod]
         public void CanSetClassifyBlnNumericModeVariable()
