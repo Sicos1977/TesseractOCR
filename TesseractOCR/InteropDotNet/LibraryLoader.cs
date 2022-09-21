@@ -35,7 +35,10 @@ using File = System.IO.File;
 
 namespace TesseractOCR.InteropDotNet
 {
-    internal class LibraryLoader
+    /// <summary>
+    ///     Loads the needed library
+    /// </summary>
+    public class LibraryLoader
     {
         #region Fields
         private readonly ILibraryLoaderLogic _logic;
@@ -44,6 +47,9 @@ namespace TesseractOCR.InteropDotNet
         private static LibraryLoader _instance;
         #endregion
 
+        /// <summary>
+        ///     A singleton to the <see cref="LibraryLoader"/> class
+        /// </summary>
         #region Properties
         public static LibraryLoader Instance
         {
@@ -90,6 +96,13 @@ namespace TesseractOCR.InteropDotNet
         #endregion
 
         #region LoadLibrary
+        /// <summary>
+        ///     Loads the library and returns a pointer to it
+        /// </summary>
+        /// <param name="fileName">The full path to the library to load</param>
+        /// <param name="platformName">The name of the platform</param>
+        /// <returns></returns>
+        /// <exception cref="DllNotFoundException"></exception>
         public IntPtr LoadLibrary(string fileName, string platformName = null)
         {
             fileName = FixUpLibraryName(fileName);
@@ -208,6 +221,11 @@ namespace TesseractOCR.InteropDotNet
         #endregion
 
         #region FreeLibrary
+        /// <summary>
+        ///     Frees all the resources for the library with the given <paramref name="fileName"/>
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public bool FreeLibrary(string fileName)
         {
             fileName = FixUpLibraryName(fileName);
@@ -228,6 +246,12 @@ namespace TesseractOCR.InteropDotNet
         #endregion
 
         #region GetProcAddress
+        /// <summary>
+        ///     Returns the pointer address for the given procedure
+        /// </summary>
+        /// <param name="dllHandle"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public IntPtr GetProcAddress(IntPtr dllHandle, string name)
         {
             return _logic.GetProcAddress(dllHandle, name);
@@ -235,6 +259,11 @@ namespace TesseractOCR.InteropDotNet
         #endregion
 
         #region IsLibraryLoaded
+        /// <summary>
+        ///     Returns <c>true</c> when the library with the given <paramref name="fileName"/> has been loaded
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public bool IsLibraryLoaded(string fileName)
         {
             fileName = FixUpLibraryName(fileName);
