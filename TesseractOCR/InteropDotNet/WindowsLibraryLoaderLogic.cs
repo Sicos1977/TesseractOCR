@@ -88,11 +88,11 @@ namespace TesseractOCR.InteropDotNet
         {
             try
             {
-                Logger.LogInformation($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
+                Logger.LogDebug($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
                 var functionHandle = WindowsGetProcAddress(libraryHandle, functionName);
                 
                 if (functionHandle != IntPtr.Zero)
-                    Logger.LogInformation($"Successfully loaded native function '{functionName}' with handle '{functionHandle}'");
+                    Logger.LogDebug($"Successfully loaded native function '{functionName}' with handle '{functionHandle}'");
                 else
                     Logger.LogError($"Failed to load native function '{functionName}' with handle '{functionHandle}'");
                 
@@ -101,7 +101,7 @@ namespace TesseractOCR.InteropDotNet
             catch (Exception exception)
             {
                 var lastError = WindowsGetLastError();
-                Logger.LogError($"Failed to free native library with handle '{libraryHandle}', last error '{lastError}', inner Exception: {exception}");
+                Logger.LogError($"Failed to load native function '{functionName}', last error '{lastError}', exception: {exception}");
                 return IntPtr.Zero;
             }
         }

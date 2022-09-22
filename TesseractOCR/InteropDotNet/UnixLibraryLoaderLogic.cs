@@ -78,20 +78,30 @@ namespace TesseractOCR.InteropDotNet
         {
             UnixGetLastError(); // Clearing previous errors
 
-            Logger.LogDebug($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
+            try
+            {
+                Logger.LogDebug($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
             
-            var functionHandle = UnixGetProcAddress(libraryHandle, functionName);
-            var errorPointer = UnixGetLastError();
+                var functionHandle = UnixGetProcAddress(libraryHandle, functionName);
+                var errorPointer = UnixGetLastError();
             
-            if (errorPointer != IntPtr.Zero)
-                throw new Exception($"dlsym: {Marshal.PtrToStringAnsi(errorPointer)}");
+                if (errorPointer != IntPtr.Zero)
+                    throw new Exception($"dlsym: {Marshal.PtrToStringAnsi(errorPointer)}");
             
-            if (functionHandle != IntPtr.Zero && errorPointer == IntPtr.Zero)
-                Logger.LogDebug($"Successfully loaded native function '{functionName}' with handle '{libraryHandle}'");
-            else
-                Logger.LogError($"Failed to load native function '{functionName}', function handle '{libraryHandle}', error pointer '{errorPointer}'");
+                if (functionHandle != IntPtr.Zero && errorPointer == IntPtr.Zero)
+                    Logger.LogDebug($"Successfully loaded native function '{functionName}' with handle '{functionHandle}'");
+                else
+                    Logger.LogError($"Failed to load native function '{functionName}', with handle '{functionHandle}', error pointer '{errorPointer}'");
             
-            return functionHandle;
+                return functionHandle;
+
+            }
+            catch (Exception exception)
+            {
+                var lastError = UnixGetLastError();
+                Logger.LogError($"Failed to load native function '{functionName}', last error '{lastError}', exception: {exception}");
+                return IntPtr.Zero;
+            }
         }
         #endregion
 
