@@ -45,6 +45,13 @@ namespace TesseractOCR.InteropDotNet
         private readonly object _syncLock = new object();
         private readonly Dictionary<string, IntPtr> _loadedAssemblies = new Dictionary<string, IntPtr>();
         private static LibraryLoader _instance;
+        private string _customSearchPath;
+        public string CustomSearchPath
+        {
+            get { return _customSearchPath; }
+            set { _customSearchPath = value; }
+        }
+
         #endregion
 
         /// <summary>
@@ -127,6 +134,9 @@ namespace TesseractOCR.InteropDotNet
                 if (dllHandle == IntPtr.Zero)
                     dllHandle = CheckWorkingDirectory(fileName, platformName);
 
+                if (dllHandle == IntPtr.Zero)
+                    dllHandle = CheckCustomSearchPath(fileName, platformName);
+
                 if (dllHandle != IntPtr.Zero)
                     _loadedAssemblies[fileName] = dllHandle;
                 else
@@ -205,6 +215,22 @@ namespace TesseractOCR.InteropDotNet
             return InternalLoadLibrary(baseDirectory, platformName, fileName);
         }
         #endregion
+
+        private IntPtr CheckCustomSearchPath(string fileName, string platformName)
+        {
+            var baseDirectory = CustomSearchPath;
+            if (!String.IsNullOrEmpty(baseDirectory))
+            {
+                Logger.LogInformation(string.Format("Checking custom search location '{0}' for '{1}' on platform {2}.", baseDirectory, fileName, platformName));
+                return InternalLoadLibrary(baseDirectory, platformName, fileName);
+            }
+            else
+            {
+                Logger.LogInformation("Custom search path is not defined, skipping.");
+                return IntPtr.Zero;
+            }
+        }
+
 
         #region InternalLoadLibrary
         private IntPtr InternalLoadLibrary(string baseDirectory, string platformName, string fileName)
