@@ -1,7 +1,5 @@
 ![image](https://user-images.githubusercontent.com/6692947/150184680-1ae82d62-891e-4dbd-b52b-e975c57f9761.png)
 
-[![NuGet](https://img.shields.io/nuget/v/TesseractOCR.svg?style=flat-square)](https://www.nuget.org/packages/TesseractOCR)
-
 What is TesseractOCR
 =========
 
@@ -144,6 +142,8 @@ var logger = !string.IsNullOrWhiteSpace(<some logfile>)
 
 Installing via NuGet
 ====================
+
+[![NuGet](https://img.shields.io/nuget/v/TesseractOCR.svg?style=flat-square)](https://www.nuget.org/packages/TesseractOCR)
 
 The easiest way to install TesseractOCR is via NuGet.
 
