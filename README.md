@@ -1,5 +1,6 @@
 ![image](https://user-images.githubusercontent.com/6692947/150184680-1ae82d62-891e-4dbd-b52b-e975c57f9761.png)
 
+[![NuGet](https://img.shields.io/nuget/v/ChromeHtmlToPdf.svg?style=flat-square)](https://www.nuget.org/packages/TesseractOCR)
 
 What is TesseractOCR
 =========
