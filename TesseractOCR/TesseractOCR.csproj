@@ -7,9 +7,8 @@
 		<Description>Tesseract 5.2.0 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files which support the legacy engine, for example those from the tessdata repository.</Description>
 		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2022 Kees van Spelde</Copyright>
 		<PackageReleaseNotes>- Updated nuget packages
-- Changed loading native function logging to the debug level instead of information level
-- Fixed coding mistake
-- Fixed some typo's</PackageReleaseNotes>
+- Removed FontAttributes on Words class (because it is not supported anymore in the current Tesseract 5.2 version
+- Added FontPointSize property</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
@@ -17,10 +16,10 @@
 		<SignAssembly>false</SignAssembly>
 		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.2.13.0</FileVersion>
-		<AssemblyVersion>5.2.13.0</AssemblyVersion>
+		<FileVersion>5.2.14.0</FileVersion>
+		<AssemblyVersion>5.2.14.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.2.13</Version>
+		<Version>5.2.14</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
@@ -44,7 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
 	</ItemGroup>
 
