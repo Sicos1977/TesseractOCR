@@ -1,9 +1,7 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
-using TesseractOCR.Helpers;
 
 namespace Tesseract.Tests.Leptonica.PixTests
 {
@@ -32,7 +30,6 @@ namespace Tesseract.Tests.Leptonica.PixTests
             using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
             using var binarizedImage = sourcePix.BinarizeOtsuAdaptiveThreshold(200, 200, 10, 10, 0.1F);
             Assert.IsNotNull(binarizedImage);
-            Assert.AreNotEqual(binarizedImage.Handle, IntPtr.Zero);
             SaveResult(binarizedImage, "binarizedOtsuImage.png");
         }
 
@@ -44,7 +41,6 @@ namespace Tesseract.Tests.Leptonica.PixTests
             using var grayscalePix = sourcePix.ConvertRGBToGray(1, 1, 1);
             using var binarizedImage = grayscalePix.BinarizeSauvola(10, 0.35f, false);
             Assert.IsNotNull(binarizedImage);
-            Assert.AreNotEqual(binarizedImage.Handle, IntPtr.Zero);
             SaveResult(binarizedImage, "binarizedSauvolaImage.png");
         }
 
@@ -56,7 +52,6 @@ namespace Tesseract.Tests.Leptonica.PixTests
             using var grayscalePix = sourcePix.ConvertRGBToGray(1, 1, 1);
             using var binarizedImage = grayscalePix.BinarizeSauvolaTiled(10, 0.35f, 2, 2);
             Assert.IsNotNull(binarizedImage);
-            Assert.AreNotEqual(binarizedImage.Handle, IntPtr.Zero);
             SaveResult(binarizedImage, "binarizedSauvolaTiledImage.png");
         }
 

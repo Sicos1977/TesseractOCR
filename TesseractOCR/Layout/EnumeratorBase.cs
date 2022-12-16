@@ -22,7 +22,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 using TesseractOCR.Enums;
+using TesseractOCR.Font;
 using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 
@@ -55,6 +57,11 @@ namespace TesseractOCR.Layout
         ///     The <see cref="PageIteratorLevel"/>
         /// </summary>
         protected PageIteratorLevel PageIteratorLevel;
+
+        /// <summary>
+        ///     <see cref="FontProperties"/>
+        /// </summary>
+        private Properties _fontProperties;
 
         /// <summary>
         ///     Flag to check if we are doing our first enumeration
@@ -236,6 +243,43 @@ namespace TesseractOCR.Layout
         ///     lines deep into the paragraph, indenting some normal-sized text in these lines
         /// </remarks>
         public bool IsDropcap => TessApi.Native.ResultIteratorSymbolIsDropcap(IteratorHandleRef);
+
+        /// <summary>
+        ///     Returns the <see cref="FontProperties"/> of the current word. If iterating at a higher level object than words, e.g.,
+        ///     text lines, then this will return the attributes of the first word in that textline.
+        /// </summary>
+        /// <remarks>
+        ///     The <b>FontProperties.Attributes</b> are only available when using older engine modes like
+        ///     <see cref="EngineMode.TesseractOnly "/> and <see cref="EngineMode.TesseractAndLstm "/>
+        /// </remarks>
+        public Properties FontProperties
+        {
+            get
+            {
+                if (_fontProperties != null)
+                    return _fontProperties;
+
+                var nameHandle =
+                    TessApi.Native.ResultIteratorWordFontAttributes(
+                        IteratorHandleRef,
+                        out var isBold, out var isItalic, out var isUnderlined,
+                        out var isMonospace, out var isSerif, out var isSmallCaps,
+                        out var pointSize, out var fontId);
+
+                Attributes fontAttributes = null;
+
+                // This can happen in certain error conditions or legacy mode
+                if (nameHandle != IntPtr.Zero)
+                {
+                    var fontName = MarshalHelper.PtrToString(nameHandle, Encoding.UTF8);
+                    var fontInfo = new Info(fontName, fontId, isItalic, isBold, isMonospace, isSerif);
+                    fontAttributes = new Attributes(fontInfo, isUnderlined, isSmallCaps);
+                }
+
+                _fontProperties = new Properties(pointSize, fontAttributes);
+                return _fontProperties;
+            }
+        }
         #endregion
 
         #region Reset

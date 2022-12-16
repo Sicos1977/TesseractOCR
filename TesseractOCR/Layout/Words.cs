@@ -18,10 +18,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using TesseractOCR.Enums;
+using TesseractOCR.Font;
 using TesseractOCR.Helpers;
 using TesseractOCR.Interop;
 // ReSharper disable UnusedMember.Global
@@ -119,47 +122,6 @@ namespace TesseractOCR.Layout
         ///     Returns the <see cref="Language"/> as a string
         /// </summary>
         public string LanguageAsString => TessApi.ResultIteratorWordRecognitionLanguage(IteratorHandleRef);
-
-        /// <summary>
-        ///     Returns the font point size
-        /// </summary>
-        public int FontPointSize
-        {
-            get
-            {
-                TessApi.Native.ResultIteratorWordFontAttributes(
-                    IteratorHandleRef,
-                    out _, out _, out _,
-                    out _, out _, out _,
-                    out var pointSize, out _);
-
-                return pointSize;
-            }
-        }
-
-        ///// <summary>
-        /////     Returns the <see cref="FontAttributes"/> for the <see cref="Word"/>
-        ///// </summary>
-        //public FontAttributes FontAttributes
-        //{
-        //    get
-        //    {
-        //        var nameHandle =
-        //            TessApi.Native.ResultIteratorWordFontAttributes(
-        //                IteratorHandleRef,
-        //                out var isBold, out var isItalic, out var isUnderlined,
-        //                out var isMonospace, out var isSerif, out var isSmallCaps,
-        //                out var pointSize, out var fontId);
-
-        //        // This can happen in certain error conditions
-        //        if (nameHandle == IntPtr.Zero)
-        //            return null;
-
-        //        var fontName = MarshalHelper.PtrToString(nameHandle, Encoding.UTF8);
-        //        var fontInfo = new FontInfo(fontName, fontId, isItalic, isBold, isMonospace, isSerif);
-        //        return new FontAttributes(fontInfo, isUnderlined, isSmallCaps, pointSize);
-        //    }
-        //}
 
         /// <summary>
         ///     Returns <c>true</c> when a word is valid according to Tesseract's language model

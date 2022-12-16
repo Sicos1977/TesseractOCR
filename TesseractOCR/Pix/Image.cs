@@ -35,16 +35,22 @@ using Math = System.Math;
 
 namespace TesseractOCR.Pix
 {
+    /// <summary>
+    ///     Wrapper for a Leptonica <see cref="Pix"/> image
+    /// </summary>
     public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     {
         #region Constants
-        public const float Deg2Rad = (float)(Math.PI / 180.0);
+        private const float Deg2Rad = (float)(Math.PI / 180.0);
 
         /// <summary>
         ///     Skew Defaults
         /// </summary>
         public const int DefaultBinarySearchReduction = 2; // binary search part
 
+        /// <summary>
+        ///     Default binary threshold
+        /// </summary>
         public const int DefaultBinaryThreshold = 130;
 
         /// <summary>
@@ -75,7 +81,7 @@ namespace TesseractOCR.Pix
         private static readonly List<int> AllowedDepths = new List<int> { 1, 2, 4, 8, 16, 32 };
 
         /// <summary>
-        ///     Used to lookup image formats by extension.
+        ///     Used to lookup <see cref="Image"/> formats by extension.
         /// </summary>
         private static readonly Dictionary<string, ImageFormat> ImageFormatLookup = new Dictionary<string, ImageFormat>
         {
@@ -94,7 +100,7 @@ namespace TesseractOCR.Pix
 
         #region Properties
         /// <summary>
-        ///     Gets the name of the image being ocr'd.
+        ///     Gets the name of the <see cref="Image"/> being ocr'd.
         /// </summary>
         /// <remarks>
         ///     This is also used for some of the more advanced functionality such as identifying the associated UZN file if
@@ -183,6 +189,12 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region LoadFromFile
+        /// <summary>
+        ///     Loads the <see cref="Image"/> object from a file
+        /// </summary>
+        /// <param name="filename">The file name with it's full path</param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
         public static Image LoadFromFile(string filename)
         {
             Logger.LogInformation($"Loading image from file '{filename}'");
@@ -254,6 +266,14 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region LoadFromMemoryInternal
+        /// <summary>
+        ///     Loads the <see cref="Image"/> object from a byte array
+        /// </summary>
+        /// <param name="bytes">The byte array</param>
+        /// <param name="offset">The offset</param>
+        /// <param name="length">The amount of bytes to read</param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
         public static Image LoadFromMemoryInternal(byte[] bytes, int offset, int length)
         {
             IntPtr handle;
@@ -274,6 +294,12 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region LoadTiffFromMemory
+        /// <summary>
+        ///     Loads a TIFF <see cref="Image"/> from a byte array
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
         public static Image LoadTiffFromMemory(byte[] bytes)
         {
             Logger.LogInformation("Loading TIFF image from memory");
@@ -299,7 +325,7 @@ namespace TesseractOCR.Pix
 
         #region Save
         /// <summary>
-        ///     Saves the image to the specified file
+        ///     Saves the <see cref="Image"/> to the specified file
         /// </summary>
         /// <param name="filename">The path to the file</param>
         /// <param name="imageFormat">
@@ -501,6 +527,15 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region Create
+        /// <summary>
+        ///     Creates an empty <see cref="Image"/> object
+        /// </summary>
+        /// <param name="width">The width</param>
+        /// <param name="height">The height</param>
+        /// <param name="depth">The pixel depth</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="InvalidOperationException"></exception>
         public static Image Create(int width, int height, int depth)
         {
             if (!AllowedDepths.Contains(depth))
@@ -536,6 +571,12 @@ namespace TesseractOCR.Pix
             return Create(handle);
         }
 
+        /// <summary>
+        ///     Creates the <see cref="Image"/> object from a pointer
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static Image Create(IntPtr handle)
         {
             if (handle != IntPtr.Zero) 
@@ -548,6 +589,10 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region GetData
+        /// <summary>
+        ///     Returns the data of the Image object
+        /// </summary>
+        /// <returns></returns>
         public Data GetData()
         {
             return new Data(this);
@@ -555,6 +600,11 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region Equals
+        /// <summary>
+        ///     Returns <c>true</c> when both objects are equal
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
             // Check for null values and compare run-time types.
@@ -564,6 +614,12 @@ namespace TesseractOCR.Pix
             return Equals((Image)obj);
         }
 
+        /// <summary>
+        ///     Compares an <see cref="Image"/> object to another <see cref="Image"/> object and returns <c>true</c> when they are equal
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        /// <exception cref="TesseractException"></exception>
         public bool Equals(Image other)
         {
             if (other == null) return false;
@@ -1105,6 +1161,10 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region Dispose
+        /// <summary>
+        ///     Disposes the <see cref="Image"/> object
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             var tmpHandle = _handle.Handle;
