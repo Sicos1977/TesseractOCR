@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using TesseractOCR.Helpers;
+using static System.String;
 using File = System.IO.File;
 
 // ReSharper disable UnusedMember.Global
@@ -45,13 +46,11 @@ namespace TesseractOCR.InteropDotNet
         private readonly object _syncLock = new object();
         private readonly Dictionary<string, IntPtr> _loadedAssemblies = new Dictionary<string, IntPtr>();
         private static LibraryLoader _instance;
-        private string _customSearchPath;
-        public string CustomSearchPath
-        {
-            get { return _customSearchPath; }
-            set { _customSearchPath = value; }
-        }
 
+        /// <summary>
+        ///     Uses an alternative search path
+        /// </summary>
+        public string CustomSearchPath { get; set; }
         #endregion
 
         /// <summary>
@@ -156,7 +155,7 @@ namespace TesseractOCR.InteropDotNet
         {
             var assemblyLocation = Assembly.GetExecutingAssembly().GetName().CodeBase;
 
-            if (string.IsNullOrEmpty(assemblyLocation))
+            if (IsNullOrEmpty(assemblyLocation))
             {
                 Logger.LogInformation("Code base was empty");
                 return IntPtr.Zero;
@@ -173,7 +172,7 @@ namespace TesseractOCR.InteropDotNet
         {
             var assemblyLocation = Assembly.GetExecutingAssembly().Location;
 
-            if (string.IsNullOrEmpty(assemblyLocation))
+            if (IsNullOrEmpty(assemblyLocation))
             {
                 Logger.LogInformation("Executing assembly location was empty");
                 return IntPtr.Zero;
@@ -189,7 +188,7 @@ namespace TesseractOCR.InteropDotNet
         {
             var appBase = AppDomain.CurrentDomain.BaseDirectory;
 
-            if (string.IsNullOrEmpty(appBase))
+            if (IsNullOrEmpty(appBase))
             {
                 Logger.LogInformation("App domains current domain base was empty");
                 return IntPtr.Zero;
@@ -205,7 +204,7 @@ namespace TesseractOCR.InteropDotNet
         {
             var currentDirectory = Environment.CurrentDirectory;
 
-            if (string.IsNullOrEmpty(currentDirectory))
+            if (IsNullOrEmpty(currentDirectory))
             {
                 Logger.LogInformation("Current directory was empty");
                 return IntPtr.Zero;
@@ -219,9 +218,9 @@ namespace TesseractOCR.InteropDotNet
         private IntPtr CheckCustomSearchPath(string fileName, string platformName)
         {
             var baseDirectory = CustomSearchPath;
-            if (!String.IsNullOrEmpty(baseDirectory))
+            if (!IsNullOrEmpty(baseDirectory))
             {
-                Logger.LogInformation(string.Format("Checking custom search location '{0}' for '{1}' on platform {2}.", baseDirectory, fileName, platformName));
+                Logger.LogInformation($"Checking custom search location '{baseDirectory}' for '{fileName}' on platform {platformName}.");
                 return InternalLoadLibrary(baseDirectory, platformName, fileName);
             }
             else

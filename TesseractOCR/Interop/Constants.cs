@@ -4,7 +4,7 @@
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
 // Copyright 2012-2019 Charles Weld
-// Copyright 2021-2022 Kees van Spelde
+// Copyright 2021-2023 Kees van Spelde
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 //
@@ -29,8 +29,8 @@ namespace TesseractOCR.Interop
     /// </summary>
     internal static class Constants
     {
-        public const string LeptonicaDllName = "leptonica-1.82.0.dll";
-        public const string TesseractDllName = "tesseract52.dll";
+        public const string LeptonicaDllName = "leptonica-1.83.0.dll";
+        public const string TesseractDllName = "tesseract53.dll";
 
         // Tesseract uses an int to represent true false values.
         public const int True = 1;
