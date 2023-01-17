@@ -1,87 +1,77 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<PackageId>TesseractOCR</PackageId>
-		<Authors>Charles Weld &amp; Kees van Spelde</Authors>
-		<Product>Tesseract</Product>
-		<Description>Tesseract 5.3.0 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 
-which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files 
+  <PropertyGroup>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>TesseractOCR</PackageId>
+    <Authors>Charles Weld &amp; Kees van Spelde</Authors>
+    <Product>Tesseract</Product>
+    <Description>Tesseract 5.3.0 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3
+which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files
 which support the legacy engine, for example those from the tessdata repository.</Description>
-		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2023 Kees van Spelde</Copyright>
-		<PackageReleaseNotes>- Updated to Tesseract 5.3 and Leptonica 1.8.3</PackageReleaseNotes>
-		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
-		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
-		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-		<SignAssembly>false</SignAssembly>
-		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.3.0.0</FileVersion>
-		<AssemblyVersion>5.3.0.0</AssemblyVersion>
-		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.3.0</Version>
-		<PackageIcon>ocr.png</PackageIcon>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-	</PropertyGroup>
-	<ItemGroup>
-		<Folder Include="x86\" />
-		<Folder Include="x64\" />
-	</ItemGroup>
+    <Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2023 Kees van Spelde</Copyright>
+    <PackageReleaseNotes>- Updated to Tesseract 5.3 and Leptonica 1.8.3</PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
+    <PackageTags>Tesseract OCR text readable PDF</PackageTags>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <SignAssembly>false</SignAssembly>
+    <TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <FileVersion>5.3.0.0</FileVersion>
+    <AssemblyVersion>5.3.0.0</AssemblyVersion>
+    <PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
+    <Version>5.3.0</Version>
+    <PackageIcon>ocr.png</PackageIcon>
+  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  <RepositoryType>git</RepositoryType>
+  <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="x64/**/*.*" copyToOutput="true">
-			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>x64;lib</PackagePath>
-		</Content>
-		<Content Include="x86/**/*.*" copyToOutput="true">
-			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>x86;lib</PackagePath>
-		</Content>
-	</ItemGroup>
+  <ItemGroup>
+    <Content Include="x64/**/*.*" copyToOutput="true">
+      <IncludeInPackage>true</IncludeInPackage>
+      <PackagePath>x64;lib</PackagePath>
+    </Content>
+    <Content Include="x86/**/*.*" copyToOutput="true">
+      <IncludeInPackage>true</IncludeInPackage>
+      <PackagePath>x86;lib</PackagePath>
+    </Content>
+  </ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
-		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
-	</ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+  </ItemGroup>
 
-	<ItemGroup>
-		<None Include="..\README.md">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		</None>
-		<None Include="ocr.png">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="ocr.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="x64\leptonica-1.82.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract.exe">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract51.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract52.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\leptonica-1.82.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract.exe">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract51.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract52.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
+  <ItemGroup>
+    <Content Update="x64\leptonica-1.83.0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="x64\tesseract.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="x64\tesseract53.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="x86\leptonica-1.83.0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="x86\tesseract.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Update="x86\tesseract53.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>
