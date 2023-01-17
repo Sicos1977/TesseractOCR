@@ -305,7 +305,7 @@ namespace TesseractOCR.Pix
             Logger.LogInformation("Loading TIFF image from memory");
 
             IntPtr handle;
-            
+
             fixed (byte* ptr = bytes)
             {
                 handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, 0);
@@ -337,7 +337,7 @@ namespace TesseractOCR.Pix
             Logger.LogInformation($"Saving image to '{filename}' with the format '{imageFormat}'");
 
             ImageFormat actualFormat;
-            
+
             if (!imageFormat.HasValue)
             {
                 var extension = Path.GetExtension(filename).ToLowerInvariant();
@@ -579,7 +579,7 @@ namespace TesseractOCR.Pix
         /// <exception cref="ArgumentException"></exception>
         public static Image Create(IntPtr handle)
         {
-            if (handle != IntPtr.Zero) 
+            if (handle != IntPtr.Zero)
                 return new Image(handle);
 
             const string message = "Pix handle must not be zero (null)";
@@ -744,7 +744,7 @@ namespace TesseractOCR.Pix
             if (ppixm != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixm);
             if (ppixsd != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixsd);
             if (ppixth != IntPtr.Zero) LeptonicaApi.Native.pixDestroy(ref ppixth);
-            
+
             if (result == 1)
             {
                 const string message = "Failed to binarize image with Sauvola";
@@ -858,9 +858,11 @@ namespace TesseractOCR.Pix
         ///     The algorithm is based on Leptonica <code>lineremoval.c</code> example.
         ///     See <a href="http://www.leptonica.com/line-removal.html">line-removal</a>.
         /// </summary>
+        /// <param name="whiteTresh">Threshold value for white pixels.</param>
+        /// <param name="blackTresh">Threshold value for black pixels.</param>
         /// <returns>Image with lines removed</returns>
         /// <exception cref="LeptonicaException">Raised when something fails</exception>
-        public Image RemoveLines()
+        public Image RemoveLines(int whiteTresh = 127, int blackTresh = 127)
         {
             // ReSharper disable once JoinDeclarationAndInitializer
             IntPtr pix1, pix2, pix3, pix4, pix5, pix6, pix7, pix8, pix9;
@@ -888,19 +890,19 @@ namespace TesseractOCR.Pix
                 pix4 = LeptonicaApi.Native.pixErodeGray(new HandleRef(this, pix3), 1, 5);
 
                 // Clean the background of those lines
-                pix5 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4), 210, 255);
+                pix5 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4), whiteTresh, 255);
 
-                pix6 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix5), 200, 0);
+                pix6 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix5), blackTresh, 0);
 
                 // Get paint-through mask for changed pixels */
-                pix7 = LeptonicaApi.Native.pixThresholdToBinary(new HandleRef(this, pix6), 210);
+                pix7 = LeptonicaApi.Native.pixThresholdToBinary(new HandleRef(this, pix6), whiteTresh);
 
                 // Add the inverted, cleaned lines to orig. Because the background was cleaned, the inversion is 0,
                 // so when you add, it doesn't lighten those pixels. It only lightens (to white) the pixels in the lines! */
                 LeptonicaApi.Native.pixInvert(new HandleRef(this, pix6), new HandleRef(this, pix6));
 
                 pix8 = LeptonicaApi.Native.pixAddGray(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix2), new HandleRef(this, pix6));
-                
+
                 pix9 = LeptonicaApi.Native.pixOpenGray(new HandleRef(this, pix8), 1, 9);
 
                 LeptonicaApi.Native.pixCombineMasked(new HandleRef(this, pix8), new HandleRef(this, pix9), new HandleRef(this, pix7));
@@ -982,7 +984,7 @@ namespace TesseractOCR.Pix
             }
 
             Logger.LogInformation("Image despeckled");
-            
+
             return new Image(pix6);
         }
         #endregion
@@ -1057,7 +1059,7 @@ namespace TesseractOCR.Pix
         public Image Deskew(ScewSweep sweep, int redSearch, int thresh, out Scew scew)
         {
             Logger.LogInformation("Getting image scew");
-            
+
             var resultPixHandle = LeptonicaApi.Native.pixDeskewGeneral(_handle, sweep.Reduction, sweep.Range,
                 sweep.Delta, redSearch, thresh, out var pAngle, out var pConf);
 
@@ -1110,7 +1112,7 @@ namespace TesseractOCR.Pix
             if (width == null) width = Width;
             if (height == null) height = Height;
 
-            if (Math.Abs(angleInRadians) < VerySmallAngle) 
+            if (Math.Abs(angleInRadians) < VerySmallAngle)
                 return Clone();
 
             var rotations = 2 * angleInRadians / Math.PI;
@@ -1129,7 +1131,7 @@ namespace TesseractOCR.Pix
             }
 
             Logger.LogInformation("Image rotated around its centre");
-            
+
             return new Image(resultHandle);
         }
         #endregion
