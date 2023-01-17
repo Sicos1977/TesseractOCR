@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
-	  <RootNamespace>Tesseract.Tests</RootNamespace>
+    <RootNamespace>Tesseract.Tests</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -72,16 +71,16 @@
     <None Include="..\TesseractOCR.Tests\Data\Conversion\photo_rgb_32bpp.tif" Link="Data\Conversion\photo_rgb_32bpp.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	  <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-one-column.jpg" Link="Data\Ocr\ocr-one-column.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-five-column.jpg" Link="Data\Ocr\ocr-five-column.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-one-and-two-column.jpg" Link="Data\Ocr\ocr-one-and-two-column.jpg">
-		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Include="..\TesseractOCR.Tests\Data\Ocr\blank.tif" Link="Data\Ocr\blank.tif">
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-one-column.jpg" Link="Data\Ocr\ocr-one-column.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-five-column.jpg" Link="Data\Ocr\ocr-five-column.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\ocr-one-and-two-column.jpg" Link="Data\Ocr\ocr-one-and-two-column.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR.Tests\Data\Ocr\blank.tif" Link="Data\Ocr\blank.tif">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\TesseractOCR.Tests\Data\Ocr\empty.png" Link="Data\Ocr\empty.png">
@@ -158,7 +157,7 @@
     </None>
     <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateUNLVOutput.txt" Link="Results\EngineTests\CanGenerateUNLVOutput.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>    
+    </None>
     <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanPrintVariables.txt" Link="Results\EngineTests\CanPrintVariables.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -186,6 +185,24 @@
     <None Include="..\TesseractOCR.Tests\tessdata\pdf.ttf" Link="tessdata\pdf.ttf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="..\TesseractOCR\x64\leptonica-1.83.0.dll" Link="x64\leptonica-1.83.0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR\x64\tesseract.exe" Link="x64\tesseract.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR\x64\tesseract53.dll" Link="x64\tesseract53.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR\x86\leptonica-1.83.0.dll" Link="x86\leptonica-1.83.0.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR\x86\tesseract.exe" Link="x86\tesseract.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\TesseractOCR\x86\tesseract53.dll" Link="x86\tesseract53.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -194,32 +211,6 @@
 
   <ItemGroup>
     <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="x64\" />
-    <Folder Include="x86\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="x64\leptonica-1.82.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\tesseract.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x64\tesseract52.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\leptonica-1.82.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\tesseract.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\tesseract52.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 
 </Project>
