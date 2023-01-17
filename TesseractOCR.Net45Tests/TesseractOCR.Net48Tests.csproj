@@ -162,7 +162,7 @@
     <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanPrintVariables.txt" Link="Results\EngineTests\CanPrintVariables.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanProcessPixUsingResultIterator.txt" Link="Results\EngineTests\CanProcessPixUsingResultIterator.txt">
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanProcessPixUsingResultIterator48.txt" Link="Results\EngineTests\CanProcessPixUsingResultIterator.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanProcessPixUsingResultIteratorAndChoiceIterator.txt" Link="Results\EngineTests\CanProcessPixUsingResultIteratorAndChoiceIterator.txt">
