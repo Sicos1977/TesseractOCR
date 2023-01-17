@@ -49,7 +49,7 @@ namespace Tesseract.Tests
         public void CanParseText_UsingMode(PageSegMode mode, string expectedText)
         {
             using var engine = CreateEngine(mode: EngineMode.TesseractAndLstm);
-            var demoFilename = $"./Ocr/PSM_{mode}.png";
+            var demoFilename = Path.Combine("Ocr", $"PSM_{mode}.png");
             using var pix = LoadTestPix(demoFilename);
             using var page = engine.Process(pix, mode);
             var text = page.Text.Trim();
@@ -224,6 +224,7 @@ namespace Tesseract.Tests
         public void CanProcessPixUsingResultIterator()
         {
             const string resultPath = @"EngineTests\CanProcessPixUsingResultIterator.txt";
+
             var result = new StringBuilder();
 
             using var engine = CreateEngine();
@@ -256,7 +257,7 @@ namespace Tesseract.Tests
                     result.AppendLine($"Paragraph info is crown: {info.IsCrown}");
                     result.AppendLine($"Paragraph info first line ident: {info.FirstLineIdent}");
                     result.AppendLine($"Paragraph text: {paragraph.Text}");
-                    
+
                     foreach (var textLine in paragraph.TextLines)
                     {
                         if (textLine.BoundingBox != null)
@@ -303,14 +304,14 @@ namespace Tesseract.Tests
             var actualResult = NormalizeNewLine(result.ToString());
             var expectedResultPath = TestResultPath(resultPath);
             var expectedResult = NormalizeNewLine(File.ReadAllText(expectedResultPath));
-            
+
             if (expectedResult == actualResult) return;
 
             var actualResultPath = TestResultRunFile(resultPath);
-            
+
             Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultPath, actualResultPath);
         }
-        
+
         [DataTestMethod]
         [DataRow(true)]
         [DataRow(false)]
@@ -555,7 +556,7 @@ namespace Tesseract.Tests
         {
             using var engine = new Engine(AbsolutePath(@"./IDontExist"), Language.English);
         }
-        
+
         #region Variable set\get
         [DataTestMethod]
         [DataRow(false)]
@@ -566,7 +567,7 @@ namespace Tesseract.Tests
             using var engine = CreateEngine();
             var variableWasSet = engine.SetVariable(variableName, variableValue);
             Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                
+
             if (engine.TryGetBoolVariable(variableName, out var result))
                 Assert.AreEqual(result, variableValue);
             else
@@ -600,7 +601,7 @@ namespace Tesseract.Tests
             using var engine = CreateEngine();
             var variableWasSet = engine.SetVariable(variableName, variableValue);
             Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                
+
             if (engine.TryGetDoubleVariable(variableName, out var result))
                 Assert.AreEqual(result, variableValue);
             else
@@ -617,7 +618,7 @@ namespace Tesseract.Tests
             using var engine = CreateEngine();
             var variableWasSet = engine.SetVariable(variableName, variableValue);
             Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                
+
             if (engine.TryGetIntVariable(variableName, out var result))
                 Assert.AreEqual(result, variableValue);
             else
@@ -634,7 +635,7 @@ namespace Tesseract.Tests
             using var engine = CreateEngine();
             var variableWasSet = engine.SetVariable(variableName, variableValue);
             Assert.IsTrue(variableWasSet, "Failed to set variable '{0}'.", variableName);
-                
+
             if (engine.TryGetStringVariable(variableName, out var result))
                 Assert.AreEqual(result, variableValue);
             else
