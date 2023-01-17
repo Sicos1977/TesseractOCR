@@ -43,6 +43,12 @@ which support the legacy engine, for example those from the tessdata repository.
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Remove="bin\**" />
+	  <EmbeddedResource Remove="bin\**" />
+	  <None Remove="bin\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
 		<PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
 	</ItemGroup>
@@ -59,7 +65,7 @@ which support the legacy engine, for example those from the tessdata repository.
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Content Update="x64\leptonica-1.82.0.dll">
+	  <Content Update="x64\leptonica-1.83.0.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="x64\tesseract.exe">
@@ -71,7 +77,10 @@ which support the legacy engine, for example those from the tessdata repository.
 	  <Content Update="x64\tesseract52.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
-	  <Content Update="x86\leptonica-1.82.0.dll">
+	  <Content Update="x64\tesseract53.dll">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="x86\leptonica-1.83.0.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="x86\tesseract.exe">
@@ -81,6 +90,9 @@ which support the legacy engine, for example those from the tessdata repository.
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	  <Content Update="x86\tesseract52.dll">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
+	  <Content Update="x86\tesseract53.dll">
 	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 	  </Content>
 	</ItemGroup>
