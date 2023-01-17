@@ -18,7 +18,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Dynamic;
 using TesseractOCR.Enums;
 
 namespace TesseractOCR
@@ -39,8 +38,17 @@ namespace TesseractOCR
         /// </summary>
         public bool IsListItem { get; }
 
+        /// <summary>
+        ///     Returns <c>true</c> when the letter is a crown
+        /// </summary>
+        /// <remarks>
+        ///     Big letters as shown in supplement one are to be called Crown Letters
+        /// </remarks>
         public bool IsCrown { get; }
 
+        /// <summary>
+        ///     Returns <c>true</c> when the this is the first line ident
+        /// </summary>
         public int FirstLineIdent { get; }
         #endregion
 
