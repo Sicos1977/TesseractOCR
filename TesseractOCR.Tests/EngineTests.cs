@@ -49,7 +49,7 @@ namespace Tesseract.Tests
         public void CanParseText_UsingMode(PageSegMode mode, string expectedText)
         {
             using var engine = CreateEngine(mode: EngineMode.TesseractAndLstm);
-            var demoFilename = $"./Ocr/PSM_{mode}.png";
+            var demoFilename = Path.Combine("Ocr", $"PSM_{mode}.png");
             using var pix = LoadTestPix(demoFilename);
             using var page = engine.Process(pix, mode);
             var text = page.Text.Trim();

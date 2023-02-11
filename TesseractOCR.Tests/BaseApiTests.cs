@@ -1,4 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 
 namespace Tesseract.Tests
 {
@@ -6,11 +9,11 @@ namespace Tesseract.Tests
     public class BaseApiTests : TesseractTestBase
     {
         [TestMethod]
-        public void GetVersion_Is520()
+        public void GetVersion_Is530()
         {
             using var engine = CreateEngine();
             var version = engine.Version;
-            Assert.IsTrue(version.StartsWith("5.2.0"));
+            Assert.IsTrue(version.StartsWith("5.3.0"));
         }
 
         [TestMethod]
@@ -21,7 +24,8 @@ namespace Tesseract.Tests
             engine.ClearAdaptiveClassifier();
             engine.ClearPersistentCache();
             var languages = engine.AvailableLanguages;
-            //Assert.IsTrue(version.StartsWith("5.0.0"));
+            Assert.IsTrue(languages.Contains(TesseractOCR.Enums.Language.English));
+            Assert.IsTrue(languages.Contains(TesseractOCR.Enums.Language.Osd));
         }
 
     }

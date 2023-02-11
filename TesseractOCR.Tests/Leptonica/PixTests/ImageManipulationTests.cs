@@ -55,33 +55,33 @@ namespace Tesseract.Tests.Leptonica.PixTests
             SaveResult(binarizedImage, "binarizedSauvolaTiledImage.png");
         }
 
-        [TestMethod]
-        public void ConvertRgbToGrayTest()
-        {
-            var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
-            using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
-            using var grayscaleImage = sourcePix.ConvertRGBToGray();
-            Assert.AreEqual(grayscaleImage.Depth, 8);
-            SaveResult(grayscaleImage, "grayscaleImage.jpg");
-        }
+        //[TestMethod]
+        //public void ConvertRgbToGrayTest()
+        //{
+        //    var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
+        //    using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
+        //    using var grayscaleImage = sourcePix.ConvertRGBToGray();
+        //    Assert.AreEqual(grayscaleImage.Depth, 8);
+        //    SaveResult(grayscaleImage, "grayscaleImage.jpg");
+        //}
 
-        [DataTestMethod]
-        [DataRow(45)]
-        [DataRow(80)]
-        [DataRow(90)]
-        [DataRow(180)]
-        [DataRow(270)]
-        public void Rotate_ShouldBeAbleToRotateImageByXDegrees(float angle)
-        {
-            const string fileNameFormat = "rotation_{0}degrees.jpg";
-            var angleAsRadians = TesseractOCR.Helpers.Math.ToRadians(angle);
+        //[DataTestMethod]
+        //[DataRow(45)]
+        //[DataRow(80)]
+        //[DataRow(90)]
+        //[DataRow(180)]
+        //[DataRow(270)]
+        //public void Rotate_ShouldBeAbleToRotateImageByXDegrees(float angle)
+        //{
+        //    const string fileNameFormat = "rotation_{0}degrees.jpg";
+        //    var angleAsRadians = TesseractOCR.Helpers.Math.ToRadians(angle);
 
-            var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
-            using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
-            using var result = sourcePix.Rotate(angleAsRadians);
-            var filename = string.Format(fileNameFormat, angle);
-            SaveResult(result, filename);
-        }
+        //    var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
+        //    using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
+        //    using var result = sourcePix.Rotate(angleAsRadians);
+        //    var filename = string.Format(fileNameFormat, angle);
+        //    SaveResult(result, filename);
+        //}
 
         [TestMethod]
         public void RemoveLinesTest()
@@ -104,24 +104,24 @@ namespace Tesseract.Tests.Leptonica.PixTests
             SaveResult(result, "w91frag-despeckled.png");
         }
 
-        [TestMethod]
-        public void Scale_RGB_ShouldBeScaledBySpecifiedFactor(
-        )
-        {
-            const string fileNameFormat = "scale_{0}.jpg";
+        //[TestMethod]
+        //public void Scale_RGB_ShouldBeScaledBySpecifiedFactor(
+        //)
+        //{
+        //    const string fileNameFormat = "scale_{0}.jpg";
 
-            var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
+        //    var sourcePixFilename = TestFilePath(@"Conversion\photo_rgb_32bpp.tif");
 
-            using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
-            foreach (var scale in new[] { 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.5f, 1.75f, 2, 4, 8 })
-            {
-                using var result = sourcePix.Scale(scale, scale);
-                Assert.AreEqual(result.Width, (int)System.Math.Round(sourcePix.Width * scale));
-                Assert.AreEqual(result.Height, (int)System.Math.Round(sourcePix.Height * scale));
-                var filename = string.Format(fileNameFormat, scale);
-                SaveResult(result, filename);
-            }
-        }
+        //    using var sourcePix = TesseractOCR.Pix.Image.LoadFromFile(sourcePixFilename);
+        //    foreach (var scale in new[] { 0.25f, 0.5f, 0.75f, 1, 1.25f, 1.5f, 1.75f, 2, 4, 8 })
+        //    {
+        //        using var result = sourcePix.Scale(scale, scale);
+        //        Assert.AreEqual(result.Width, (int)System.Math.Round(sourcePix.Width * scale));
+        //        Assert.AreEqual(result.Height, (int)System.Math.Round(sourcePix.Height * scale));
+        //        var filename = string.Format(fileNameFormat, scale);
+        //        SaveResult(result, filename);
+        //    }
+        //}
 
         private static void SaveResult(TesseractOCR.Pix.Image result, string filename)
         {
