@@ -4,7 +4,7 @@
 What is TesseractOCR
 =========
 
-It is a .NET wrapper for Tesseract 5.2.0 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
+It is a .NET wrapper for Tesseract 5.3.0 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
 
 How to use
 ============
@@ -154,7 +154,7 @@ In Visual Studio's Package Manager Console, simply enter the following command:
 ## License Information
 
 * Copyright 2012-2019 Charles Weld (https://github.com/charlesw)
-* Copyright 2021-2022 Kees van Spelde
+* Copyright 2021-2023 Kees van Spelde
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
