@@ -23,12 +23,15 @@ using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.InteropDotNet;
+#pragma warning disable CS1591
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 
 namespace TesseractOCR.Interop
 {
+    // TODO: Update leptonica interface
+
     /// <summary>
     ///     The exported leptonica api signatures.
     /// </summary>
@@ -83,8 +86,7 @@ namespace TesseractOCR.Interop
 
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetHeight")]
         int pixGetHeight(HandleRef pix);
-
-
+        
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetDepth")]
         int pixGetDepth(HandleRef pix);
 
@@ -109,14 +111,12 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixSetResolution")]
         int pixSetResolution(HandleRef pix, int xres, int yres);
 
-
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixScaleResolution")]
         int pixScaleResolution(HandleRef pix, float xscale, float yscale);
 
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetData")]
         IntPtr pixGetData(HandleRef pix);
-
-
+        
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixGetInputFormat")]
         ImageFormat pixGetInputFormat(HandleRef pix);
 
