@@ -530,7 +530,7 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixcmapShiftIntensity")]
         int pixcmapShiftIntensity(HandleRef cmap, float fraction);
         #endregion
-
+        
         #region Box
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "boxaGetCount")]
         int boxaGetCount(HandleRef boxa);
@@ -548,6 +548,20 @@ namespace TesseractOCR.Interop
         void boxaDestroy(ref IntPtr box);
 
         #endregion
+
+        ///  <summary>
+        /// (1) This is a simple top-level interface.  For more flexibility,
+        /// call directly into pixBlendMask(), etc.
+        ///  </summary>
+        ///  <remarks>
+        ///  </remarks>
+        ///  <param name="pixs1">[in] - blendee</param>
+        ///  <param name="pixs2">[in] - blender typ. smaller</param>
+        ///  <param name="x">[in] - ,y  origin [UL corner] of pixs2 relative to the origin of pixs1 can be  is smaller 0</param>
+        ///  <param name="fraction">[in] - blending fraction</param>
+        ///   <returns>pixd blended image, or NULL on error</returns>
+        [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixBlend")]
+        IntPtr pixBlend(HandleRef pixs1, HandleRef pixs2, int x, int y, float fraction);
     }
 
     internal static class LeptonicaApi

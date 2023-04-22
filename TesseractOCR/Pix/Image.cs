@@ -1193,6 +1193,26 @@ namespace TesseractOCR.Pix
         }
         #endregion
 
+        #region Blend
+        /// <summary>
+        ///     Blends this image with the given <paramref name="imageToBlendWith"/>
+        /// </summary>
+        /// <param name="imageToBlendWith"><see cref="Image"/></param>
+        /// <param name="x">origin [UL corner] of <paramref name="imageToBlendWith"/> relative to the origin of <see cref="Image"/> can be  is smaller 0</param>
+        /// <param name="y">origin [UL corner] of <paramref name="imageToBlendWith"/> relative to the origin of <see cref="Image"/> can be  is smaller 0</param>
+        /// <param name="fraction"></param>
+        /// <returns></returns>
+        public Image Blend(Image imageToBlendWith, int x, int y, float fraction)
+        {
+            if (imageToBlendWith == null) 
+                throw new ArgumentNullException(nameof(imageToBlendWith));
+
+            var result = LeptonicaApi.Native.pixBlend(_handle, imageToBlendWith.Handle, x, y, fraction);
+
+            return result == IntPtr.Zero ? null : new Image(result);
+        }
+        #endregion
+
         #region Dispose
         /// <summary>
         ///     Disposes the <see cref="Image"/> object
