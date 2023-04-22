@@ -1207,7 +1207,11 @@ namespace TesseractOCR.Pix
             if (imageToBlendWith == null) 
                 throw new ArgumentNullException(nameof(imageToBlendWith));
 
+            Logger.LogInformation("Blending image");
+
             var result = LeptonicaApi.Native.pixBlend(_handle, imageToBlendWith.Handle, x, y, fraction);
+
+            Logger.LogInformation("Image blend");
 
             return result == IntPtr.Zero ? null : new Image(result);
         }
