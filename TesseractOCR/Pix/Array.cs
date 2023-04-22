@@ -34,7 +34,7 @@ namespace TesseractOCR.Pix
     /// <summary>
     ///     Represents an array of <see cref="Image" />.
     /// </summary>
-    public class Array : DisposableBase, IEnumerable<Image>
+    public unsafe class Array : DisposableBase, IEnumerable<Image>
     {
         #region Fields
         /// <summary>
@@ -75,6 +75,31 @@ namespace TesseractOCR.Pix
             return new Array(pixaHandle) { Filename = filename };
         }
 
+        /// <summary>
+        ///     Loads the multi-page tiff from the memory <paramref name="bytes"/>
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
+        public static Array LoadMultiPageTiffFromMemory(byte[] bytes)
+        {
+            IntPtr pixaHandle;
+
+            fixed (byte* ptr = bytes)
+            {
+                pixaHandle = LeptonicaApi.Native.pixaReadMemMultipageTiff(ptr, bytes.Length);
+            }
+
+            if (pixaHandle == IntPtr.Zero) throw new IOException("Failed to load multi page image from memory");
+
+            return new Array(pixaHandle);
+        }
+
+        /// <summary>
+        ///     Creates a PIX array
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
         public static Array Create(int n)
         {
             var pixaHandle = LeptonicaApi.Native.pixaCreate(n);

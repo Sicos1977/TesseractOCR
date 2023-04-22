@@ -135,6 +135,12 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadMemTiff")]
         unsafe IntPtr pixReadMemTiff(byte* data, int length, int page);
 
+        [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadMemFromMultipageTiff")]
+        unsafe IntPtr pixReadMemFromMultipageTiff (byte* data, int length, ref int offset);
+
+        [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixaReadMemMultipageTiff")]
+        unsafe IntPtr pixaReadMemMultipageTiff (byte* data, int length);
+
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadFromMultipageTiff")]
         IntPtr pixReadFromMultipageTiff(string filename, ref int offset);
 

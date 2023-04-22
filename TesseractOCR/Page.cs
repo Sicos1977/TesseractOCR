@@ -34,6 +34,9 @@ using TesseractOCR.Layout;
 
 namespace TesseractOCR
 {
+    /// <summary>
+    ///     A Tesseract page
+    /// </summary>
     public sealed class Page : DisposableBase
     {
         #region Consts

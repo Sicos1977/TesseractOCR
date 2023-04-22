@@ -18,11 +18,12 @@ namespace Tesseract.Tests
         private const string TestImageFileColumn = "Ocr/ocr-five-column.jpg";
 
         [TestMethod]
-        public void CanParseMultiPageTif()
+        public void CanParseMultiPageTifFromFile()
         {
             using var engine = CreateEngine();
             using var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromFile(TestFilePath("./processing/multi-page.tif"));
             var i = 1;
+
             foreach (var pix in pixA)
             {
                 using (var page = engine.Process(pix))
@@ -36,6 +37,29 @@ namespace Tesseract.Tests
                 i++;
             }
         }
+
+        [TestMethod]
+        public void CanParseMultiPageTifFromMemory()
+        {
+            using var engine = CreateEngine();
+            var bytes = File.ReadAllBytes(TestFilePath("./processing/multi-page.tif"));
+            using var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromMemory(bytes);
+            var i = 1;
+
+            foreach (var pix in pixA)
+            {
+                using (var page = engine.Process(pix))
+                {
+                    var text = page.Text.Trim();
+
+                    var expectedText = $"Page {i}";
+                    Assert.AreEqual(text, expectedText);
+                }
+
+                i++;
+            }
+        }
+
 
         [DataTestMethod]
         [DataRow(PageSegMode.SingleBlock, "This is a lot of 12 point text to test the\n" +

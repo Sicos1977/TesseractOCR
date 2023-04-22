@@ -293,27 +293,28 @@ namespace TesseractOCR.Pix
         }
         #endregion
 
-        #region LoadTiffFromMemory
+        #region LoadMultiPageTiffFromMemory
         /// <summary>
-        ///     Loads a TIFF <see cref="Image"/> from a byte array
+        ///     Loads a multi-page TIFF <see cref="Image"/> from a byte array
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
         /// <exception cref="IOException"></exception>
-        public static List<Image> LoadMultiPageTiffFromMemory(byte[] bytes)
+        public static Image LoadMultiPageTiffFromMemory(byte[] bytes)
         {
             Logger.LogInformation("Loading multi-page TIFF image from memory");
 
             IntPtr handle;
 
             fixed (byte* ptr = bytes)
-            {
-                handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, 0);
+            { 
+                var offSet = 0;
+                handle = LeptonicaApi.Native.pixReadMemFromMultipageTiff(ptr, bytes.Length, ref offSet);
             }
 
             if (handle == IntPtr.Zero)
             {
-                const string message = "Failed to load image from memory";
+                const string message = "Failed to load multi page image from memory";
                 Logger.LogError(message);
                 throw new IOException(message);
             }
