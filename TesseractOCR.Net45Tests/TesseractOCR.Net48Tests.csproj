@@ -203,9 +203,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="x64\leptonica-1.83.0.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="x64\tesseract.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -213,9 +210,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="x64\tesseract53.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="x86\leptonica-1.83.0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="x86\tesseract.exe">
