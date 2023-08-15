@@ -4,13 +4,13 @@
 		<PackageId>TesseractOCR</PackageId>
 		<Authors>Charles Weld &amp; Kees van Spelde</Authors>
 		<Product>Tesseract</Product>
-		<Description>Tesseract 5.3.1 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 
+		<Description>Tesseract 5.3.2 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 
 which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files 
 which support the legacy engine, for example those from the tessdata repository.</Description>
 		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2023 Kees van Spelde</Copyright>
-		<PackageReleaseNotes>- Updated to Tesseract 5.3.1
-- Added a method to read multi page tiffs from memory
-- Added a method to blend images</PackageReleaseNotes>
+		<PackageReleaseNotes>- Updated to Tesseract 5.3.2
+- Updated to Leptonica 1.83.1
+- Updated nuget packages</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
@@ -21,7 +21,7 @@ which support the legacy engine, for example those from the tessdata repository.
 		<FileVersion>5.3.3.0</FileVersion>
 		<AssemblyVersion>5.3.3.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.3.3</Version>
+		<Version>5.3.4</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
