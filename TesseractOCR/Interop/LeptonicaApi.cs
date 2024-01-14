@@ -138,9 +138,17 @@ namespace TesseractOCR.Interop
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadMemFromMultipageTiff")]
         unsafe IntPtr pixReadMemFromMultipageTiff (byte* data, int length, ref int offset);
 
+        /// <summary>
+        /// Provides array with all pages.
+        /// Loops over pixReadMemFromMultipageTiff inside of leptonica
+        /// </summary>
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixaReadMemMultipageTiff")]
         unsafe IntPtr pixaReadMemMultipageTiff (byte* data, int length);
 
+        /// <summary>
+        /// Should be used to save on memory when working with large / multiple files at a time.
+        /// Only a single page will be read an hold in memory
+        /// </summary>
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixReadFromMultipageTiff")]
         IntPtr pixReadFromMultipageTiff(string filename, ref int offset);
 

@@ -16,12 +16,12 @@ which support the legacy engine, for example those from the tessdata repository.
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<SignAssembly>false</SignAssembly>
-		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0</TargetFrameworks>
+		<TargetFrameworks>netstandard21;net461;net48;net5.0;net6.0;net8.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.3.3.0</FileVersion>
-		<AssemblyVersion>5.3.3.0</AssemblyVersion>
+		<FileVersion>5.3.6.0</FileVersion>
+		<AssemblyVersion>5.3.6.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.3.4</Version>
+		<Version>5.3.6-preview-4</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>

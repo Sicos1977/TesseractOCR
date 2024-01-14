@@ -294,21 +294,23 @@ namespace TesseractOCR.Pix
         #endregion
 
         #region LoadMultiPageTiffFromMemory
+        
         /// <summary>
         ///     Loads a multi-page TIFF <see cref="Image"/> from a byte array
         /// </summary>
         /// <param name="bytes"></param>
+        /// <param name="offSet">0 for the first image</param>
         /// <returns></returns>
         /// <exception cref="IOException"></exception>
-        public static Image LoadMultiPageTiffFromMemory(byte[] bytes)
+        public static Image LoadMultiPageTiffFromMemory(byte[] bytes, ref int offSet)
         {
             Logger.LogInformation("Loading multi-page TIFF image from memory");
 
             IntPtr handle;
 
             fixed (byte* ptr = bytes)
+                
             { 
-                var offSet = 0;
                 handle = LeptonicaApi.Native.pixReadMemFromMultipageTiff(ptr, bytes.Length, ref offSet);
             }
 
@@ -322,16 +324,38 @@ namespace TesseractOCR.Pix
             Logger.LogInformation("Image loaded");
             return Create(handle);
         }
-        #endregion
-
-        #region LoadTiffFromMemory
+        
         /// <summary>
-        ///     Loads a TIFF <see cref="Image"/> from a byte array
+        ///     Enumerate in-memory multipage tiff
+        ///     Will only hold a copy of a single page at a time.
+        ///     Image will be disposed immediately after each iteration step.
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>
+        public static IEnumerable<Image> EnumerateInMemTiff(byte[] bytes)
+        {
+            var offSet = 0;
+            do
+            {
+                using (var pix = LoadMultiPageTiffFromMemory(bytes, ref offSet))
+                {
+                    yield return pix;
+                }
+            } while (offSet != 0);
+        }
+        #endregion
+
+        #region LoadTiffFromMemory
+
+        /// <summary>
+        ///     Loads a TIFF <see cref="Image"/> from a byte array
+        ///     Supports multipage images
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <param name="pageIndex">select page via index. default 0 for first page</param>
+        /// <returns></returns>
         /// <exception cref="IOException"></exception>
-        public static Image LoadTiffFromMemory(byte[] bytes)
+        public static Image LoadTiffFromMemory(byte[] bytes, int pageIndex = 0)
         {
             Logger.LogInformation("Loading TIFF image from memory");
 
@@ -339,7 +363,7 @@ namespace TesseractOCR.Pix
 
             fixed (byte* ptr = bytes)
             {
-                handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, 0);
+                handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, pageIndex);
             }
 
             if (handle == IntPtr.Zero)
