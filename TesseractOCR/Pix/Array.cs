@@ -77,6 +77,7 @@ namespace TesseractOCR.Pix
 
         /// <summary>
         ///     Loads the multi-page tiff from the memory <paramref name="bytes"/>
+        ///     Will result in duplicating the entire image / all pages!
         /// </summary>
         /// <param name="bytes"></param>
         /// <returns></returns>

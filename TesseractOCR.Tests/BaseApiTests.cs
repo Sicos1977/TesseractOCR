@@ -13,7 +13,7 @@ namespace Tesseract.Tests
         {
             using var engine = CreateEngine();
             var version = engine.Version;
-            Assert.IsTrue(version.StartsWith("5.3.0"));
+            Assert.IsTrue(version.StartsWith("5.3.2"));
         }
 
         [TestMethod]

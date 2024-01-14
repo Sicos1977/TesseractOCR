@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
@@ -160,7 +160,8 @@
     <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanGenerateUNLVOutput.txt" Link="Results\EngineTests\CanGenerateUNLVOutput.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanPrintVariables.txt" Link="Results\EngineTests\CanPrintVariables.txt">
+    <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanPrintVariables.txt">
+      <Link>Results\EngineTests\CanPrintVariables.txt</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\TesseractOCR.Tests\Results\EngineTests\CanProcessPixUsingResultIterator.txt" Link="Results\EngineTests\CanProcessPixUsingResultIterator.txt">
@@ -185,6 +186,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\TesseractOCR.Tests\tessdata\pdf.ttf" Link="tessdata\pdf.ttf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="x86\leptonica-1.83.1.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="x64\leptonica-1.83.1.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

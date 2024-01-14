@@ -505,7 +505,7 @@ certainty_scale	20	Certainty scaling factor
 stopper_nondict_certainty_base	-2.5	Certainty threshold for non-dict words
 stopper_phase2_certainty_rejection_offset	1	Reject certainty offset
 stopper_certainty_per_char	-0.5	Certainty to add for each dict char above small word size.
-stopper_allowable_character_badness	3	Max certaintly variation allowed in a word (in sigma)
+stopper_allowable_character_badness	3	Max certainty variation allowed in a word (in sigma)
 doc_dict_pending_threshold	0	Worst certainty for using pending dictionary
 doc_dict_certainty_threshold	-2.25	Worst certainty for words that can be inserted into the document dictionary
 tessedit_certainty_threshold	-2.25	Good blob limit

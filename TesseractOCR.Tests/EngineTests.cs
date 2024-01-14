@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
 using TesseractOCR.Exceptions;
+using TesseractOCR.Pix;
 
 // ReSharper disable UnusedMember.Global
 
@@ -39,27 +41,89 @@ namespace Tesseract.Tests
         }
 
         [TestMethod]
-        public void CanParseMultiPageTifFromMemory()
+        public void ArrayCanParseMultiPageTifFromMemory()
         {
             using var engine = CreateEngine();
             var bytes = File.ReadAllBytes(TestFilePath("./processing/multi-page.tif"));
             using var pixA = TesseractOCR.Pix.Array.LoadMultiPageTiffFromMemory(bytes);
-            var i = 1;
+            var i = 0;
+            var pixa = new Image[3];
 
             foreach (var pix in pixA)
             {
-                using (var page = engine.Process(pix))
-                {
-                    var text = page.Text.Trim();
-
-                    var expectedText = $"Page {i}";
-                    Assert.AreEqual(text, expectedText);
-                }
-
+                pixa[i] = pix;
                 i++;
-            }
-        }
+                using var page = engine.Process(pix);
+                var text = page.Text.Trim();
 
+                var expectedText = $"Page {i}";
+                Assert.AreEqual(text, expectedText);
+            }
+            
+            Assert.AreEqual(pixa[0].Handle.Handle, IntPtr.Zero);
+            Assert.AreEqual(3, i); // check also that 3 pages were processed
+        }
+        
+        [TestMethod]
+        public void ImageCanParseMultiPageTifFromMemory()
+        {
+            using var engine = CreateEngine();
+            var bytes = File.ReadAllBytes(TestFilePath("./processing/multi-page.tif"));
+            var offSet = 0;
+            var i = 0;
+            var pixa = new Image[3];
+            
+            do
+            {
+                using var pix = Image.LoadMultiPageTiffFromMemory(bytes, ref offSet);
+                pixa[i] = pix;
+                i++;
+                using var page = engine.Process(pix);
+                var text = page.Text.Trim();
+
+                var expectedText = $"Page {i}";
+                Assert.AreEqual(expectedText, text);
+            } while (offSet != 0);
+
+            Assert.AreEqual(pixa[0].Handle.Handle, IntPtr.Zero);
+            Assert.AreEqual(3, i); // check also that 3 pages were processed
+        }
+        
+        [TestMethod]
+        public void ImageCanParseYieldingPages()
+        {
+            using var engine = CreateEngine();
+            var bytes = File.ReadAllBytes(TestFilePath("./processing/multi-page.tif"));
+            var i = 0;
+            var pixa = new Image[3];
+            
+            foreach (var pix in Image.EnumerateInMemTiff(bytes))
+            {
+                pixa[i] = pix;
+                i++;
+                using var page = engine.Process(pix);  
+                
+                var text = page.Text.Trim();
+                var expectedText = $"Page {i}";
+                Assert.AreEqual(expectedText, text);
+            }
+
+            Assert.AreEqual(pixa[0].Handle.Handle, IntPtr.Zero);
+            Assert.AreEqual(3, i); // check also that 3 pages were processed
+        }
+        
+        [TestMethod]
+        public void ImageCanParsePageByIndex()
+        {
+            using var engine = CreateEngine();
+            var bytes = File.ReadAllBytes(TestFilePath("./processing/multi-page.tif"));
+
+            using var pix = Image.LoadTiffFromMemory(bytes, 1);
+            using var page = engine.Process(pix);  
+            var text = page.Text.Trim();
+            var expectedText = "Page 2";
+            Assert.AreEqual(expectedText, text);
+        }
 
         [DataTestMethod]
         [DataRow(PageSegMode.SingleBlock, "This is a lot of 12 point text to test the\n" +
@@ -331,7 +395,7 @@ namespace Tesseract.Tests
             if (expectedResult == actualResult) return;
 
             var actualResultPath = TestResultRunFile(resultPath);
-            
+            File.WriteAllText(actualResultPath, actualResult);
             Assert.Fail("Expected results to be \"{0}\" but was \"{1}\".", expectedResultPath, actualResultPath);
         }
         
