@@ -99,6 +99,40 @@ namespace Tesseract.Tests
             Assert.IsTrue(File.Exists(expectedOutputFilename),
                 $"Expected a PDF file \"{expectedOutputFilename}\" to have been created; but none was found.");
         }
+        
+        [TestMethod]
+        public void CanRenderProcessPagesFromFileToPdfFile()
+        {
+            var resultPath = TestResultRunFile(@"Results\PDF\multi-page-from-file");
+            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            {
+                var examplePixPath = TestFilePath("processing/multi-page.tif");
+                renderer.ProcessPages(examplePixPath, _engine);
+            }
+
+            var expectedOutputFilename = Path.ChangeExtension(resultPath, "pdf");
+
+            Assert.IsTrue(File.Exists(expectedOutputFilename),
+                $"Expected a PDF file \"{expectedOutputFilename}\" to have been created; but none was found.");
+        }
+
+        [TestMethod]
+        public void CanRenderProcessPagesFromBytesToPdfFile()
+        {
+            var resultPath = TestResultRunFile(@"Results\PDF\multi-page-from-bytes");
+            using (var renderer = Result.CreatePdfRenderer(resultPath, DataPath, false))
+            {
+                var bytes = File.ReadAllBytes(TestFilePath("processing/multi-page.tif"));
+                renderer.ProcessPages(bytes, _engine);
+            }
+
+            var expectedOutputFilename = Path.ChangeExtension(resultPath, "pdf");
+
+            Assert.IsTrue(File.Exists(expectedOutputFilename),
+                $"Expected a PDF file \"{expectedOutputFilename}\" to have been created; but none was found.");
+            
+            // todo: extract text from pdf and verify content
+        }
 
         [TestMethod]
         public void CanRenderMultiplePageDocumentToPdfFile1()

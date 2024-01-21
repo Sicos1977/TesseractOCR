@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.Internal;
@@ -81,6 +82,29 @@ namespace TesseractOCR.Renderers
             page.Recognize();
 
             return TessApi.Native.ResultRendererAddImage(Handle, page.Engine.Handle) != 0;
+        }
+
+
+        /// <inheritdoc />
+        public bool ProcessPages(byte[] data, Engine engine)
+        {
+            var tmpFile = Path.GetTempFileName();
+            try
+            {
+                File.WriteAllBytes(tmpFile, data);
+                return ProcessPages(tmpFile, engine);
+            }
+            finally
+            {
+                File.Delete(tmpFile);
+            }
+        }
+        
+        /// <inheritdoc />
+        public bool ProcessPages(string imgFilePath, Engine engine)
+        {
+            // config and timeout are not set either when tesseract is called from cmd line
+            return TessApi.Native.BaseApiProcessPages(engine.Handle, imgFilePath, null, 0, _handle) != 0;
         }
         #endregion
 

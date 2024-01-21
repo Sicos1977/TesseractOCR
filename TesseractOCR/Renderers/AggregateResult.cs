@@ -24,7 +24,6 @@ using System.Collections.Generic;
 using System.Linq;
 using TesseractOCR.Helpers;
 using TesseractOCR.Internal;
-using TesseractOCR.Loggers;
 
 namespace TesseractOCR.Renderers
 {
@@ -86,6 +85,27 @@ namespace TesseractOCR.Renderers
 
             return ResultRenderers.All(m => m.AddPage(page));
         }
+
+        /// <inheritdoc />
+        public bool ProcessPages(byte[] data, Engine engine)
+        {
+            Guard.RequireNotNull("data", data);
+            Guard.RequireNotNull("engine", engine);
+            VerifyNotDisposed();
+
+            return ResultRenderers.All(m => m.ProcessPages(data, engine));
+        }
+
+        /// <inheritdoc />
+        public bool ProcessPages(string imgFilePath, Engine engine)
+        {
+            Guard.RequireNotNull("imgFilePath", imgFilePath);
+            Guard.RequireNotNull("engine", engine);
+            VerifyNotDisposed();
+
+            return ResultRenderers.All(m => m.ProcessPages(imgFilePath, engine));
+        }
+
         #endregion
 
         #region BeginDocument
