@@ -21,7 +21,7 @@ which support the legacy engine, for example those from the tessdata repository.
 		<FileVersion>5.3.6.0</FileVersion>
 		<AssemblyVersion>5.3.6.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.3.6-preview-4</Version>
+		<Version>5.3.6-preview-6</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
