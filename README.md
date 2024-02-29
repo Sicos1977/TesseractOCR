@@ -35,6 +35,8 @@ using var engine = new Engine(@"./tessdata", Language.English, EngineMode.Defaul
 using var img = Pix.Image.LoadFromFile(testImagePath);
 using var page = engine.Process(img);
 
+var result = new StringBuilder();
+
 foreach (var block in page.Layout)
 {
     result.AppendLine($"Block confidence: {block.Confidence}");
