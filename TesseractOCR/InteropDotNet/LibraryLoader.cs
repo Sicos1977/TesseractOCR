@@ -115,8 +115,8 @@ namespace TesseractOCR.InteropDotNet
             fileName = FixUpLibraryName(fileName);
             lock (_syncLock)
             {
-                if (_loadedAssemblies.ContainsKey(fileName)) 
-                    return _loadedAssemblies[fileName];
+                if (_loadedAssemblies.TryGetValue(fileName, out var library)) 
+                    return library;
                 
                 if (platformName == null)
                     platformName = SystemManager.GetPlatformName();
