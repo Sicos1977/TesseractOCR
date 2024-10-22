@@ -270,6 +270,7 @@ debug_fix_space_level	0	Contextual fixspace debug
 x_ht_acceptance_tolerance	8	Max allowed deviation of blob top outside of font data
 x_ht_min_change	8	Min change in xht before actually trying it
 superscript_debug	0	Debug level for sub & superscript fixer
+page_xml_level	0	Create the PAGE file on 0=line or 1=word level.
 jpg_quality	85	Set JPEG quality level
 user_defined_dpi	0	Specify DPI for input image
 min_characters_to_try	50	Specify minimum characters to try during OSD
@@ -390,6 +391,8 @@ tessedit_write_unlv	0	Write .unlv output file
 tessedit_create_txt	0	Write .txt output file
 tessedit_create_hocr	0	Write .html hOCR output file
 tessedit_create_alto	0	Write .xml ALTO file
+tessedit_create_page_xml	0	Write .page.xml PAGE file
+page_xml_polygon	1	Create the PAGE file with polygons instead of box values
 tessedit_create_lstmbox	0	Write .box file for LSTM training
 tessedit_create_tsv	0	Write .tsv output file
 tessedit_create_wordstrbox	0	Write WordStr format .box output file
