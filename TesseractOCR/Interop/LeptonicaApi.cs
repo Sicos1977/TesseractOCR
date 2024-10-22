@@ -566,6 +566,7 @@ namespace TesseractOCR.Interop
         ///  <param name="pixs1">[in] - blendee</param>
         ///  <param name="pixs2">[in] - blender typ. smaller</param>
         ///  <param name="x">[in] - ,y  origin [UL corner] of pixs2 relative to the origin of pixs1 can be  is smaller 0</param>
+        ///  <param name="y"></param>
         ///  <param name="fraction">[in] - blending fraction</param>
         ///   <returns>pixd blended image, or NULL on error</returns>
         [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixBlend")]
