@@ -3,7 +3,7 @@
 //
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
-// Copyright 2021-2023 Kees van Spelde
+// Copyright 2021-2025 Kees van Spelde
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 //
