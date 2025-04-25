@@ -17,10 +17,10 @@ which support the legacy engine, for example those from the tessdata repository.
 		<SignAssembly>false</SignAssembly>
 		<TargetFrameworks>netstandard21;net461;net48;net6.0;net8.0;net9.0</TargetFrameworks>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.5.0.0</FileVersion>
-		<AssemblyVersion>5.5.0.0</AssemblyVersion>
+		<FileVersion>5.5.1.0</FileVersion>
+		<AssemblyVersion>5.5.1.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.5.0</Version>
+		<Version>5.5.1</Version>
 		<PackageIcon>ocr.png</PackageIcon>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
