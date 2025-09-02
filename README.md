@@ -18,6 +18,12 @@ The DLL's Tesseract54.dll (and exe) and leptonica-1.85.0.dll are compiled with V
 - X86: https://aka.ms/vs/17/release/vc_redist.x86.exe
 - X64: https://aka.ms/vs/17/release/vc_redist.x64.exe
 
+How to use in Docker on Linux
+============
+
+See this wiki for more information
+https://github.com/Sicos1977/TesseractOCR/wiki/How-to-use-in-Docker-on-Linux
+
 ## OCR a page
 
 ```c#
