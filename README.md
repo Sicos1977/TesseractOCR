@@ -3,7 +3,7 @@
 What is TesseractOCR
 =========
 
-It is a .NET wrapper for Tesseract 5.5.0 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
+It is a .NET wrapper for Tesseract 5.5.1 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
 
 How to use
 ============
@@ -13,7 +13,7 @@ You can get them at https://github.com/tesseract-ocr/tessdata or https://github.
 
 ## Microsoft Visual C++ runtimes
 
-The DLL's Tesseract54.dll (and exe) and leptonica-1.85.0.dll are compiled with Visual Studio 2022 you need these C++ runtimes for it on your computer
+The DLL's Tesseract55.dll (and exe) and leptonica-1.86.0.dll are compiled with Visual Studio 2022 you need these C++ runtimes for it on your computer
 
 - X86: https://aka.ms/vs/17/release/vc_redist.x86.exe
 - X64: https://aka.ms/vs/17/release/vc_redist.x64.exe
