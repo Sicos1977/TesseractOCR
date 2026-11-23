@@ -64,6 +64,10 @@ which support the legacy engine, for example those from the tessdata repository.
 		  <Pack>True</Pack>
 		  <PackagePath>\</PackagePath>
 		</None>
+		<None Include="..\NATIVE-DEPENDENCIES.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Include="ocr.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
