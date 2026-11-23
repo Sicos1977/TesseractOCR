@@ -165,6 +165,10 @@ In Visual Studio's Package Manager Console, simply enter the following command:
 
 ## License Information
 
+See [native dependency provenance and licensing](NATIVE-DEPENDENCIES.md) for
+the recorded information and limitations concerning the bundled Windows
+binaries.
+
 * Copyright 2012-2019 Charles Weld (https://github.com/charlesw)
 * Copyright 2021-2026 Kees van Spelde
 
