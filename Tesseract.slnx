@@ -11,6 +11,7 @@
     <File Path="_Powershell scripts_/Build-LanguagePackages.ps1" />
     <File Path="_Powershell scripts_/LanguagePackage.csproj" />
     <File Path="_Powershell scripts_/LanguagePackage.README.md" />
+    <File Path="_Powershell scripts_/Publish-LanguagePackages.ps1" />
   </Folder>
   <Project Path="TesseractOCR.Net10Tests/TesseractOCR.Net10Tests.csproj" />
   <Project Path="TesseractOCR.Net4_8Tests/TesseractOCR.Net4_8Tests.csproj" />
