@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>TesseractOCRPdf</PackageId>
-    <Version>5.5.3</Version>
+    <Version>5.5.4</Version>
     <Authors>Kees van Spelde</Authors>
     <Description>Optional PDF OCR extensions for TesseractOCR Engine and EnginePool, using PDFium and SkiaSharp.</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
