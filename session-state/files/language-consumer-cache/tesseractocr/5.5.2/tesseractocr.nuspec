@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+  <metadata>
+    <id>TesseractOCR</id>
+    <version>5.5.2</version>
+    <authors>Charles Weld &amp; Kees van Spelde</authors>
+    <owners></owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">Apache-2.0</license>
+    <licenseUrl>https://licenses.nuget.org/Apache-2.0</licenseUrl>
+    <icon>ocr.png</icon>
+    <readme>README.md</readme>
+    <projectUrl>https://github.com/Sicos1977/TesseractOCR</projectUrl>
+    <description>Tesseract 5.5.1 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 
+which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files 
+which support the legacy engine, for example those from the tessdata repository.</description>
+    <releaseNotes>- Updated to Tesseract 5.5.1
+- Updated nuget packages</releaseNotes>
+    <copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2023 Kees van Spelde</copyright>
+    <tags>Tesseract OCR text readable PDF</tags>
+    <repository type="git" url="https://github.com/Sicos1977/TesseractOCR" commit="787ebdb488184f47df3dcad7fe687b0b95d0d98c" />
+    <dependencies>
+      <group targetFramework=".NETStandard2.0">
+        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="10.0.3" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Emit" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+      <group targetFramework=".NETStandard2.1">
+        <dependency id="Microsoft.Extensions.Logging.Abstractions" version="10.0.3" exclude="Build,Analyzers" />
+        <dependency id="System.Reflection.Emit" version="4.7.0" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+</package>

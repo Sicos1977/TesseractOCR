@@ -190,6 +190,56 @@ public interface ILeptonicaApiSignatures
     IntPtr pixConvertTo8(HandleRef pix, int cmapflag);
     #endregion
 
+    #region OCR preprocessing
+    /// <summary>Normalizes an image background using Leptonica's default parameters.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixBackgroundNormSimple")]
+    IntPtr pixBackgroundNormSimple(HandleRef pixs, IntPtr pixim, IntPtr pixg);
+
+    /// <summary>Normalizes local contrast in an 8-bit grayscale image.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixContrastNorm")]
+    IntPtr pixContrastNorm(IntPtr pixd, HandleRef pixs, int sx, int sy, int mindiff, int smoothx, int smoothy);
+
+    /// <summary>Applies a median filter to an image.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixMedianFilter")]
+    IntPtr pixMedianFilter(HandleRef pixs, int width, int height);
+
+    /// <summary>Composites an alpha channel against white.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixRemoveAlpha")]
+    IntPtr pixRemoveAlpha(HandleRef pixs);
+
+    /// <summary>Adds a black or white border to an image.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixAddBlackOrWhiteBorder")]
+    IntPtr pixAddBlackOrWhiteBorder(HandleRef pixs, int left, int right, int top, int bottom, int operation);
+
+    /// <summary>Removes the same number of pixels from each image edge.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixRemoveBorder")]
+    IntPtr pixRemoveBorder(HandleRef pixs, int pixels);
+
+    /// <summary>Creates a native rectangle.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "boxCreate")]
+    IntPtr boxCreate(int x, int y, int width, int height);
+
+    /// <summary>Copies an image region specified by a rectangle.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixClipRectangle")]
+    IntPtr pixClipRectangle(HandleRef pixs, HandleRef box, IntPtr clippedBox);
+
+    /// <summary>Dilates a binary image with a rectangular structuring element.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixDilateBrick")]
+    IntPtr pixDilateBrick(IntPtr pixd, HandleRef pixs, int width, int height);
+
+    /// <summary>Erodes a binary image with a rectangular structuring element.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixErodeBrick")]
+    IntPtr pixErodeBrick(IntPtr pixd, HandleRef pixs, int width, int height);
+
+    /// <summary>Opens a binary image with a rectangular structuring element.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixOpenBrick")]
+    IntPtr pixOpenBrick(IntPtr pixd, HandleRef pixs, int width, int height);
+
+    /// <summary>Closes a binary image with a rectangular structuring element.</summary>
+    [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixCloseBrick")]
+    IntPtr pixCloseBrick(IntPtr pixd, HandleRef pixs, int width, int height);
+    #endregion
+
     #region Skew
     /// <summary>Deskews an image and returns the estimated skew angle and confidence.</summary>
     [RuntimeDllImport(Constants.LeptonicaDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "pixDeskewGeneral")]

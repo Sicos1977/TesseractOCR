@@ -7,6 +7,11 @@
   <Folder Name="/Solution Items/">
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/_Powershell scripts_/">
+    <File Path="_Powershell scripts_/Build-LanguagePackages.ps1" />
+    <File Path="_Powershell scripts_/LanguagePackage.csproj" />
+    <File Path="_Powershell scripts_/LanguagePackage.README.md" />
+  </Folder>
   <Project Path="TesseractOCR.Net10Tests/TesseractOCR.Net10Tests.csproj" />
   <Project Path="TesseractOCR.Net4_8Tests/TesseractOCR.Net4_8Tests.csproj" />
   <Project Path="TesseractOCR/TesseractOCR.csproj" />

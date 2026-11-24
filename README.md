@@ -14,7 +14,45 @@ Install the NuGet package:
 dotnet add package TesseractOCR
 ```
 
-Tesseract also needs trained language data in a `tessdata` directory. Download the languages you need from [tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast). In the examples below, `dataPath` is the parent directory containing `tessdata` (for example, `./` when the directory is `./tessdata`).
+Tesseract also needs trained language data in a `tessdata` directory. Download the languages you need from [tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast). In the examples below, `dataPath` is the directory containing the `.traineddata` files (for example, `./tessdata`).
+
+### Build local language packages
+
+The solution contains `_Powershell scripts_\Build-LanguagePackages.ps1`, which requires PowerShell, the .NET 8 SDK or later, and internet access. Run it from the repository root:
+
+```powershell
+& '.\_Powershell scripts_\Build-LanguagePackages.ps1' -Version 1.0.0
+```
+
+The script downloads all language and script models from one `tessdata_fast` commit and verifies their Git blob hashes. It temporarily saves the models under `_Powershell scripts_\artifacts\tessdata`, removes each model after its package is successfully created, and creates local NuGet packages under `_Powershell scripts_\artifacts\packages`. It does not publish them. Set `-Version` to the desired NuGet version; the version is independent of the upstream commit. Each package depends on TesseractOCR version 5.5.2 or later by default; use `-TesseractOCRVersion` to select another minimum version. Use `-Revision` to select an upstream branch, tag, or commit instead of `main`, `-OutputDirectory` to change the output location, and `-Models` to select specific models:
+
+```powershell
+& '.\_Powershell scripts_\Build-LanguagePackages.ps1' -Models eng,script/Latin -Version 1.0.0
+```
+
+Packages are named after the upstream model, for example `TesseractOCR.Languages.eng` or `TesseractOCR.Languages.script.Latin`. Add the output directory as a local NuGet source and install the desired packages. NuGet also restores the TesseractOCR dependency from a configured package source. For example, from a consuming project directory:
+
+```powershell
+dotnet nuget add source 'C:\path\to\TesseractOCR\_Powershell scripts_\artifacts\packages' --name TesseractOCR-Local
+dotnet add package TesseractOCR.Languages.eng --version 1.0.0
+```
+
+Use a new package version when the upstream revision changes, because NuGet caches packages by ID and version. Each package includes a README, the project icon, and an MSBuild `.props` file. In projects using PackageReference, the props copy models to `tessdata` (or `tessdata\script`) in the build and publish output. Pass the directory containing the model, for example `Path.Combine(AppContext.BaseDirectory, "tessdata")`, as the engine data path. These fast models support Tesseract's LSTM engine only, not the legacy engine. The `osd` package supplies orientation and script detection data, not a recognition language.
+
+If your application uses another location, configure `TesseractOCRLanguageDataDirectory` in `Directory.Build.props` before NuGet imports the package and update the engine data path to match. The property is a path relative to the build and publish output directories; see the language package README for an example.
+
+### Publish language packages
+
+To publish the generated `TesseractOCR.Languages.*.nupkg` files to nuget.org, supply an API key with permission to push the packages:
+
+```powershell
+& '.\_Powershell scripts_\Publish-LanguagePackages.ps1' -ApiKey $apiKey -WhatIf
+& '.\_Powershell scripts_\Publish-LanguagePackages.ps1' -ApiKey $apiKey
+```
+
+The first command previews the files; the second uploads them. The default directory is `_Powershell scripts_\artifacts\packages`; pass `-PackageDirectory` to use another directory (the `packages` subdirectory of the build script's `-OutputDirectory`). All matching versions in that directory are uploaded. The script stops at the first failed upload; use `-SkipDuplicate` on a retry to skip versions already present on nuget.org. Packages are not deleted after publishing.
+
+Avoid typing the API key as a literal in the command, as shell history can retain it. The script passes the key to `dotnet` as a command-line argument, which may be visible to other users or process-monitoring tools on the machine.
 
 ## Microsoft Visual C++ runtimes
 
@@ -34,7 +72,7 @@ using TesseractOCR;
 using TesseractOCR.Enums;
 using TesseractOCR.Pix;
 
-var dataPath = @"./"; // Contains ./tessdata
+var dataPath = @"./tessdata";
 var imagePath = @"./invoice.png";
 
 using var engine = new Engine(dataPath, Language.English, EngineMode.Default);
@@ -42,6 +80,70 @@ using var image = Image.LoadFromFile(imagePath);
 using var page = engine.Process(image);
 
 Console.WriteLine($"Mean confidence: {page.MeanConfidence}");
+Console.WriteLine(page.Text);
+```
+
+## Choose an OCR engine and page segmentation mode
+
+`EngineMode` selects the recognition engine when you create an `Engine`. `PageSegMode` tells Tesseract what layout to expect in each image; pass it to `Process` or set `Engine.DefaultPageSegMode`.
+
+### Engine modes
+
+| Mode | What it does |
+| --- | --- |
+| `TesseractOnly` | Uses the legacy OCR engine. Choose this only when your language data includes legacy engine data. |
+| `LstmOnly` | Uses the newer neural-network (LSTM) engine. This is the recommended choice for current language data, including `tessdata_fast` models. |
+| `TesseractAndLstm` | Uses the combined legacy and LSTM engine. The language data must support both engines; LSTM-only models cannot be used with this mode. |
+| `Default` | Lets Tesseract select its default engine mode. This currently uses the LSTM engine. |
+
+### Page segmentation modes
+
+| Mode | What it assumes or does |
+| --- | --- |
+| `OsdOnly` | Detects page orientation and script only; it does not recognize text. |
+| `AutoOsd` | Automatically segments the page, detects orientation and script, and recognizes text. |
+| `AutoOnly` | Analyses the page layout automatically, without orientation/script detection or text recognition. |
+| `Auto` | Automatically segments the page and recognizes text, without orientation/script detection. This is the default. |
+| `SingleColumn` | A single column of text, with variable-sized text. |
+| `SingleBlockVertText` | A single block of vertically aligned text. |
+| `SingleBlock` | A single, uniform block of text. |
+| `SingleLine` | A single line of text. |
+| `SingleWord` | A single word. |
+| `CircleWord` | A single word arranged in a circle. |
+| `SingleChar` | A single character. |
+| `SparseText` | Finds as much text as possible, without assuming a particular reading order. |
+| `SparseTextOsd` | Finds sparse text and also detects orientation and script. |
+| `RawLine` | A single text line, bypassing Tesseract-specific line-recognition heuristics. |
+
+OSD means orientation and script detection, and requires suitable `osd` language data. For example, use a single-line mode for a cropped line rather than asking automatic page segmentation to interpret it as a full page:
+
+```csharp
+using var engine = new Engine(dataPath, Language.English, EngineMode.LstmOnly);
+using var image = Image.LoadFromFile(imagePath);
+using var page = engine.Process(image, PageSegMode.SingleLine);
+```
+
+`PageSegMode.Count` is an internal enum sentinel, not a mode to pass to `Process`.
+
+## Prepare images for OCR
+
+The image API can convert to grayscale (`ConvertToGray`), normalize an uneven background (`NormalizeBackground` or `NormalizeBackgroundFlexible`), normalize contrast (`NormalizeContrast`), filter noise (`MedianFilter`), invert pixels, binarize using a fixed threshold (`Binarize`), and crop or add/remove borders. Binary images also support `Dilate`, `Erode`, `Open`, and `Close`. `RemoveAlpha` composites 32-bit RGBA images on white; for other images it returns a shared reference.
+
+Each result must be disposed. Test preprocessing choices against your own images: Tesseract already performs preprocessing, and extra operations can reduce accuracy.
+
+```csharp
+using System;
+using TesseractOCR;
+using TesseractOCR.Enums;
+using TesseractOCR.Pix;
+
+using var image = Image.LoadFromFile(@"./invoice.png");
+using var gray = image.ConvertToGray();
+using var normalized = gray.NormalizeBackground();
+using var binary = normalized.Binarize(160);
+using var bordered = binary.AddBorder(10);
+using var engine = new Engine(@"./tessdata", Language.English);
+using var page = engine.Process(bordered);
 Console.WriteLine(page.Text);
 ```
 
@@ -55,7 +157,7 @@ using TesseractOCR;
 using TesseractOCR.Enums;
 using TesseractOCR.Pix;
 
-using var engine = new Engine(@"./", Language.English);
+using var engine = new Engine(@"./tessdata", Language.English);
 using var image = Image.LoadFromFile(@"./invoice.png");
 using var page = engine.Process(image);
 
@@ -88,7 +190,7 @@ using TesseractOCR.Enums;
 using TesseractOCR.Pix;
 using TesseractOCR.Renderers;
 
-var dataPath = @"./"; // Contains ./tessdata
+var dataPath = @"./tessdata";
 var imagePath = @"./invoice.png";
 var outputBase = @"./output/invoice"; // Do not include an extension
 Directory.CreateDirectory(@"./output");
@@ -134,7 +236,7 @@ using TesseractOCR.Enums;
 using TesseractOCR.Pix;
 using TesseractOCR.Renderers;
 
-var dataPath = @"./";
+var dataPath = @"./tessdata";
 var imagePath = @"./invoice.png";
 var outputBase = @"./output/invoice";
 Directory.CreateDirectory(@"./output");
@@ -178,7 +280,7 @@ TesseractOCR accepts the Microsoft `ILogger` interface, so you can use any compa
 
 ```csharp
 using var logger = new TesseractOCR.Loggers.Console();
-using var engine = new Engine(@"./", Language.English, logger: logger);
+using var engine = new Engine(@"./tessdata", Language.English, logger: logger);
 ```
 
 In Visual Studio's Package Manager Console, install the package with:

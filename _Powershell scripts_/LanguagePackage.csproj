@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <TesseractOCRVersion Condition="'$(TesseractOCRVersion)' == ''">5.5.2</TesseractOCRVersion>
+    <PackageId>TesseractOCR.Languages.$(ModelId)</PackageId>
+    <Version>$(LanguagePackageVersion)</Version>
+    <Authors>Tesseract OCR contributors</Authors>
+    <Description>Tesseract tessdata_fast model $(ModelId) for the LSTM OCR engine.</Description>
+    <PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryCommit>$(ModelCommit)</RepositoryCommit>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageTags>tesseract ocr tessdata language</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>ocr.png</PackageIcon>
+    <ModelPackagePath Condition="'$(ModelDirectory)' == ''">tessdata\</ModelPackagePath>
+    <ModelPackagePath Condition="'$(ModelDirectory)' != ''">tessdata\$(ModelDirectory)\</ModelPackagePath>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="TesseractOCR" Version="$(TesseractOCRVersion)" />
+    <None Update="_._" Pack="true" PackagePath="lib\netstandard2.0\_._" />
+    <None Update="LanguagePackage.README.md" Pack="true" PackagePath="README.md" />
+    <None Update="LanguagePackage.props" Pack="true" PackagePath="buildTransitive\$(PackageId).props" />
+    <None Include="..\TesseractOCR\ocr.png" Pack="true" PackagePath="ocr.png" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(ModelFile)' != ''">
+    <None Include="$(ModelFile)" Pack="true" PackagePath="$(ModelPackagePath)" />
+  </ItemGroup>
+</Project>

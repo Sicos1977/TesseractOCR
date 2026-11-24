@@ -346,7 +346,6 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     #endregion
 
     #region LoadTiffFromMemory
-
     /// <summary>
     ///     Loads a TIFF <see cref="Image"/> from a byte array
     ///     Supports multipage images
@@ -453,6 +452,10 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     /// <param name="scaleY"></param>
     /// <returns>The scaled image.</returns>
     /// <remarks>
+    ///     <para>
+    ///         Scaling changes the pixel dimensions of the image. Enlarge small text before OCR or reduce an
+    ///         unnecessarily large image to save processing time; excessive scaling can blur or lose character detail.
+    ///     </para>
     ///     <para>
     ///         This function scales 32 bpp RGB; 2, 4 or 8 bpp palette color;
     ///         2, 4, 8 or 16 bpp gray; and binary images.
@@ -702,6 +705,12 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     /// <summary>
     ///     Binarization of the input image based on the passed parameters and the Otsu method
     /// </summary>
+    /// <remarks>
+    ///     Binarization turns grayscale pixels into black or white. Otsu's method chooses a threshold from the
+    ///     distribution of pixel intensities in each tile; threshold smoothing can reduce abrupt tile boundaries.
+    ///     Use it on grayscale documents with differing illumination when one fixed threshold is not sufficient.
+    ///     Fine or faint text can be lost, so inspect the result before OCR.
+    /// </remarks>
     /// <param name="sx"> sizeX Desired tile X dimension; actual size may vary.</param>
     /// <param name="sy"> sizeY Desired tile Y dimension; actual size may vary.</param>
     /// <param name="smoothx"> smoothX Half-width of convolution kernel applied to threshold array: use 0 for no smoothing.</param>
@@ -744,6 +753,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     Note: The source image must be 8 bpp grayscale; not colormapped.
     /// </summary>
     /// <remarks>
+    ///     <para>
+    ///         Sauvola converts grayscale to black and white using a threshold calculated from the brightness and
+    ///         variation around each pixel. Use it for documents with shadows, uneven lighting, or faint text where
+    ///         a single threshold produces poor results. The window size and factor affect which details remain.
+    ///     </para>
     ///     <list type="number">
     ///         <listheader>Notes</listheader>
     ///         <item>
@@ -820,6 +834,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     Note: The source image must be 8 bpp grayscale; not colormapped.
     /// </summary>
     /// <remarks>
+    ///     <para>
+    ///         Like <see cref="BinarizeSauvola"/>, this turns grayscale into black and white using local brightness
+    ///         and variation. Use this tiled version for large scans with uneven backgrounds to limit the memory
+    ///         needed for intermediate calculations.
+    ///     </para>
     ///     A tiled version of Sauvola can become necessary for large source images (over 16M pixels) because:
     ///     * The mean value accumulator is a uint32, overflow can occur for an image with more than 16M pixels.
     ///     * The mean value accumulator array for 16M pixels is 64 MB. While the mean square accumulator array for 16M pixels
@@ -867,8 +886,13 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
 
     #region ConvertRGBToGray
     /// <summary>
-    ///     Conversion from RBG to 8bpp grayscale using the specified weights. Note red, green, blue weights should add up to 1.0.
+    ///     Conversion from RGB to 8bpp grayscale using the specified weights. Note red, green, blue weights should add up to 1.0.
     /// </summary>
+    /// <remarks>
+    ///     Combines the red, green, and blue channels into a single brightness value. Adjust the weights when text
+    ///     and background have different colors and their separation benefits from emphasizing a particular channel.
+    ///     Grayscale is also a suitable input for the thresholding methods. Passing all zero weights uses Leptonica's defaults.
+    /// </remarks>
     /// <param name="rwt">Red weight</param>
     /// <param name="gwt">Green weight</param>
     /// <param name="bwt">Blue weight</param>
@@ -898,8 +922,12 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     }
 
     /// <summary>
-    ///     Conversion from RBG to 8bpp grayscale.
+    ///     Conversion from RGB to 8bpp grayscale.
     /// </summary>
+    /// <remarks>
+    ///     Combines the color channels into brightness using Leptonica's default weights. Use this to prepare a
+    ///     color document for grayscale processing or binarization; use the weighted overload to emphasize a color channel.
+    /// </remarks>
     /// <returns>The Grayscale pix.</returns>
     public Image ConvertRGBToGray()
     {
@@ -913,6 +941,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     The algorithm is based on Leptonica <code>lineremoval.c</code> example.
     ///     See <a href="http://www.leptonica.com/line-removal.html">line-removal</a>.
     /// </summary>
+    /// <remarks>
+    ///     Estimates and corrects page tilt, identifies long horizontal lines, and lightens them in the grayscale image.
+    ///     Use it for ruled forms or table lines that interfere with OCR. Lines touching text may cause parts of
+    ///     characters to be removed, so inspect the result before recognition.
+    /// </remarks>
     /// <param name="whiteThreshold">Threshold value for white pixels.</param>
     /// <param name="blackThreshold">Threshold value for black pixels.</param>
     /// <returns>Image with lines removed</returns>
@@ -995,6 +1028,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     <code>speckle_reg.c</code> example demonstrating morphological method of
     ///     removing speckle.
     /// </summary>
+    /// <remarks>
+    ///     Speckles are small isolated marks, such as scanning noise or dust. This operation normalizes the
+    ///     background, converts the image to black and white, and removes isolated marks matching the supplied
+    ///     pattern. Use it on noisy grayscale scans before OCR; small punctuation or character details may also match.
+    /// </remarks>
     /// <param name="selStr">hit-miss sels in 2D layout; SEL_STR2 and SEL_STR3 are predefined values</param>
     /// <param name="selSize">2 for 2x2, 3 for 3x3</param>
     /// <returns>Despeckled image</returns>
@@ -1015,13 +1053,10 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
 
         /* Remove the speckle noise up to selSize x selSize */
         var sel1 = LeptonicaApi.Native.selCreateFromString(selStr, selSize + 2, selSize + 2, "speckle" + selSize);
-        var pix4 = LeptonicaApi.Native.pixHMT(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix3),
-            new HandleRef(this, sel1));
+        var pix4 = LeptonicaApi.Native.pixHMT(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix3), new HandleRef(this, sel1));
         var sel2 = LeptonicaApi.Native.selCreateBrick(selSize, selSize, 0, 0, SelType.SelHit);
-        var pix5 = LeptonicaApi.Native.pixDilate(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4),
-            new HandleRef(this, sel2));
-        var pix6 = LeptonicaApi.Native.pixSubtract(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix3),
-            new HandleRef(this, pix5));
+        var pix5 = LeptonicaApi.Native.pixDilate(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4), new HandleRef(this, sel2));
+        var pix6 = LeptonicaApi.Native.pixSubtract(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix3), new HandleRef(this, pix5));
 
         LeptonicaApi.Native.selDestroy(ref sel1);
         LeptonicaApi.Native.selDestroy(ref sel2);
@@ -1050,9 +1085,10 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     returns clone of original image.
     /// </summary>
     /// <remarks>
-    ///     This binarizes if necessary and finds the skew angle.  If the
-    ///     angle is large enough and there is sufficient confidence,
-    ///     it returns a deskewed image; otherwise, it returns a clone.
+    ///     Deskewing detects a small page tilt, such as a scan placed slightly crooked, and rotates the image so
+    ///     text lines are more horizontal. Use it before OCR when the page is tilted; it does not determine whether
+    ///     a page is upside down or sideways. Leptonica binarizes as needed to estimate the angle and returns a
+    ///     shared clone if the angle is too small or the confidence is insufficient. Dispose the returned image.
     /// </remarks>
     /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
     /// <exception cref="LeptonicaException">Raised when something fails</exception>
@@ -1066,9 +1102,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     returns clone of original image
     /// </summary>
     /// <remarks>
-    ///     This binarizes if necessary and finds the skew angle.  If the
-    ///     angle is large enough and there is sufficient confidence,
-    ///     it returns a deskewed image; otherwise, it returns a clone.
+    ///     Deskewing detects a small page tilt, such as a scan placed slightly crooked, and rotates the image so
+    ///     text lines are more horizontal. Use it before OCR when the page is tilted and when the estimated angle
+    ///     and confidence are needed. It does not detect sideways or upside-down pages. Leptonica binarizes as
+    ///     needed for the estimate and returns a shared clone if the angle is too small or confidence is insufficient.
+    ///     Dispose the returned image.
     /// </remarks>
     /// <param name="scew">The scew angle and confidence</param>
     /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
@@ -1083,11 +1121,12 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     returns clone of original image
     /// </summary>
     /// <remarks>
-    ///     This binarizes if necessary and finds the skew angle.  If the
-    ///     angle is large enough and there is sufficient confidence,
-    ///     it returns a deskewed image; otherwise, it returns a clone
+    ///     Deskewing detects a small page tilt and rotates a crooked scan so text lines are more horizontal.
+    ///     Use it before OCR when the page is tilted and you need to control the search reduction. It does not
+    ///     detect sideways or upside-down pages. Leptonica binarizes as needed for the estimate and returns a
+    ///     shared clone if the angle is too small or confidence is insufficient. Dispose the returned image.
     /// </remarks>
-    /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or .</param>
+    /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or 4.</param>
     /// <param name="scew">The scew angle and confidence</param>
     /// <returns>Returns deskewed image if confidence was high enough, otherwise returns clone of original pix</returns>
     /// <exception cref="LeptonicaException">Raised when something fails</exception>
@@ -1101,9 +1140,10 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     returns clone of original image
     /// </summary>
     /// <remarks>
-    ///     This binarizes if necessary and finds the skew angle.  If the
-    ///     angle is large enough and there is sufficient confidence,
-    ///     it returns a deskewed image; otherwise, it returns a clone.
+    ///     Deskewing detects a small page tilt and rotates a crooked scan so text lines are more horizontal.
+    ///     Use this overload before OCR when the angle search and binarization threshold need to be tuned. It does
+    ///     not detect sideways or upside-down pages. Leptonica binarizes as needed for the estimate and returns a
+    ///     shared clone if the angle is too small or confidence is insufficient. Dispose the returned image.
     /// </remarks>
     /// <param name="sweep">linear sweep parameters</param>
     /// <param name="redSearch">The reduction factor used by the binary search, can be 1, 2, or 4.</param>
@@ -1137,6 +1177,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     Creates a new image by rotating this image about it's centre.
     /// </summary>
     /// <remarks>
+    ///     <para>
+    ///         Rotation turns the image by a known angle. Use it to correct a known orientation or tilt before OCR;
+    ///         for automatic detection of a small tilt, use <see cref="Deskew()"/> instead. Resampling at arbitrary
+    ///         angles can soften text edges; quarter-turns use an orthogonal rotation.
+    ///     </para>
     ///     Please note the following:
     ///     <list type="bullet">
     ///         <item>
@@ -1195,6 +1240,10 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     /// <summary>
     ///     90 degree rotation.
     /// </summary>
+    /// <remarks>
+    ///     Turns the image one quarter-turn in the selected direction, exchanging its width and height.
+    ///     Use it to make a sideways page upright before OCR when its orientation is already known.
+    /// </remarks>
     /// <param name="direction">1 = clockwise,  -1 = counter-clockwise</param>
     /// <returns>Rotated image</returns>
     /// <exception cref="LeptonicaException">Raised when something fails</exception>
@@ -1221,6 +1270,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     /// <summary>
     ///     Blends this image with the given <paramref name="imageToBlendWith"/>
     /// </summary>
+    /// <remarks>
+    ///     Overlays the second image at the specified position and mixes its pixels with the source according to
+    ///     <paramref name="fraction"/>. Use it to combine images or visualize an overlay; blending may reduce text
+    ///     contrast and is not generally needed for OCR preprocessing.
+    /// </remarks>
     /// <param name="imageToBlendWith"><see cref="Image"/></param>
     /// <param name="x">origin [UL corner] of <paramref name="imageToBlendWith"/> relative to the origin of <see cref="Image"/> can be  is smaller 0</param>
     /// <param name="y">origin [UL corner] of <paramref name="imageToBlendWith"/> relative to the origin of <see cref="Image"/> can be  is smaller 0</param>
@@ -1238,6 +1292,370 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
         Logger.LogInformation("Image blend");
 
         return result == IntPtr.Zero ? null : new Image(result);
+    }
+    #endregion
+
+    #region ConvertToGray
+    /// <summary>
+    ///     Converts an image to 8-bit grayscale without a colormap.
+    /// </summary>
+    /// <remarks>
+    ///     Converts colors or other pixel depths to brightness values from black to white using the conversion
+    ///     appropriate to the source. Use it to prepare an image for grayscale filters or thresholding; color
+    ///     information is discarded. Dispose the returned image.
+    /// </remarks>
+    /// <returns>A new grayscale image.</returns>
+    /// <exception cref="LeptonicaException">The conversion failed.</exception>
+    public Image ConvertToGray()
+    {
+        VerifyNotDisposed();
+        return Preprocessed(LeptonicaApi.Native.pixConvertTo8(_handle, 0), "convert image to grayscale");
+    }
+    #endregion
+
+    #region Binarize
+    /// <summary>
+    ///     Converts an 8-bit grayscale image to black and white using a fixed threshold.
+    /// </summary>
+    /// <remarks>
+    ///     Applies the same brightness cutoff to every pixel, producing a binary image with black foreground and
+    ///     white background. Use it for scans with uniform lighting and clear text. Uneven backgrounds or faint text
+    ///     may require an adaptive method such as <see cref="BinarizeSauvola"/> instead.
+    /// </remarks>
+    /// <param name="threshold">Gray values below this value become black; values at or above it become white. Range: 0 through 256.</param>
+    /// <returns>A new 1-bit image.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The threshold is outside the supported range.</exception>
+    /// <exception cref="InvalidOperationException">The image is not uncolormapped 8-bit grayscale.</exception>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image Binarize(int threshold)
+    {
+        VerifyGray();
+        return threshold is < 0 or > 256
+            ? throw new ArgumentOutOfRangeException(nameof(threshold))
+            : Preprocessed(LeptonicaApi.Native.pixThresholdToBinary(_handle, threshold), "binarize image");
+    }
+    #endregion
+
+    #region NormalizeBackground
+    /// <summary>Normalizes an uneven background using Leptonica's default parameters.</summary>
+    /// <remarks>
+    ///     Estimates variations in background brightness and adjusts the image to make the background more uniform.
+    ///     Use it before thresholding or OCR on grayscale or RGB documents affected by shadows or uneven lighting.
+    ///     The original image is not modified.
+    /// </remarks>
+    /// <returns>A normalized image, which the caller must dispose.</returns>
+    /// <exception cref="InvalidOperationException">The source depth or colormap is not supported.</exception>
+    /// <exception cref="LeptonicaException">The operation failed, for example if the image is too small for the algorithm.</exception>
+    public Image NormalizeBackground()
+    {
+        VerifyGrayOrRgb();
+        return Preprocessed(LeptonicaApi.Native.pixBackgroundNormSimple(_handle, IntPtr.Zero, IntPtr.Zero), "normalize image background");
+    }
+    #endregion
+
+    #region NormalizeBackgroundFlexible
+    /// <summary>Normalizes a quickly varying background in an 8-bit grayscale image.</summary>
+    /// <remarks>
+    ///     Estimates the background over small tiles and adjusts local brightness to make it more uniform.
+    ///     Use it for grayscale documents with rapidly changing illumination or background shading before
+    ///     binarization; tile and smoothing settings control the scale of the adjustment.
+    /// </remarks>
+    /// <param name="tileWidth">Desired horizontal tile size, from 3 to 10 pixels.</param>
+    /// <param name="tileHeight">Desired vertical tile size, from 3 to 10 pixels.</param>
+    /// <param name="smoothX">Horizontal smoothing half-width, from 1 to 3.</param>
+    /// <param name="smoothY">Vertical smoothing half-width, from 1 to 3.</param>
+    /// <param name="delta">Basin-filling difference; use zero to skip basin filling.</param>
+    /// <returns>A new background-normalized image.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">A parameter is outside its supported range.</exception>
+    /// <exception cref="InvalidOperationException">The source is not uncolormapped 8-bit grayscale.</exception>
+    /// <exception cref="LeptonicaException">The native operation failed.</exception>
+    public Image NormalizeBackgroundFlexible(int tileWidth = 7, int tileHeight = 7, int smoothX = 1, int smoothY = 1, int delta = 10)
+    {
+        VerifyGray();
+        if (tileWidth < 3 || tileWidth > 10 || tileWidth > Width) throw new ArgumentOutOfRangeException(nameof(tileWidth));
+        if (tileHeight < 3 || tileHeight > 10 || tileHeight > Height) throw new ArgumentOutOfRangeException(nameof(tileHeight));
+        if (smoothX is < 1 or > 3) throw new ArgumentOutOfRangeException(nameof(smoothX));
+        if (smoothY is < 1 or > 3) throw new ArgumentOutOfRangeException(nameof(smoothY));
+        if (delta < 0) throw new ArgumentOutOfRangeException(nameof(delta));
+        return Preprocessed(LeptonicaApi.Native.pixBackgroundNormFlex(_handle, tileWidth, tileHeight, smoothX, smoothY, delta), "normalize image background");
+    }
+    #endregion
+
+    #region NormalizeContrast
+    /// <summary>Normalizes the local contrast of an 8-bit grayscale image.</summary>
+    /// <remarks>
+    ///     Adjusts the difference between light and dark pixels locally rather than applying one adjustment to the
+    ///     whole image. Use it when text contrast varies across a scan, for example on faded pages; it can also
+    ///     emphasize noise, so inspect the result before OCR.
+    /// </remarks>
+    /// <param name="tileWidth">Width of each tile in pixels, at least 5 and no larger than the image width.</param>
+    /// <param name="tileHeight">Height of each tile in pixels, at least 5 and no larger than the image height.</param>
+    /// <param name="minimumDifference">Minimum local intensity difference to accept, from 0 through 255.</param>
+    /// <param name="smoothX">Horizontal smoothing half-width from 0 through 5; zero disables smoothing.</param>
+    /// <param name="smoothY">Vertical smoothing half-width from 0 through 5; zero disables smoothing.</param>
+    /// <returns>A new contrast-normalized image.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">A parameter is outside its valid range.</exception>
+    /// <exception cref="InvalidOperationException">The image is not uncolormapped 8-bit grayscale.</exception>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image NormalizeContrast(int tileWidth, int tileHeight, int minimumDifference, int smoothX = 0, int smoothY = 0)
+    {
+        VerifyGray();
+        if (tileWidth < 5 || tileWidth > Width) throw new ArgumentOutOfRangeException(nameof(tileWidth));
+        if (tileHeight < 5 || tileHeight > Height) throw new ArgumentOutOfRangeException(nameof(tileHeight));
+        if (minimumDifference is < 0 or > 255) throw new ArgumentOutOfRangeException(nameof(minimumDifference));
+        if (smoothX is < 0 or > 5) throw new ArgumentOutOfRangeException(nameof(smoothX));
+        if (smoothY is < 0 or > 5) throw new ArgumentOutOfRangeException(nameof(smoothY));
+        return Preprocessed(LeptonicaApi.Native.pixContrastNorm(IntPtr.Zero, _handle, tileWidth, tileHeight, minimumDifference, smoothX, smoothY), "normalize image contrast");
+    }
+    #endregion
+
+    #region MedianFilter
+    /// <summary>Reduces noise with a median filter.</summary>
+    /// <remarks>
+    ///     Replaces pixel values using the median of a surrounding window, reducing isolated light and dark noise.
+    ///     Use it on noisy grayscale or RGB scans before OCR. A large window can remove thin strokes or punctuation.
+    /// </remarks>
+    /// <param name="width">Filter width in pixels, at least 1.</param>
+    /// <param name="height">Filter height in pixels, at least 1.</param>
+    /// <returns>A new filtered image.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">A filter dimension is less than 1.</exception>
+    /// <exception cref="InvalidOperationException">The image is not uncolormapped 8-bit grayscale or 32-bit RGB.</exception>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image MedianFilter(int width, int height)
+    {
+        VerifyGrayOrRgb();
+        ValidateKernel(width, height);
+        return Preprocessed(LeptonicaApi.Native.pixMedianFilter(_handle, width, height), "median-filter image");
+    }
+    #endregion
+
+    #region Invert
+    /// <summary>Inverts the pixel values of an image.</summary>
+    /// <remarks>
+    ///     Reverses light and dark values, for example changing light text on a dark background into dark text on
+    ///     a light background. Use it when the input has the opposite polarity from that needed by a later processing
+    ///     step. For colormapped images Leptonica inverts the colormap; the source is not modified.
+    /// </remarks>
+    /// <returns>A new inverted image.</returns>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image Invert()
+    {
+        VerifyNotDisposed();
+        return Preprocessed(LeptonicaApi.Native.pixInvert(new HandleRef(this, IntPtr.Zero), _handle), "invert image");
+    }
+    #endregion
+
+    #region RemoveAlpha
+    /// <summary>Composites 32-bit RGBA images against white to remove their alpha channel.</summary>
+    /// <remarks>
+    ///     Blends transparent and partially transparent pixels against white, producing an opaque image. Use it
+    ///     before OCR when transparent areas should be treated as white paper. For other images, including
+    ///     colormapped images, Leptonica returns a shared reference without removing transparency.
+    /// </remarks>
+    /// <returns>The composited image, or a shared reference to the source if no conversion was performed. Dispose the returned reference.</returns>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image RemoveAlpha()
+    {
+        VerifyNotDisposed();
+        return Preprocessed(LeptonicaApi.Native.pixRemoveAlpha(_handle), "remove image alpha");
+    }
+    #endregion
+
+    #region AddBorder
+    /// <summary>Adds a white or black border around an image.</summary>
+    /// <remarks>
+    ///     Adds the specified amount of space on all four sides without scaling the content. A white border can
+    ///     give tightly cropped text some surrounding whitespace before OCR; a black border may be useful for
+    ///     other image-processing tasks. Choose a width that does not overwhelm the content.
+    /// </remarks>
+    /// <param name="pixels">Number of pixels to add on each side.</param>
+    /// <param name="white">Whether the border is white; false selects black.</param>
+    /// <returns>A new image with a border.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The border is negative or would exceed the supported image dimensions.</exception>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image AddBorder(int pixels, bool white = true)
+    {
+        VerifyNotDisposed();
+        if (pixels < 0 || pixels > (int.MaxValue - Width) / 2 || pixels > (int.MaxValue - Height) / 2)
+            throw new ArgumentOutOfRangeException(nameof(pixels));
+        return Preprocessed(LeptonicaApi.Native.pixAddBlackOrWhiteBorder(_handle, pixels, pixels, pixels, pixels, white ? 1 : 2), "add image border");
+    }
+    #endregion
+
+    #region RemoveBorder
+    /// <summary>Removes an equal-width border from all four sides.</summary>
+    /// <remarks>
+    ///     Cuts away the specified number of pixels from every edge. Use it to remove unwanted scan edges or
+    ///     previously added padding before OCR. Content within the removed area is lost, including text near an edge.
+    /// </remarks>
+    /// <param name="pixels">Number of pixels to remove from each side.</param>
+    /// <returns>A new cropped image.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The border is negative or would remove the entire image.</exception>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image RemoveBorder(int pixels)
+    {
+        VerifyNotDisposed();
+        if (pixels < 0 || pixels > (Width - 1) / 2 || pixels > (Height - 1) / 2)
+            throw new ArgumentOutOfRangeException(nameof(pixels));
+        return Preprocessed(LeptonicaApi.Native.pixRemoveBorder(_handle, pixels), "remove image border");
+    }
+    #endregion
+
+    #region Crop
+    /// <summary>Copies a rectangular region of an image.</summary>
+    /// <remarks>
+    ///     Extracts only the requested rectangle into a new image. Use it to OCR a specific field or text region
+    ///     and exclude surrounding content; anything outside the rectangle is omitted.
+    /// </remarks>
+    /// <param name="region">The region, which must be nonempty and entirely within the source image.</param>
+    /// <returns>A new cropped image.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">The region is empty or outside the image.</exception>
+    /// <exception cref="LeptonicaException">The operation failed.</exception>
+    public Image Crop(Rect region)
+    {
+        VerifyNotDisposed();
+        if (region.X1 < 0 || region.Y1 < 0 || region.Width <= 0 || region.Height <= 0 ||
+            (long)region.X1 + region.Width > Width || (long)region.Y1 + region.Height > Height)
+            throw new ArgumentOutOfRangeException(nameof(region));
+        var box = LeptonicaApi.Native.boxCreate(region.X1, region.Y1, region.Width, region.Height);
+        if (box == IntPtr.Zero)
+        {
+            const string message = "Failed to create crop rectangle.";
+            Logger.LogError(message);
+            throw new LeptonicaException(message);
+        }
+        try
+        {
+            return Preprocessed(LeptonicaApi.Native.pixClipRectangle(_handle, new HandleRef(this, box), IntPtr.Zero), "crop image");
+        }
+        finally
+        {
+            LeptonicaApi.Native.boxDestroy(ref box);
+        }
+    }
+    #endregion
+
+    #region Dilate
+    /// <summary>Expands foreground pixels in a binary image with a rectangular structuring element.</summary>
+    /// <remarks>
+    ///     Expands black foreground regions using a rectangular neighborhood of the specified size. Use it on a
+    ///     binary image to thicken thin strokes or bridge small breaks before OCR; too much dilation can join letters.
+    /// </remarks>
+    /// <param name="width">Structuring element width, at least 1.</param>
+    /// <param name="height">Structuring element height, at least 1.</param>
+    /// <returns>A new binary image.</returns>
+    public Image Dilate(int width, int height) => Morph(width, height, LeptonicaApi.Native.pixDilateBrick, "dilate image");
+    #endregion
+
+    #region Erode
+    /// <summary>Shrinks foreground pixels in a binary image with a rectangular structuring element.</summary>
+    /// <remarks>
+    ///     Shrinks black foreground regions using a rectangular neighborhood of the specified size. Use it on a
+    ///     binary image to thin overly thick strokes or separate small connections; excessive erosion can erase text.
+    /// </remarks>
+    /// <param name="width">Structuring element width, at least 1.</param>
+    /// <param name="height">Structuring element height, at least 1.</param>
+    /// <returns>A new binary image.</returns>
+    public Image Erode(int width, int height) => Morph(width, height, LeptonicaApi.Native.pixErodeBrick, "erode image");
+    #endregion
+
+    #region Open
+    /// <summary>Applies binary morphological opening to remove small foreground features.</summary>
+    /// <remarks>
+    ///     Opening erodes the black foreground and then dilates it with the same rectangular neighborhood. Use it
+    ///     on binary images to remove small isolated marks or thin connections; small punctuation and strokes may
+    ///     also disappear, so choose the neighborhood carefully.
+    /// </remarks>
+    /// <param name="width">Structuring element width, at least 1.</param>
+    /// <param name="height">Structuring element height, at least 1.</param>
+    /// <returns>A new binary image.</returns>
+    public Image Open(int width, int height) => Morph(width, height, LeptonicaApi.Native.pixOpenBrick, "open image");
+    #endregion
+
+    #region Close
+    /// <summary>Applies binary morphological closing to fill small gaps in foreground features.</summary>
+    /// <remarks>
+    ///     Closing dilates the black foreground and then erodes it with the same rectangular neighborhood. Use it
+    ///     on binary images to fill small gaps or reconnect broken strokes; a large neighborhood can join adjacent letters.
+    /// </remarks>
+    /// <param name="width">Structuring element width, at least 1.</param>
+    /// <param name="height">Structuring element height, at least 1.</param>
+    /// <returns>A new binary image.</returns>
+    public Image Close(int width, int height) => Morph(width, height, LeptonicaApi.Native.pixCloseBrick, "close image");
+    #endregion
+
+    #region Morph
+    /// <summary>
+    ///     Applies the specified morphological operation to the image.
+    /// </summary>
+    /// <param name="width">The width of the operation kernel.</param>
+    /// <param name="height">The height of the operation kernel.</param>
+    /// <param name="operation">The operation to apply to the image.</param>
+    /// <param name="description">A description of the resulting image.</param>
+    /// <returns>The processed image.</returns>
+    /// <exception cref="InvalidOperationException">The image is not uncolormapped or does not have a bit depth of 1.</exception>
+    private Image Morph(int width, int height, Func<IntPtr, HandleRef, int, int, IntPtr> operation, string description)
+    {
+        VerifyNotDisposed();
+        if (Depth != 1 || Colormap != null) throw new InvalidOperationException("The image must be uncolormapped and 1 bit per pixel.");
+        ValidateKernel(width, height);
+        return Preprocessed(operation(IntPtr.Zero, _handle, width, height), description);
+    }
+    #endregion
+
+    #region VerifyGray
+    /// <summary>
+    ///     Verifies that the image is uncolormapped and has a bit depth of 8.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The image is not uncolormapped or does not have a bit depth of 8.</exception>
+    private void VerifyGray()
+    {
+        VerifyNotDisposed();
+        if (Depth != 8 || Colormap != null) throw new InvalidOperationException("The image must be uncolormapped and 8 bits per pixel.");
+    }
+    #endregion
+
+    #region VerifyGrayOrRgb
+    /// <summary>
+    ///     Verifies that the image is uncolormapped and has a bit depth of 8 or 32.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">The image is colormapped or its bit depth is not 8 or 32.</exception>
+    private void VerifyGrayOrRgb()
+    {
+        VerifyNotDisposed();
+        if ((Depth != 8 && Depth != 32) || Colormap != null)
+            throw new InvalidOperationException("The image must be uncolormapped and 8 or 32 bits per pixel.");
+    }
+    #endregion
+
+    #region ValidateKernel
+    /// <summary>
+    ///     Validates that the kernel dimensions are positive.
+    /// </summary>
+    /// <param name="width">The kernel width.</param>
+    /// <param name="height">The kernel height.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="width"/> or <paramref name="height"/> is less than 1.</exception>
+    private static void ValidateKernel(int width, int height)
+    {
+        if (width < 1) throw new ArgumentOutOfRangeException(nameof(width));
+        if (height < 1) throw new ArgumentOutOfRangeException(nameof(height));
+    }
+    #endregion
+
+    #region Preprocessed
+    /// <summary>
+    ///     Creates an image from a nonzero native handle.
+    /// </summary>
+    /// <param name="handle">The native image handle.</param>
+    /// <param name="operation">The operation to include in the error message if the handle is zero.</param>
+    /// <returns>An image wrapping the native handle.</returns>
+    /// <exception cref="LeptonicaException">Thrown when <paramref name="handle"/> is zero.</exception>
+    private static Image Preprocessed(IntPtr handle, string operation)
+    {
+        if (handle != IntPtr.Zero) return new Image(handle);
+        var message = $"Failed to {operation}.";
+        Logger.LogError(message);
+        throw new LeptonicaException(message);
     }
     #endregion
 

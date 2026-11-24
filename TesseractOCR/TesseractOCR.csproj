@@ -4,11 +4,11 @@
 		<PackageId>TesseractOCR</PackageId>
 		<Authors>Charles Weld &amp; Kees van Spelde</Authors>
 		<Product>Tesseract</Product>
-		<Description>Tesseract 5.5.2 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 
+		<Description>Tesseract 5.5.4 adds a new neural net (LSTM) based OCR engine which is focused on line recognition, but also still supports the legacy Tesseract OCR engine of Tesseract 3 
 which works by recognizing character patterns. Compatibility with Tesseract 3 is enabled by using the Legacy OCR Engine mode (--oem 0). It also needs traineddata files 
 which support the legacy engine, for example those from the tessdata repository.</Description>
-		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2023 Kees van Spelde</Copyright>
-		<PackageReleaseNotes>- Updated to Tesseract 5.5.2
+		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2027 Kees van Spelde</Copyright>
+		<PackageReleaseNotes>- Updated to Tesseract 5.5.4
 - Updated nuget packages</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
@@ -50,9 +50,10 @@ which support the legacy engine, for example those from the tessdata repository.
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Remove="bin\**" />
-	  <EmbeddedResource Remove="bin\**" />
-	  <None Remove="bin\**" />
+		<Compile Remove="bin\**" />
+		<EmbeddedResource Remove="bin\**" />
+		<None Remove="bin\**" />
+		<None Remove="TesseractOCR.csproj.DotSettings" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -62,6 +63,10 @@ which support the legacy engine, for example those from the tessdata repository.
 
 	<ItemGroup>
 		<None Include="ocr.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
