@@ -42,9 +42,24 @@ namespace TesseractOCR.InteropDotNet
     public class LibraryLoader
     {
         #region Fields
+        /// <summary>
+        ///     Provides the library loader logic.
+        /// </summary>
         private readonly ILibraryLoaderLogic _logic;
+
+        /// <summary>
+        ///     Object used to synchronize access to shared state.
+        /// </summary>
         private readonly object _syncLock = new object();
+
+        /// <summary>
+        ///     Maps assembly names to their loaded handles.
+        /// </summary>
         private readonly Dictionary<string, IntPtr> _loadedAssemblies = new Dictionary<string, IntPtr>();
+
+        /// <summary>
+        ///     The singleton instance of the library loader.
+        /// </summary>
         private static LibraryLoader _instance;
 
         /// <summary>
@@ -53,10 +68,10 @@ namespace TesseractOCR.InteropDotNet
         public string CustomSearchPath { get; set; }
         #endregion
 
+        #region Properties
         /// <summary>
         ///     A singleton to the <see cref="LibraryLoader"/> class
         /// </summary>
-        #region Properties
         public static LibraryLoader Instance
         {
             get
@@ -216,6 +231,14 @@ namespace TesseractOCR.InteropDotNet
         }
         #endregion
 
+        #region CheckCustomSearchPath
+        /// <summary>
+        /// Loads a library from the custom search path.
+        /// </summary>
+        /// <param name="fileName">The name of the library file to load.</param>
+        /// <param name="platformName">The platform name used to locate the library.</param>
+        /// <returns>A handle to the loaded library, or <c>IntPtr.Zero</c> if the custom search path is not defined or the
+        /// library could not be loaded.</returns>
         private IntPtr CheckCustomSearchPath(string fileName, string platformName)
         {
             var baseDirectory = CustomSearchPath;
@@ -224,13 +247,11 @@ namespace TesseractOCR.InteropDotNet
                 Logger.LogInformation($"Checking custom search location '{baseDirectory}' for '{fileName}' on platform {platformName}.");
                 return InternalLoadLibrary(baseDirectory, platformName, fileName);
             }
-            else
-            {
-                Logger.LogInformation("Custom search path is not defined, skipping.");
-                return IntPtr.Zero;
-            }
-        }
 
+            Logger.LogInformation("Custom search path is not defined, skipping.");
+            return IntPtr.Zero;
+        }
+        #endregion
 
         #region InternalLoadLibrary
         private IntPtr InternalLoadLibrary(string baseDirectory, string platformName, string fileName)
@@ -327,6 +348,11 @@ namespace TesseractOCR.InteropDotNet
         #endregion
 
         #region FixUpLibraryName
+        /// <summary>
+        ///     Fixes up the library name for the current platform.
+        /// </summary>
+        /// <param name="fileName">The name of the library file.</param>
+        /// <returns>The fixed-up library name.</returns>
         private string FixUpLibraryName(string fileName)
         {
             return _logic.FixUpLibraryName(fileName);

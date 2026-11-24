@@ -4,7 +4,7 @@
 // Author: Kees van Spelde <sicos2002@hotmail.com>
 //
 // Copyright 2012-2019 Charles Weld
-// Copyright 2021-2025 Kees van Spelde
+// Copyright 2021-2027 Kees van Spelde
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 //
@@ -462,6 +462,10 @@ namespace TesseractOCR
         #endregion
 
         #region Dispose
+        /// <summary>
+        ///     Releases the native resources associated with the page.
+        /// </summary>
+        /// <param name="disposing">true to release managed and unmanaged resources; false to release unmanaged resources only.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)
