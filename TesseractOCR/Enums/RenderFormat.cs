@@ -57,9 +57,14 @@ public enum RenderFormat
     Box,
 
     /// <summary>
-    ///     To alto
+    ///     To ALTO XML
     /// </summary>
     Alto,
+
+    /// <summary>
+    ///     To PAGE XML
+    /// </summary>
+    Page,
 
     /// <summary>
     ///     To tsv

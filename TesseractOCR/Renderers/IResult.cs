@@ -23,6 +23,10 @@ using System;
 
 namespace TesseractOCR.Renderers;
 
+/// <summary>
+///     Provides operations for creating a result document and adding or processing OCR pages.
+/// </summary>
+/// <remarks>Dispose of the result when it is no longer needed.</remarks>
 public interface IResult : IDisposable
 {
     /// <summary>

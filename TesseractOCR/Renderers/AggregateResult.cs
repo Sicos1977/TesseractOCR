@@ -53,6 +53,10 @@ public class AggregateResult : DisposableBase, IResult
     /// <summary>
     ///     Create a new aggregate result renderer with the specified child result renderers.
     /// </summary>
+    /// <remarks>
+    ///     Pages and document operations are forwarded to each child renderer, allowing one processing pass to produce
+    ///     several output formats. The aggregate takes responsibility for disposing the child renderers.
+    /// </remarks>
     /// <param name="resultRenderers">The child result renderers.</param>
     public AggregateResult(params IResult[] resultRenderers) : this((IEnumerable<IResult>)resultRenderers)
     {
@@ -61,6 +65,10 @@ public class AggregateResult : DisposableBase, IResult
     /// <summary>
     ///     Create a new aggregate result renderer with the specified child result renderers.
     /// </summary>
+    /// <remarks>
+    ///     Pages and document operations are forwarded to each child renderer, allowing one processing pass to produce
+    ///     several output formats. The aggregate takes responsibility for disposing the child renderers.
+    /// </remarks>
     /// <param name="resultRenderers">The child result renderers.</param>
     public AggregateResult(IEnumerable<IResult> resultRenderers)
     {

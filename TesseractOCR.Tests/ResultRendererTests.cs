@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TesseractOCR;
 using TesseractOCR.Enums;
@@ -165,6 +166,24 @@ public class ResultTests : TesseractTestBase
     }
 
     [TestMethod]
+    public void CanRenderResultsIntoPageXmlFile()
+    {
+        var resultPath = TestResultRunFile(@"Results\PAGE\phototest");
+        var renderer = Result.CreateRenderers(resultPath, DataPath, new List<RenderFormat> { RenderFormat.Page }).First();
+        using (renderer)
+        using (var pix = TesseractOCR.Pix.Image.Create(100, 50, 8))
+        using (var page = _engine.Process(pix))
+        {
+            using (renderer.BeginDocument("phototest"))
+                Assert.IsTrue(renderer.AddPage(page));
+        }
+
+        var expectedOutputFilename = Path.ChangeExtension(resultPath, "page.xml");
+        Assert.IsTrue(File.Exists(expectedOutputFilename),
+            $"Expected a PAGE XML file \"{expectedOutputFilename}\" to have been created; but none was found.");
+    }
+
+    [TestMethod]
     public void CanRenderResultsIntoUnlvFile()
     {
         var resultPath = TestResultRunFile(@"Results\UNLV\phototest");
@@ -207,6 +226,7 @@ public class ResultTests : TesseractTestBase
             RenderFormat.Box,
             RenderFormat.Unlv,
             // RenderFormat.Alto,
+            RenderFormat.Page,
             RenderFormat.Tsv,
             RenderFormat.LstmBox,
             RenderFormat.WordStrBox

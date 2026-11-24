@@ -182,6 +182,10 @@ public abstract class Result : DisposableBase, IResult
                     renderer = CreateAltoRenderer(outputbase);
                     break;
 
+                case RenderFormat.Page:
+                    renderer = CreatePageRenderer(outputbase);
+                    break;
+
                 case RenderFormat.Tsv:
                     renderer = CreateTsvRenderer(outputbase);
                     break;
@@ -207,8 +211,8 @@ public abstract class Result : DisposableBase, IResult
     ///     Creates a <see cref="IResult">result renderer</see> that render that generates UTF-8 encoded text
     ///     file from tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the text file to be generated without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The text result renderer.</returns>
     public static IResult CreateTextRenderer(string outputFilename)
     {
         return new TextResult(outputFilename);
@@ -220,9 +224,9 @@ public abstract class Result : DisposableBase, IResult
     ///     Creates a <see cref="IResult">result renderer</see> that render that generates a HOCR
     ///     file from tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the hocr file to be generated without the file extension.</param>
-    /// <param name="fontInfo">Determines if the generated HOCR file includes font information or not.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <param name="fontInfo">Whether the generated hOCR file includes font information.</param>
+    /// <returns>The hOCR result renderer.</returns>
     public static IResult CreateHOcrRenderer(string outputFilename, bool fontInfo = false)
     {
         return new HOcrResult(outputFilename, fontInfo);
@@ -234,10 +238,10 @@ public abstract class Result : DisposableBase, IResult
     ///     Creates a <see cref="IResult">result renderer</see> that render that generates a searchable
     ///     pdf file from tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The filename of the pdf file to be generated without the file extension.</param>
-    /// <param name="fontDirectory">The directory containing the pdf font data, normally same as your tessdata directory.</param>
-    /// <param name="textonly">skip images if set</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <param name="fontDirectory">The directory containing PDF font data, normally the tessdata directory.</param>
+    /// <param name="textonly">Whether to omit page images and create a text-only PDF.</param>
+    /// <returns>The PDF result renderer.</returns>
     public static IResult CreatePdfRenderer(string outputFilename, string fontDirectory, bool textonly)
     {
         return new PdfResult(outputFilename, fontDirectory, textonly);
@@ -249,8 +253,8 @@ public abstract class Result : DisposableBase, IResult
     ///     Creates a <see cref="IResult">result renderer</see> that render that generates a unlv
     ///     file from tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the unlv file to be created without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The UNLV result renderer.</returns>
     public static IResult CreateUnlvRenderer(string outputFilename)
     {
         return new UnlvResult(outputFilename);
@@ -262,8 +266,8 @@ public abstract class Result : DisposableBase, IResult
     ///     Creates a <see cref="IResult">result renderer</see> that render that generates a box text file from
     ///     tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the box file to be created without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The box result renderer.</returns>
     public static IResult CreateBoxRenderer(string outputFilename)
     {
         return new BoxResult(outputFilename);
@@ -272,24 +276,36 @@ public abstract class Result : DisposableBase, IResult
 
     #region CreateAltoRenderer
     /// <summary>
-    ///     Creates a <see cref="IResult">result renderer</see> that render that generates an Alto
-    ///     file from tesseract's output.
+    ///     Creates a <see cref="IResult">result renderer</see> that generates an ALTO XML
+    ///     file from Tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the Alto file to be created without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The ALTO result renderer.</returns>
     public static IResult CreateAltoRenderer(string outputFilename)
     {
         return new AltoResult(outputFilename);
     }
     #endregion
 
+    #region CreatePageRenderer
+    /// <summary>
+    ///     Creates a result renderer that generates PAGE XML output.
+    /// </summary>
+    /// <param name="outputFilename">The output file path without its extension.</param>
+    /// <returns>A PAGE XML result renderer.</returns>
+    public static IResult CreatePageRenderer(string outputFilename)
+    {
+        return new PageXmlResult(outputFilename);
+    }
+    #endregion
+
     #region CreateTsvRenderer
     /// <summary>
-    ///     Creates a <see cref="IResult">result renderer</see> that render that generates a Tsv
-    ///     file from tesseract's output.
+    ///     Creates a <see cref="IResult">result renderer</see> that generates a TSV
+    ///     file from Tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the Tsv file to be created without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The TSV result renderer.</returns>
     public static IResult CreateTsvRenderer(string outputFilename)
     {
         return new TsvResult(outputFilename);
@@ -298,11 +314,11 @@ public abstract class Result : DisposableBase, IResult
 
     #region CreateLstmBoxRenderer
     /// <summary>
-    ///     Creates a <see cref="IResult">result renderer</see> that render that generates a box
-    ///     file from tesseract's output.
+    ///     Creates a <see cref="IResult">result renderer</see> that generates an LSTM box
+    ///     file from Tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the unlv file to be created without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The LSTM box result renderer.</returns>
     public static IResult CreateLstmBoxRenderer(string outputFilename)
     {
         return new LstmBoxResult(outputFilename);
@@ -311,11 +327,11 @@ public abstract class Result : DisposableBase, IResult
 
     #region CreateWordStrBoxRenderer
     /// <summary>
-    ///     Creates a <see cref="IResult">result renderer</see> that render that generates a unlv
-    ///     file from tesseract's output.
+    ///     Creates a <see cref="IResult">result renderer</see> that generates a WordStr box
+    ///     file from Tesseract's output.
     /// </summary>
-    /// <param name="outputFilename">The path to the unlv file to be created without the file extension.</param>
-    /// <returns></returns>
+    /// <param name="outputFilename">The base output path, without the file extension.</param>
+    /// <returns>The WordStr box result renderer.</returns>
     public static IResult CreateWordStrBoxRenderer(string outputFilename)
     {
         return new WordStrBoxResult(outputFilename);
