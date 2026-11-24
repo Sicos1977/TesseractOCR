@@ -15,6 +15,7 @@
     <PackageTags>Tesseract OCR PDF PDFium SkiaSharp</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>ocr.png</PackageIcon>
+    <PackageReleaseNotes>Adds PDF support for TesseractOCR</PackageReleaseNotes>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\TesseractOCR\TesseractOCR.csproj" />
