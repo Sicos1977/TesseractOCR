@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using TesseractOCR.Enums;
 using TesseractOCR.InteropDotNet;
 // ReSharper disable InconsistentNaming
+#pragma warning disable IDE0051
 
 namespace TesseractOCR.Interop;
 
