@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="TesseractOCR.Net45Tests/TesseractOCR.Net48Tests.csproj" />
+  <Project Path="TesseractOCR.NetCore31Tests/TesseractOCR.NetCore31Tests.csproj" />
+  <Project Path="TesseractOCR/TesseractOCR.csproj" />
+</Solution>
