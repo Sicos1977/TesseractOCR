@@ -2,156 +2,190 @@
 
 
 What is TesseractOCR
-=========
+====================
 
-It is a .NET wrapper for Tesseract 5.5.2 that is originally copied from Charles Weld (https://github.com/charlesw/tesseract) and modified for my own needs
+TesseractOCR is a .NET wrapper for Tesseract OCR. The native API bindings target **Tesseract 5.5.4**, and the bundled native image-processing library is **Leptonica 1.87.0**. The Windows native binaries are named `tesseract55.dll` and `leptonica-1.87.0.dll` (the Tesseract DLL name identifies the 5.5 series).
 
-How to use
-============
+## Install and prepare language data
 
-You need trained data in tessdata by language
-You can get them at https://github.com/tesseract-ocr/tessdata or https://github.com/tesseract-ocr/tessdata_fast
+Install the NuGet package:
+
+```powershell
+dotnet add package TesseractOCR
+```
+
+Tesseract also needs trained language data in a `tessdata` directory. Download the languages you need from [tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast). In the examples below, `dataPath` is the parent directory containing `tessdata` (for example, `./` when the directory is `./tessdata`).
 
 ## Microsoft Visual C++ runtimes
 
-The Windows native DLLs are compiled with Visual Studio 2022, so you need these C++ runtimes on your computer:
+The Windows native DLLs are compiled with Visual Studio 2026, so you need these C++ runtimes on your computer:
 
-- X86: https://aka.ms/vs/17/release/vc_redist.x86.exe
-- X64: https://aka.ms/vs/17/release/vc_redist.x64.exe
-- ARM64: https://aka.ms/vs/17/release/vc_redist.arm64.exe
+- X86: https://aka.ms/vs/18/release/vc_redist.x86.exe
+- X64: https://aka.ms/vs/18/release/vc_redist.x64.exe
+- ARM64: https://aka.ms/vs/18/release/vc_redist.arm64.exe
 
 Windows native binaries are included for x86, x64 and arm64.
 
-## OCR a page
+## Recognize a page
 
-```c#
-using var engine = new Engine(@"./tessdata", Language.English, EngineMode.Default);
-using var img = TesseractOCR.Pix.Image.LoadFromFile(testImagePath);
-using var page = engine.Process(img);
-Console.WriteLine("Mean confidence: {0}", page.MeanConfidence);
-Console.WriteLine("Text: \r\n{0}", page.Text);
+```csharp
+using System;
+using TesseractOCR;
+using TesseractOCR.Enums;
+using TesseractOCR.Pix;
+
+var dataPath = @"./"; // Contains ./tessdata
+var imagePath = @"./invoice.png";
+
+using var engine = new Engine(dataPath, Language.English, EngineMode.Default);
+using var image = Image.LoadFromFile(imagePath);
+using var page = engine.Process(image);
+
+Console.WriteLine($"Mean confidence: {page.MeanConfidence}");
+Console.WriteLine(page.Text);
 ```
 
-## Iterate through the layout of a page
+## Inspect page layout
 
-```c#
-using var engine = new Engine(@"./tessdata", Language.English, EngineMode.Default);
-using var img = Pix.Image.LoadFromFile(testImagePath);
-using var page = engine.Process(img);
+A recognized page exposes blocks, paragraphs, text lines, words, and symbols. Use their bounding boxes and confidence values when you need more than the combined text:
+
+```csharp
+using System;
+using TesseractOCR;
+using TesseractOCR.Enums;
+using TesseractOCR.Pix;
+
+using var engine = new Engine(@"./", Language.English);
+using var image = Image.LoadFromFile(@"./invoice.png");
+using var page = engine.Process(image);
 
 foreach (var block in page.Layout)
 {
-    result.AppendLine($"Block confidence: {block.Confidence}");
-    if (block.BoundingBox != null)
-    {
-        var boundingBox = block.BoundingBox.Value;
-        result.AppendLine($"Block bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
-                          $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
-    }
-    result.AppendLine($"Block text: {block.Text}");
+    Console.WriteLine($"Block (confidence {block.Confidence}): {block.Text}");
 
     foreach (var paragraph in block.Paragraphs)
+    foreach (var line in paragraph.TextLines)
+    foreach (var word in line.Words)
     {
-        result.AppendLine($"Paragraph confidence: {paragraph.Confidence}");
-        if (paragraph.BoundingBox != null)
-        {
-            var boundingBox = paragraph.BoundingBox.Value;
-            result.AppendLine($"Paragraph bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
-                              $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
-        }
-        var info = paragraph.Info;
-        result.AppendLine($"Paragraph info justification: {info.Justification}");
-        result.AppendLine($"Paragraph info is list item: {info.IsListItem}");
-        result.AppendLine($"Paragraph info is crown: {info.IsCrown}");
-        result.AppendLine($"Paragraph info first line ident: {info.FirstLineIdent}");
-        result.AppendLine($"Paragraph text: {paragraph.Text}");
-        
-        foreach (var textLine in paragraph.TextLines)
-        {
-            if (textLine.BoundingBox != null)
-            {
-                var boundingBox = textLine.BoundingBox.Value;
-                result.AppendLine($"Text line bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
-                                  $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
-            }
-            result.AppendLine($"Text line confidence: {textLine.Confidence}");
-            result.AppendLine($"Text line text: {textLine.Text}");
-
-            foreach (var word in textLine.Words)
-            {
-                result.AppendLine($"Word confidence: {word.Confidence}");
-                if (word.BoundingBox != null)
-                {
-                    var boundingBox = word.BoundingBox.Value;
-                    result.AppendLine($"Word bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
-                                      $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
-                }
-                result.AppendLine($"Word is from dictionary: {word.IsFromDictionary}");
-                result.AppendLine($"Word is numeric: {word.IsNumeric}");
-                result.AppendLine($"Word language: {word.Language}");
-                result.AppendLine($"Word text: {word.Text}");
-
-                foreach (var symbol in word.Symbols)
-                {
-                    result.AppendLine($"Symbol confidence: {symbol.Confidence}");
-                    if (symbol.BoundingBox != null)
-                    {
-                        var boundingBox = symbol.BoundingBox.Value;
-                        result.AppendLine($"Symbol bounding box X1 '{boundingBox.X1}', Y1 '{boundingBox.Y2}', X2 " +
-                                          $"'{boundingBox.X2}', Y2 '{boundingBox.Y2}', width '{boundingBox.Width}', height '{boundingBox.Height}'");
-                    }
-                    result.AppendLine($"Symbol is superscript: {symbol.IsSuperscript}");
-                    result.AppendLine($"Symbol is dropcap: {symbol.IsDropcap}");
-                    result.AppendLine($"Symbol text: {symbol.Text}");
-                }
-            }
-        }
+        var box = word.BoundingBox;
+        Console.WriteLine($"{word.Text}: confidence {word.Confidence}, " +
+                          $"box {box?.X1},{box?.Y1} - {box?.X2},{box?.Y2}");
     }
 }
 ```
 
-For more examples see https://github.com/Sicos1977/TesseractOCR/wiki/examples.md
+## Write OCR output with a renderer
+
+Renderers write OCR results to common text, document, and training formats. The output path passed to a renderer is a base path; Tesseract adds the format-specific extension.
+
+This example writes recognized text to a `.txt` file:
+
+```csharp
+using System;
+using System.IO;
+using TesseractOCR;
+using TesseractOCR.Enums;
+using TesseractOCR.Pix;
+using TesseractOCR.Renderers;
+
+var dataPath = @"./"; // Contains ./tessdata
+var imagePath = @"./invoice.png";
+var outputBase = @"./output/invoice"; // Do not include an extension
+Directory.CreateDirectory(@"./output");
+
+using var engine = new Engine(dataPath, Language.English);
+using var image = Image.LoadFromFile(imagePath);
+using var page = engine.Process(image);
+using var renderer = Result.CreateTextRenderer(outputBase);
+
+using (renderer.BeginDocument(Path.GetFileNameWithoutExtension(imagePath)))
+{
+    if (!renderer.AddPage(page))
+        throw new InvalidOperationException("Failed to add the page to the renderer.");
+}
+```
+
+Choose a renderer based on the output you need:
+
+| Renderer / format | Output |
+| --- | --- |
+| `Text` | UTF-8 plain text for straightforward text extraction. |
+| `Hocr` | HTML with hOCR markup, word positions, and confidence; the renderer can optionally include font information. |
+| `Pdf` | Searchable PDF with the source page image and an OCR text layer. |
+| `PdfTextonly` | PDF containing only the OCR text layer, without page images. |
+| `Unlv` | Legacy Tesseract UNLV text format. |
+| `Box` | Character-level bounding boxes, commonly used by OCR training workflows. |
+| `Alto` | ALTO XML with structured page layout and recognized text. |
+| `Page` | PAGE XML with page regions, lines, words, and recognized text. |
+| `Tsv` | Tab-separated page, layout, word, bounding-box, and confidence data. |
+| `LstmBox` | Box output for Tesseract LSTM training workflows. |
+| `WordStrBox` | Word-level box output, with one box for each recognized word. |
+
+Other formats can be created directly with `Result.CreateHOcrRenderer(outputBase)`, `Result.CreatePdfRenderer(outputBase, dataPath, textonly: false)`, or `Result.CreateTsvRenderer(outputBase)`.
+
+To write several formats from one OCR pass, combine the renderers with `AggregateResult`. It forwards document and page operations and disposes its child renderers:
+
+```csharp
+using System;
+using System.Collections.Generic;
+using System.IO;
+using TesseractOCR;
+using TesseractOCR.Enums;
+using TesseractOCR.Pix;
+using TesseractOCR.Renderers;
+
+var dataPath = @"./";
+var imagePath = @"./invoice.png";
+var outputBase = @"./output/invoice";
+Directory.CreateDirectory(@"./output");
+
+using var engine = new Engine(dataPath, Language.English);
+using var image = Image.LoadFromFile(imagePath);
+using var page = engine.Process(image);
+using var renderer = new AggregateResult(Result.CreateRenderers(
+    outputBase,
+    dataPath,
+    new List<RenderFormat> { RenderFormat.Text, RenderFormat.Hocr, RenderFormat.Tsv }));
+
+using (renderer.BeginDocument(Path.GetFileNameWithoutExtension(imagePath)))
+{
+    if (!renderer.AddPage(page))
+        throw new InvalidOperationException("Failed to add the page to one or more renderers.");
+}
+```
+
+For more examples, see the [examples on the project wiki](https://github.com/Sicos1977/TesseractOCR/wiki/examples.md).
 
 Supported input formats
 =======================
 
-Tesseract uses the Leptonica library to read images with one of these formats:
+Tesseract uses the bundled Leptonica 1.87.0 library to read images. Supported formats depend on the codecs included in the native Leptonica build and include:
 
-- PNG - requires libpng, libz
-- JPEG - requires libjpeg / libjpeg-turbo
-- TIFF - requires libtiff, libz
-- JPEG 2000 - requires libopenjp2
-- GIF - requires libgif (giflib)
-- WebP (including animated WebP) - requires libwebp
-- BMP - no library required*
-= PNM - no library required*
-* Except Leptonica
+- PNG (libpng and zlib)
+- JPEG (libjpeg or libjpeg-turbo)
+- TIFF (libtiff and zlib)
+- JPEG 2000 (OpenJPEG)
+- GIF (giflib)
+- WebP (libwebp)
+- BMP and PNM
 
-**I have dropped support for the Windows.Drawing.Image namespace since this only works good on Windows and not on other systems. You should be fine with Leptonica**
+Images are loaded through the library's Leptonica-backed `Pix.Image` API. `System.Drawing.Image` is not supported; using Leptonica keeps image loading cross-platform.
 
 Logging
 =======
 
-TesseractOCR uses the Microsoft ILogger interface (https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.logging.ilogger?view=dotnet-plat-ext-5.0). You can use any logging library that uses this interface.
-
-TesseractOCR has some build in loggers that can be found in the ```TesseractOCR.Logger``` namespace. 
-
-For example
+TesseractOCR accepts the Microsoft `ILogger` interface, so you can use any compatible logging provider. Built-in logger implementations are available in the `TesseractOCR.Loggers` namespace. For example, pass the built-in console logger to the engine:
 
 ```csharp
-var logger = !string.IsNullOrWhiteSpace(<some logfile>)
-                ? new TesseractOCR.Loggers.Stream(File.OpenWrite(<some logfile>))
-                : new TesseractOCR.Loggers.Console();
+using var logger = new TesseractOCR.Loggers.Console();
+using var engine = new Engine(@"./", Language.English, logger: logger);
 ```
 
-Installing via NuGet
-====================
+In Visual Studio's Package Manager Console, install the package with:
 
-The easiest way to install TesseractOCR is via NuGet.
-
-In Visual Studio's Package Manager Console, simply enter the following command:
-
-    Install-Package TesseractOCR
+```powershell
+Install-Package TesseractOCR
+```
 
 
 ## License Information

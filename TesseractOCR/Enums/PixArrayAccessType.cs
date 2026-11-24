@@ -24,7 +24,7 @@
 namespace TesseractOCR.Enums;
 
 /// <summary>
-///     Determines how <see cref="Pix" /> of a <see cref="PixArray" /> structure are accessed.
+///     Determines how image objects in a Leptonica Pix array are accessed.
 /// </summary>
 public enum PixArrayAccessType
 {
