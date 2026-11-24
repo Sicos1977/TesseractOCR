@@ -19,29 +19,28 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+public enum ParagraphJustification
 {
-    public enum ParagraphJustification
-    {
-        /// <summary>
-        ///     The alignment is not clearly one of the other options. This could happen for example
-        ///     if there are only one or two lines of text or the text looks like source code or poetry
-        /// </summary>
-        Unknown,
+    /// <summary>
+    ///     The alignment is not clearly one of the other options. This could happen for example
+    ///     if there are only one or two lines of text or the text looks like source code or poetry
+    /// </summary>
+    Unknown,
 
-        /// <summary>
-        ///     Each line, except possibly the first, is flush to the same left tab stop
-        /// </summary>
-        Left,
+    /// <summary>
+    ///     Each line, except possibly the first, is flush to the same left tab stop
+    /// </summary>
+    Left,
 
-        /// <summary>
-        ///     The text lines of the paragraph are centered about a line going down through their middle of the text lines
-        /// </summary>
-        Center,
+    /// <summary>
+    ///     The text lines of the paragraph are centered about a line going down through their middle of the text lines
+    /// </summary>
+    Center,
 
-        /// <summary>
-        ///     Each line, except possibly the first, is flush to the same right tab stop
-        /// </summary>
-        Right,
-    }
+    /// <summary>
+    ///     Each line, except possibly the first, is flush to the same right tab stop
+    /// </summary>
+    Right,
 }

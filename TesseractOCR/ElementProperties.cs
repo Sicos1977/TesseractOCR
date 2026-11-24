@@ -21,50 +21,49 @@
 
 using TesseractOCR.Enums;
 
-namespace TesseractOCR
+namespace TesseractOCR;
+
+/// <summary>
+///     Describes the element properties at the current <see cref="PageIteratorLevel"/>
+/// </summary>
+public class ElementProperties
 {
+    #region Properties
     /// <summary>
-    ///     Describes the element properties at the current <see cref="PageIteratorLevel"/>
+    ///     Returns the <see cref="Orientation" />
     /// </summary>
-    public class ElementProperties
+    public Orientation Orientation { get; }
+
+    /// <summary>
+    ///     Returns the <see cref="TextLineOrder" />
+    /// </summary>
+    public TextLineOrder TextLineOrder { get; }
+
+    /// <summary>
+    ///     Returns the <see cref="WritingDirection" />
+    /// </summary>
+    public WritingDirection WritingDirection { get; }
+
+    /// <summary>
+    ///     Returns the angle the page would need to be rotated to deskew the information
+    /// </summary>
+    public float DeskewAngle { get; }
+    #endregion
+
+    #region Constructor
+    /// <summary>
+    ///     The information for the element at the current <see cref="PageIteratorLevel"/>
+    /// </summary>
+    /// <param name="orientation"><see cref="Orientation"/></param>
+    /// <param name="textLineOrder"><see cref="TextLineOrder"/></param>
+    /// <param name="writingDirection"><see cref="WritingDirection"/></param>
+    /// <param name="deskewAngle"><see cref="DeskewAngle"/></param>
+    public ElementProperties(Orientation orientation, TextLineOrder textLineOrder, WritingDirection writingDirection, float deskewAngle)
     {
-        #region Properties
-        /// <summary>
-        ///     Returns the <see cref="Orientation" />
-        /// </summary>
-        public Orientation Orientation { get; }
-
-        /// <summary>
-        ///     Returns the <see cref="TextLineOrder" />
-        /// </summary>
-        public TextLineOrder TextLineOrder { get; }
-
-        /// <summary>
-        ///     Returns the <see cref="WritingDirection" />
-        /// </summary>
-        public WritingDirection WritingDirection { get; }
-
-        /// <summary>
-        ///     Returns the angle the page would need to be rotated to deskew the information
-        /// </summary>
-        public float DeskewAngle { get; }
-        #endregion
-
-        #region Constructor
-        /// <summary>
-        ///     The information for the element at the current <see cref="PageIteratorLevel"/>
-        /// </summary>
-        /// <param name="orientation"><see cref="Orientation"/></param>
-        /// <param name="textLineOrder"><see cref="TextLineOrder"/></param>
-        /// <param name="writingDirection"><see cref="WritingDirection"/></param>
-        /// <param name="deskewAngle"><see cref="DeskewAngle"/></param>
-        public ElementProperties(Orientation orientation, TextLineOrder textLineOrder, WritingDirection writingDirection, float deskewAngle)
-        {
-            Orientation = orientation;
-            TextLineOrder = textLineOrder;
-            WritingDirection = writingDirection;
-            DeskewAngle = deskewAngle;
-        }
-        #endregion
+        Orientation = orientation;
+        TextLineOrder = textLineOrder;
+        WritingDirection = writingDirection;
+        DeskewAngle = deskewAngle;
     }
+    #endregion
 }

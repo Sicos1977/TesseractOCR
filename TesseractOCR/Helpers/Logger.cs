@@ -27,92 +27,91 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace TesseractOCR.Helpers
+namespace TesseractOCR.Helpers;
+
+internal static class Logger
 {
-    internal static class Logger
+    #region Fields
+    /// <summary>
+    ///     When set then logging is written to this ILogger instance
+    /// </summary>
+    [ThreadStatic]
+    private static ILogger _logger;
+    #endregion
+
+    #region Properties
+    /// <summary>
+    ///     An unique id that can be used to identify the logging of the converter when
+    ///     calling the code from multiple threads and writing all the logging to the same file
+    /// </summary>
+    public static string InstanceId { get; set; }
+
+    /// <summary>
+    ///     Sets the logger interface
+    /// </summary>
+    public static ILogger LoggerInterface
     {
-        #region Fields
-        /// <summary>
-        ///     When set then logging is written to this ILogger instance
-        /// </summary>
-        [ThreadStatic]
-        private static ILogger _logger;
-        #endregion
-
-        #region Properties
-        /// <summary>
-        ///     An unique id that can be used to identify the logging of the converter when
-        ///     calling the code from multiple threads and writing all the logging to the same file
-        /// </summary>
-        public static string InstanceId { get; set; }
-
-        /// <summary>
-        ///     Sets the logger interface
-        /// </summary>
-        public static ILogger LoggerInterface
-        {
-            set => _logger = value;
-        }
-        #endregion
-
-        #region LogInformation
-        /// <summary>
-        ///     Writes an information line to the <see cref="_logger" />
-        /// </summary>
-        /// <param name="message">The message to write</param>
-        internal static void LogInformation(string message)
-        {
-            try
-            {
-                if (_logger == null) return;
-                using (_logger.BeginScope(InstanceId))
-                    _logger.LogInformation(message);
-            }
-            catch (ObjectDisposedException)
-            {
-                // Ignore
-            }
-        }
-        #endregion
-
-        #region LogError
-        /// <summary>
-        ///     Writes an error line to the <see cref="_logger" />
-        /// </summary>
-        /// <param name="message">The message to write</param>
-        internal static void LogError(string message)
-        {
-            try
-            {
-                if (_logger == null) return;
-                using (_logger.BeginScope(InstanceId))
-                    _logger.LogError(message);
-            }
-            catch (ObjectDisposedException)
-            {
-                // Ignore
-            }
-        }
-        #endregion
-
-        #region LogDebug
-        /// <summary>
-        ///     Writes a debug line to the <see cref="_logger" />
-        /// </summary>
-        /// <param name="message">The message to write</param>
-        internal static void LogDebug(string message)
-        {
-            try
-            {
-                if (_logger == null) return;
-                using (_logger.BeginScope(InstanceId))
-                    _logger.LogDebug(message);
-            }
-            catch (ObjectDisposedException)
-            {
-                // Ignore
-            }
-        }
-        #endregion
+        set => _logger = value;
     }
+    #endregion
+
+    #region LogInformation
+    /// <summary>
+    ///     Writes an information line to the <see cref="_logger" />
+    /// </summary>
+    /// <param name="message">The message to write</param>
+    internal static void LogInformation(string message)
+    {
+        try
+        {
+            if (_logger == null) return;
+            using (_logger.BeginScope(InstanceId))
+                _logger.LogInformation(message);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore
+        }
+    }
+    #endregion
+
+    #region LogError
+    /// <summary>
+    ///     Writes an error line to the <see cref="_logger" />
+    /// </summary>
+    /// <param name="message">The message to write</param>
+    internal static void LogError(string message)
+    {
+        try
+        {
+            if (_logger == null) return;
+            using (_logger.BeginScope(InstanceId))
+                _logger.LogError(message);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore
+        }
+    }
+    #endregion
+
+    #region LogDebug
+    /// <summary>
+    ///     Writes a debug line to the <see cref="_logger" />
+    /// </summary>
+    /// <param name="message">The message to write</param>
+    internal static void LogDebug(string message)
+    {
+        try
+        {
+            if (_logger == null) return;
+            using (_logger.BeginScope(InstanceId))
+                _logger.LogDebug(message);
+        }
+        catch (ObjectDisposedException)
+        {
+            // Ignore
+        }
+    }
+    #endregion
 }

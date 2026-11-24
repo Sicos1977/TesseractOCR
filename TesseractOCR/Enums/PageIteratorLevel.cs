@@ -19,36 +19,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+///		The page iterator level
+/// </summary>
+public enum PageIteratorLevel
 {
     /// <summary>
-    ///		The page iterator level
+    ///		Block
     /// </summary>
-    public enum PageIteratorLevel
-    {
-        /// <summary>
-        ///		Block
-        /// </summary>
-        Block,
+    Block,
 
-        /// <summary>
-        ///		Paragraph
-        /// </summary>
-        Paragraph,
+    /// <summary>
+    ///		Paragraph
+    /// </summary>
+    Paragraph,
 
-        /// <summary>
-        ///		Text line
-        /// </summary>
-        TextLine,
+    /// <summary>
+    ///		Text line
+    /// </summary>
+    TextLine,
 
-        /// <summary>
-        ///		Word
-        /// </summary>
-        Word,
+    /// <summary>
+    ///		Word
+    /// </summary>
+    Word,
 
-        /// <summary>
-        ///		Symbol
-        /// </summary>
-        Symbol
-    }
+    /// <summary>
+    ///		Symbol
+    /// </summary>
+    Symbol
 }

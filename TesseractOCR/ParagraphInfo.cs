@@ -20,46 +20,45 @@
 
 using TesseractOCR.Enums;
 
-namespace TesseractOCR
+namespace TesseractOCR;
+
+/// <summary>
+///     Returns information about a <see cref="Layout.Paragraph"/>
+/// </summary>
+public readonly struct ParagraphInfo
 {
+    #region Properties
     /// <summary>
-    ///     Returns information about a <see cref="Layout.Paragraph"/>
+    ///     <see cref="ParagraphJustification"/>
     /// </summary>
-    public readonly struct ParagraphInfo
+    public ParagraphJustification Justification { get; }
+
+    /// <summary>
+    ///     Returns <c>true</c> if the <see cref="Layout.Paragraph"/> is a list item
+    /// </summary>
+    public bool IsListItem { get; }
+
+    /// <summary>
+    ///     Returns <c>true</c> when the letter is a crown
+    /// </summary>
+    /// <remarks>
+    ///     Big letters as shown in supplement one are to be called Crown Letters
+    /// </remarks>
+    public bool IsCrown { get; }
+
+    /// <summary>
+    ///     Returns <c>true</c> when the this is the first line ident
+    /// </summary>
+    public int FirstLineIdent { get; }
+    #endregion
+
+    #region Constructor
+    internal ParagraphInfo(ParagraphJustification justification, bool isListItem, bool isCrown, int firstLineIdent)
     {
-        #region Properties
-        /// <summary>
-        ///     <see cref="ParagraphJustification"/>
-        /// </summary>
-        public ParagraphJustification Justification { get; }
-
-        /// <summary>
-        ///     Returns <c>true</c> if the <see cref="Layout.Paragraph"/> is a list item
-        /// </summary>
-        public bool IsListItem { get; }
-
-        /// <summary>
-        ///     Returns <c>true</c> when the letter is a crown
-        /// </summary>
-        /// <remarks>
-        ///     Big letters as shown in supplement one are to be called Crown Letters
-        /// </remarks>
-        public bool IsCrown { get; }
-
-        /// <summary>
-        ///     Returns <c>true</c> when the this is the first line ident
-        /// </summary>
-        public int FirstLineIdent { get; }
-        #endregion
-
-        #region Constructor
-        internal ParagraphInfo(ParagraphJustification justification, bool isListItem, bool isCrown, int firstLineIdent)
-        {
-            Justification = justification;
-            IsListItem = isListItem;
-            IsCrown = isCrown;
-            FirstLineIdent = firstLineIdent;
-        }
-        #endregion
+        Justification = justification;
+        IsListItem = isListItem;
+        IsCrown = isCrown;
+        FirstLineIdent = firstLineIdent;
     }
+    #endregion
 }

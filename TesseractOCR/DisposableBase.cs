@@ -22,51 +22,50 @@
 using System;
 using TesseractOCR.Helpers;
 
-namespace TesseractOCR
+namespace TesseractOCR;
+
+public abstract class DisposableBase : IDisposable
 {
-    public abstract class DisposableBase : IDisposable
+    #region Events
+    public event EventHandler<EventArgs> Disposed;
+    #endregion
+
+    #region Properties
+    /// <summary>
+    ///     Returns <c>true</c> when this object is disposed
+    /// </summary>
+    public bool IsDisposed { get; private set; }
+    #endregion
+
+    #region Destructor
+    ~DisposableBase()
     {
-        #region Events
-        public event EventHandler<EventArgs> Disposed;
-        #endregion
-
-        #region Properties
-        /// <summary>
-        ///     Returns <c>true</c> when this object is disposed
-        /// </summary>
-        public bool IsDisposed { get; private set; }
-        #endregion
-
-        #region Destructor
-        ~DisposableBase()
-        {
-            Dispose(false);
-            Logger.LogError($"{this} was not disposed");
-        }
-        #endregion
-
-        #region Dispose
-        public void Dispose()
-        {
-            Dispose(true);
-
-            IsDisposed = true;
-            GC.SuppressFinalize(this);
-
-            Disposed?.Invoke(this, EventArgs.Empty);
-        }
-        #endregion
-
-        #region VerifyNotDisposed
-        protected virtual void VerifyNotDisposed()
-        {
-            if (IsDisposed) 
-                throw new ObjectDisposedException(ToString());
-        }
-        #endregion
-
-        #region Abstracts
-        protected abstract void Dispose(bool disposing);
-        #endregion
+        Dispose(false);
+        Logger.LogError($"{this} was not disposed");
     }
+    #endregion
+
+    #region Dispose
+    public void Dispose()
+    {
+        Dispose(true);
+
+        IsDisposed = true;
+        GC.SuppressFinalize(this);
+
+        Disposed?.Invoke(this, EventArgs.Empty);
+    }
+    #endregion
+
+    #region VerifyNotDisposed
+    protected virtual void VerifyNotDisposed()
+    {
+        if (IsDisposed) 
+            throw new ObjectDisposedException(ToString());
+    }
+    #endregion
+
+    #region Abstracts
+    protected abstract void Dispose(bool disposing);
+    #endregion
 }

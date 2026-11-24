@@ -21,91 +21,90 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+///     The poly block type
+/// </summary>
+public enum PolyBlockType
 {
     /// <summary>
-    ///     The poly block type
+    ///     The type is not known yet, keep as first element
     /// </summary>
-    public enum PolyBlockType
-    {
-        /// <summary>
-        ///     The type is not known yet, keep as first element
-        /// </summary>
-        Unknown,
+    Unknown,
 
-        /// <summary>
-        ///     The text is inside a column
-        /// </summary>
-        FlowingText,
+    /// <summary>
+    ///     The text is inside a column
+    /// </summary>
+    FlowingText,
 
-        /// <summary>
-        ///     The text spans more than one column
-        /// </summary>
-        HeadingText,
+    /// <summary>
+    ///     The text spans more than one column
+    /// </summary>
+    HeadingText,
 
-        /// <summary>
-        ///     The text is in a cross-column pull-out region
-        /// </summary>
-        PullOutText,
+    /// <summary>
+    ///     The text is in a cross-column pull-out region
+    /// </summary>
+    PullOutText,
 
-        /// <summary>
-        ///     The portion belongs to an equation region
-        /// </summary>
-        Equation,
+    /// <summary>
+    ///     The portion belongs to an equation region
+    /// </summary>
+    Equation,
 
-        /// <summary>
-        ///     The partition has an inline equation
-        /// </summary>
-        InlineEquation,
+    /// <summary>
+    ///     The partition has an inline equation
+    /// </summary>
+    InlineEquation,
 
-        /// <summary>
-        ///     The partition belongs to a Table region
-        /// </summary>
-        Table,
+    /// <summary>
+    ///     The partition belongs to a Table region
+    /// </summary>
+    Table,
 
-        /// <summary>
-        ///     Text line runs vertically
-        /// </summary>
-        VerticalText,
+    /// <summary>
+    ///     Text line runs vertically
+    /// </summary>
+    VerticalText,
 
-        /// <summary>
-        ///     Text that belongs to an image
-        /// </summary>
-        CaptionText,
+    /// <summary>
+    ///     Text that belongs to an image
+    /// </summary>
+    CaptionText,
 
-        /// <summary>
-        ///     Image that lives inside a column
-        /// </summary>
-        FlowingImage,
+    /// <summary>
+    ///     Image that lives inside a column
+    /// </summary>
+    FlowingImage,
 
-        /// <summary>
-        ///     Image that spans more than one column
-        /// </summary>
-        HeadingImage,
+    /// <summary>
+    ///     Image that spans more than one column
+    /// </summary>
+    HeadingImage,
 
-        /// <summary>
-        ///     Image that is in a cross-column pull-out region
-        /// </summary>
-        PullOutImage,
+    /// <summary>
+    ///     Image that is in a cross-column pull-out region
+    /// </summary>
+    PullOutImage,
 
-        /// <summary>
-        ///     Horizontal Line
-        /// </summary>
-        HorizontalLine,
+    /// <summary>
+    ///     Horizontal Line
+    /// </summary>
+    HorizontalLine,
 
-        /// <summary>
-        ///     Vertical Line
-        /// </summary>
-        VerticalLine,
+    /// <summary>
+    ///     Vertical Line
+    /// </summary>
+    VerticalLine,
 
-        /// <summary>
-        ///     Lies outside any column.
-        /// </summary>
-        Noise,
+    /// <summary>
+    ///     Lies outside any column.
+    /// </summary>
+    Noise,
 
-        /// <summary>
-        ///     Count
-        /// </summary>
-        Count
-    }
+    /// <summary>
+    ///     Count
+    /// </summary>
+    Count
 }

@@ -22,135 +22,134 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TesseractOCR.Pix
+namespace TesseractOCR.Pix;
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public readonly struct Color : IEquatable<Color>
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public readonly struct Color : IEquatable<Color>
+    #region Properties
+    /// <summary>
+    ///     Returns the red byte value
+    /// </summary>
+    public byte Red { get; }
+
+    /// <summary>
+    ///     Returns the green byte value
+    /// </summary>
+    public byte Green { get; }
+
+    /// <summary>
+    ///     Returns the blue byte value
+    /// </summary>
+    public byte Blue { get; }
+
+    /// <summary>
+    ///     Returns the alpha byte value
+    /// </summary>
+    public byte Alpha { get; }
+    #endregion
+
+    #region Constructor
+    public Color(byte red, byte green, byte blue, byte alpha = 255)
     {
-        #region Properties
-        /// <summary>
-        ///     Returns the red byte value
-        /// </summary>
-        public byte Red { get; }
-
-        /// <summary>
-        ///     Returns the green byte value
-        /// </summary>
-        public byte Green { get; }
-
-        /// <summary>
-        ///     Returns the blue byte value
-        /// </summary>
-        public byte Blue { get; }
-
-        /// <summary>
-        ///     Returns the alpha byte value
-        /// </summary>
-        public byte Alpha { get; }
-        #endregion
-
-        #region Constructor
-        public Color(byte red, byte green, byte blue, byte alpha = 255)
-        {
-            Red = red;
-            Green = green;
-            Blue = blue;
-            Alpha = alpha;
-        }
-        #endregion
-
-        #region PixColor
-        public static Color FromRgba(uint value)
-        {
-            return new Color(
-                (byte)(value >> 24 & 0xFF),
-                (byte)(value >> 16 & 0xFF),
-                (byte)(value >> 8 & 0xFF),
-                (byte)(value & 0xFF));
-        }
-        #endregion
-
-        #region FromRgb
-        public static Color FromRgb(uint value)
-        {
-            return new Color(
-                (byte)(value >> 24 & 0xFF),
-                (byte)(value >> 16 & 0xFF),
-                (byte)(value >> 8 & 0xFF));
-        }
-        #endregion
-
-        #region ToRgba
-        public uint ToRgba()
-        {
-            return (uint)(Red << 24 |
-                          Green << 16 |
-                          Blue << 8 |
-                          Alpha);
-        }
-        #endregion
-
-        #region Color
-        public static explicit operator System.Drawing.Color(Color color)
-        {
-            return System.Drawing.Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
-        }
-        #endregion
-
-        #region PixColor
-        public static explicit operator Color(System.Drawing.Color color)
-        {
-            return new Color(color.R, color.G, color.B, color.A);
-        }
-        #endregion
-
-        #region Equals
-        public override bool Equals(object obj)
-        {
-            return obj is Color color && Equals(color);
-        }
-        #endregion
-
-        #region Equals
-        public bool Equals(Color other)
-        {
-            return Red == other.Red && Blue == other.Blue && Green == other.Green && Alpha == other.Alpha;
-        }
-        #endregion
-
-        #region GetHashCode
-        public override int GetHashCode()
-        {
-            var hashCode = 0;
-            unchecked
-            {
-                hashCode += 1000000007 * Red.GetHashCode();
-                hashCode += 1000000009 * Blue.GetHashCode();
-                hashCode += 1000000021 * Green.GetHashCode();
-                hashCode += 1000000033 * Alpha.GetHashCode();
-            }
-
-            return hashCode;
-        }
-        #endregion
-
-        #region Operator
-        public static bool operator ==(Color lhs, Color rhs)
-        {
-            return lhs.Equals(rhs);
-        }
-
-        public static bool operator !=(Color lhs, Color rhs)
-        {
-            return !(lhs == rhs);
-        }
-        #endregion
-
-        #region ToString
-        public override string ToString()
-        {
-            return $"Color(0x{ToRgba():X})";
-        }
-        #endregion
+        Red = red;
+        Green = green;
+        Blue = blue;
+        Alpha = alpha;
     }
+    #endregion
+
+    #region PixColor
+    public static Color FromRgba(uint value)
+    {
+        return new Color(
+            (byte)(value >> 24 & 0xFF),
+            (byte)(value >> 16 & 0xFF),
+            (byte)(value >> 8 & 0xFF),
+            (byte)(value & 0xFF));
+    }
+    #endregion
+
+    #region FromRgb
+    public static Color FromRgb(uint value)
+    {
+        return new Color(
+            (byte)(value >> 24 & 0xFF),
+            (byte)(value >> 16 & 0xFF),
+            (byte)(value >> 8 & 0xFF));
+    }
+    #endregion
+
+    #region ToRgba
+    public uint ToRgba()
+    {
+        return (uint)(Red << 24 |
+                      Green << 16 |
+                      Blue << 8 |
+                      Alpha);
+    }
+    #endregion
+
+    #region Color
+    public static explicit operator System.Drawing.Color(Color color)
+    {
+        return System.Drawing.Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
+    }
+    #endregion
+
+    #region PixColor
+    public static explicit operator Color(System.Drawing.Color color)
+    {
+        return new Color(color.R, color.G, color.B, color.A);
+    }
+    #endregion
+
+    #region Equals
+    public override bool Equals(object obj)
+    {
+        return obj is Color color && Equals(color);
+    }
+    #endregion
+
+    #region Equals
+    public bool Equals(Color other)
+    {
+        return Red == other.Red && Blue == other.Blue && Green == other.Green && Alpha == other.Alpha;
+    }
+    #endregion
+
+    #region GetHashCode
+    public override int GetHashCode()
+    {
+        var hashCode = 0;
+        unchecked
+        {
+            hashCode += 1000000007 * Red.GetHashCode();
+            hashCode += 1000000009 * Blue.GetHashCode();
+            hashCode += 1000000021 * Green.GetHashCode();
+            hashCode += 1000000033 * Alpha.GetHashCode();
+        }
+
+        return hashCode;
+    }
+    #endregion
+
+    #region Operator
+    public static bool operator ==(Color lhs, Color rhs)
+    {
+        return lhs.Equals(rhs);
+    }
+
+    public static bool operator !=(Color lhs, Color rhs)
+    {
+        return !(lhs == rhs);
+    }
+    #endregion
+
+    #region ToString
+    public override string ToString()
+    {
+        return $"Color(0x{ToRgba():X})";
+    }
+    #endregion
 }

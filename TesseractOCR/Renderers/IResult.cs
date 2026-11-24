@@ -21,55 +21,54 @@
 
 using System;
 
-namespace TesseractOCR.Renderers
+namespace TesseractOCR.Renderers;
+
+public interface IResult : IDisposable
 {
-    public interface IResult : IDisposable
-    {
-        /// <summary>
-        ///     Begins a new document with the specified <paramref name="title" />.
-        /// </summary>
-        /// <param name="title">The title of the new document.</param>
-        /// <returns>A handle that when disposed of ends the current document.</returns>
-        IDisposable BeginDocument(string title);
+    /// <summary>
+    ///     Begins a new document with the specified <paramref name="title" />.
+    /// </summary>
+    /// <param name="title">The title of the new document.</param>
+    /// <returns>A handle that when disposed of ends the current document.</returns>
+    IDisposable BeginDocument(string title);
 
-        /// <summary>
-        ///     Add the page to the current document.
-        /// </summary>
-        /// <param name="page"></param>
-        /// <returns><c>True</c> if the page was successfully added to the result renderer; otherwise false.</returns>
-        bool AddPage(Page page);
+    /// <summary>
+    ///     Add the page to the current document.
+    /// </summary>
+    /// <param name="page"></param>
+    /// <returns><c>True</c> if the page was successfully added to the result renderer; otherwise false.</returns>
+    bool AddPage(Page page);
 
-        /// <summary>
-        /// Uses internal file processing. (which is must faster than adding single pages)
-        /// Should behave as if the cmd line was called. Thus will deal with different file formats out of the box
-        /// 
-        /// Data needs to be persisted to disk as temp file before passed down.
-        /// Temp files will be deleted afterwards
-        /// </summary>
-        /// <param name="data">
-        /// The raw bytes of the image to add. tiff, multipage tiff, jpg
-        /// and all other types the cmd line call of tesseract would support
-        /// </param>
-        /// <param name="engine">The engine to be used with the result</param>
-        /// <returns></returns>
-        bool ProcessPages(byte[] data, Engine engine);
-        
-        /// <summary>
-        /// Uses internal file processing. (which is must faster than adding single pages)
-        /// Should behave as if the cmd line was called. Thus will deal with different file formats out of the box
-        /// 
-        /// Data needs to be persisted to disk as temp file before passed down.
-        /// Temp files will be deleted afterwards
-        /// </summary>
-        /// <param name="imgFilePath">The path to the image file to add. tiff, multipage tiff, jpg, etc.</param>
-        /// <param name="engine">The engine to be used for processing</param>
-        /// <returns></returns>
-        bool ProcessPages(string imgFilePath, Engine engine);
+    /// <summary>
+    /// Uses internal file processing. (which is must faster than adding single pages)
+    /// Should behave as if the cmd line was called. Thus will deal with different file formats out of the box
+    /// 
+    /// Data needs to be persisted to disk as temp file before passed down.
+    /// Temp files will be deleted afterwards
+    /// </summary>
+    /// <param name="data">
+    /// The raw bytes of the image to add. tiff, multipage tiff, jpg
+    /// and all other types the cmd line call of tesseract would support
+    /// </param>
+    /// <param name="engine">The engine to be used with the result</param>
+    /// <returns></returns>
+    bool ProcessPages(byte[] data, Engine engine);
+    
+    /// <summary>
+    /// Uses internal file processing. (which is must faster than adding single pages)
+    /// Should behave as if the cmd line was called. Thus will deal with different file formats out of the box
+    /// 
+    /// Data needs to be persisted to disk as temp file before passed down.
+    /// Temp files will be deleted afterwards
+    /// </summary>
+    /// <param name="imgFilePath">The path to the image file to add. tiff, multipage tiff, jpg, etc.</param>
+    /// <param name="engine">The engine to be used for processing</param>
+    /// <returns></returns>
+    bool ProcessPages(string imgFilePath, Engine engine);
 
-        /// <summary>
-        ///     Gets the current page number; returning -1 if no page has yet been added otherwise the number
-        ///     of the last added page (starting from 0).
-        /// </summary>
-        int PageNumber { get; }
-    }
+    /// <summary>
+    ///     Gets the current page number; returning -1 if no page has yet been added otherwise the number
+    ///     of the last added page (starting from 0).
+    /// </summary>
+    int PageNumber { get; }
 }

@@ -20,24 +20,23 @@
 
 using Microsoft.Extensions.Logging;
 
-namespace TesseractOCR.Loggers
+namespace TesseractOCR.Loggers;
+
+/// <summary>
+///     Writes log information to a file at the <see cref="LogLevel.Debug"/>, <see cref="LogLevel.Error"/>
+///     and <see cref="LogLevel.Information"/> <see cref="LogLevel"/>
+/// </summary>
+/// <remarks>
+///     Other levels are ignored
+/// </remarks>
+
+public class File : Stream
 {
     /// <summary>
-    ///     Writes log information to a file at the <see cref="LogLevel.Debug"/>, <see cref="LogLevel.Error"/>
-    ///     and <see cref="LogLevel.Information"/> <see cref="LogLevel"/>
+    ///     Logs information to the given <paramref name="fileName"/>
     /// </summary>
-    /// <remarks>
-    ///     Other levels are ignored
-    /// </remarks>
-
-    public class File : Stream
+    /// <param name="fileName"></param>
+    public File(string fileName) : base(System.IO.File.OpenWrite(fileName))
     {
-        /// <summary>
-        ///     Logs information to the given <paramref name="fileName"/>
-        /// </summary>
-        /// <param name="fileName"></param>
-        public File(string fileName) : base(System.IO.File.OpenWrite(fileName))
-        {
-        }
     }
 }

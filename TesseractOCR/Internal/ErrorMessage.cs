@@ -19,21 +19,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace TesseractOCR.Internal
-{
-    internal static class ErrorMessage
-    {
-        #region Constants
-        private const string ErrorMessageFormat = "{0}. See {1} for details.";
-        private const string WikiPageUrl = "https://github.com/Sicos1977/TesseractOCR/wiki/How-to-use-the-iLogger-interface";
-        #endregion
+namespace TesseractOCR.Internal;
 
-        #region Format
-        public static string Format(string messageFormat, params object[] messageArgs)
-        {
-            var errorMessage = string.Format(messageFormat, messageArgs);
-            return string.Format(ErrorMessageFormat, errorMessage, WikiPageUrl);
-        }
-        #endregion
+internal static class ErrorMessage
+{
+    #region Constants
+    private const string ErrorMessageFormat = "{0}. See {1} for details.";
+    private const string WikiPageUrl = "https://github.com/Sicos1977/TesseractOCR/wiki/How-to-use-the-iLogger-interface";
+    #endregion
+
+    #region Format
+    public static string Format(string messageFormat, params object[] messageArgs)
+    {
+        var errorMessage = string.Format(messageFormat, messageArgs);
+        return string.Format(ErrorMessageFormat, errorMessage, WikiPageUrl);
     }
+    #endregion
 }

@@ -19,61 +19,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+///     Rendered formats supported by Tesseract.
+/// </summary>
+public enum RenderFormat
 {
     /// <summary>
-    ///     Rendered formats supported by Tesseract.
+    ///     To text
     /// </summary>
-    public enum RenderFormat
-    {
-        /// <summary>
-        ///     To text
-        /// </summary>
-        Text,
+    Text,
 
-        /// <summary>
-        ///     To HOCR
-        /// </summary>
-        Hocr,
+    /// <summary>
+    ///     To HOCR
+    /// </summary>
+    Hocr,
 
-        /// <summary>
-        ///     To PDF
-        /// </summary>
-        Pdf,
+    /// <summary>
+    ///     To PDF
+    /// </summary>
+    Pdf,
 
-        /// <summary>
-        ///     A PDF with only an invisible text layer
-        /// </summary>
-        PdfTextonly,
+    /// <summary>
+    ///     A PDF with only an invisible text layer
+    /// </summary>
+    PdfTextonly,
 
-        /// <summary>
-        ///     To UNLV
-        /// </summary>
-        Unlv,
+    /// <summary>
+    ///     To UNLV
+    /// </summary>
+    Unlv,
 
-        /// <summary>
-        ///     To boxed
-        /// </summary>
-        Box,
+    /// <summary>
+    ///     To boxed
+    /// </summary>
+    Box,
 
-        /// <summary>
-        ///     To alto
-        /// </summary>
-        Alto,
+    /// <summary>
+    ///     To alto
+    /// </summary>
+    Alto,
 
-        /// <summary>
-        ///     To tsv
-        /// </summary>
-        Tsv,
+    /// <summary>
+    ///     To tsv
+    /// </summary>
+    Tsv,
 
-        /// <summary>
-        ///     To LSTM box
-        /// </summary>
-        LstmBox,
+    /// <summary>
+    ///     To LSTM box
+    /// </summary>
+    LstmBox,
 
-        /// <summary>
-        ///     To word str box
-        /// </summary>
-        WordStrBox
-    }
+    /// <summary>
+    ///     To word str box
+    /// </summary>
+    WordStrBox
 }

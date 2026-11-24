@@ -2,19 +2,18 @@
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
 
-namespace TesseractOCR.Renderers
-{
-    /// <summary>
-    ///     Renders the result in ALTO format
-    /// </summary>
-    public sealed class AltoResult : Result
-    {
-        public AltoResult(string outputFilename)
-        {
-            Logger.LogInformation("Create alto renderer");
+namespace TesseractOCR.Renderers;
 
-            var rendererHandle = TessApi.Native.AltoRendererCreate(outputFilename);
-            Initialize(rendererHandle);
-        }
+/// <summary>
+///     Renders the result in ALTO format
+/// </summary>
+public sealed class AltoResult : Result
+{
+    public AltoResult(string outputFilename)
+    {
+        Logger.LogInformation("Create alto renderer");
+
+        var rendererHandle = TessApi.Native.AltoRendererCreate(outputFilename);
+        Initialize(rendererHandle);
     }
 }

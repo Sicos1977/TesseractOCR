@@ -27,35 +27,34 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TesseractOCR.InteropDotNet
+namespace TesseractOCR.InteropDotNet;
+
+[ComVisible(true)]
+[AttributeUsage(AttributeTargets.Method, Inherited = false)]
+internal sealed class RuntimeDllImportAttribute : Attribute
 {
-    [ComVisible(true)]
-    [AttributeUsage(AttributeTargets.Method, Inherited = false)]
-    internal sealed class RuntimeDllImportAttribute : Attribute
+    #region Fields
+    public string EntryPoint;
+
+    public CallingConvention CallingConvention;
+
+    public CharSet CharSet;
+
+    public bool SetLastError;
+
+    public bool BestFitMapping;
+
+    public bool ThrowOnUnmappableChar;
+    #endregion
+
+    #region Properties
+    public string LibraryFileName { get; private set; }
+    #endregion
+
+    #region Constructor
+    public RuntimeDllImportAttribute(string libraryFileName)
     {
-        #region Fields
-        public string EntryPoint;
-
-        public CallingConvention CallingConvention;
-
-        public CharSet CharSet;
-
-        public bool SetLastError;
-
-        public bool BestFitMapping;
-
-        public bool ThrowOnUnmappableChar;
-        #endregion
-
-        #region Properties
-        public string LibraryFileName { get; private set; }
-        #endregion
-
-        #region Constructor
-        public RuntimeDllImportAttribute(string libraryFileName)
-        {
-            LibraryFileName = libraryFileName;
-        }
-        #endregion
+        LibraryFileName = libraryFileName;
     }
+    #endregion
 }

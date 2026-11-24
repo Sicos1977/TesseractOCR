@@ -22,30 +22,29 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace TesseractOCR.Exceptions
+namespace TesseractOCR.Exceptions;
+
+/// <summary>
+/// Description of TesseractException.
+/// </summary>
+[Serializable]
+public class TesseractException : Exception
 {
-    /// <summary>
-    /// Description of TesseractException.
-    /// </summary>
-    [Serializable]
-    public class TesseractException : Exception
+    #region Constructors
+    public TesseractException()
     {
-        #region Constructors
-        public TesseractException()
-        {
-        }
-
-        public TesseractException(string message) : base(message)
-        {
-        }
-
-        public TesseractException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected TesseractException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-        #endregion
     }
+
+    public TesseractException(string message) : base(message)
+    {
+    }
+
+    public TesseractException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
+    protected TesseractException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
+    #endregion
 }

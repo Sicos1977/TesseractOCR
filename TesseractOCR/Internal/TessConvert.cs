@@ -21,121 +21,120 @@
 
 using System.Globalization;
 
-namespace TesseractOCR.Internal
+namespace TesseractOCR.Internal;
+
+/// <summary>
+///     Utility helpers to handle converting variable values.
+/// </summary>
+internal static class TessConvert
 {
-    /// <summary>
-    ///     Utility helpers to handle converting variable values.
-    /// </summary>
-    internal static class TessConvert
+    #region TryToString
+    public static bool TryToString(object value, out string result)
     {
-        #region TryToString
-        public static bool TryToString(object value, out string result)
+        switch (value)
         {
-            switch (value)
-            {
-                case bool b:
-                    result = ToString(b);
-                    break;
+            case bool b:
+                result = ToString(b);
+                break;
 
-                case decimal value1:
-                    result = ToString(value1);
-                    break;
+            case decimal value1:
+                result = ToString(value1);
+                break;
 
-                case double d:
-                    result = ToString(d);
-                    break;
+            case double d:
+                result = ToString(d);
+                break;
 
-                case float f:
-                    result = ToString(f);
-                    break;
+            case float f:
+                result = ToString(f);
+                break;
 
-                case short s:
-                    result = ToString(s);
-                    break;
+            case short s:
+                result = ToString(s);
+                break;
 
-                case int i:
-                    result = ToString(i);
-                    break;
+            case int i:
+                result = ToString(i);
+                break;
 
-                case long l:
-                    result = ToString(l);
-                    break;
+            case long l:
+                result = ToString(l);
+                break;
 
-                case ushort value1:
-                    result = ToString(value1);
-                    break;
+            case ushort value1:
+                result = ToString(value1);
+                break;
 
-                case uint u:
-                    result = ToString(u);
-                    break;
+            case uint u:
+                result = ToString(u);
+                break;
 
-                case ulong value1:
-                    result = ToString(value1);
-                    break;
+            case ulong value1:
+                result = ToString(value1);
+                break;
 
-                case string s:
-                    result = s;
-                    break;
+            case string s:
+                result = s;
+                break;
 
-                default:
-                    result = null;
-                    return false;
-            }
-
-            return true;
-        }
-        #endregion
-
-        #region ToString
-        public static string ToString(bool value)
-        {
-            return value ? "TRUE" : "FALSE";
+            default:
+                result = null;
+                return false;
         }
 
-        public static string ToString(decimal value)
-        {
-            return value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(double value)
-        {
-            return value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(float value)
-        {
-            return value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(short value)
-        {
-            return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(int value)
-        {
-            return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(long value)
-        {
-            return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(ushort value)
-        {
-            return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(uint value)
-        {
-            return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-        }
-
-        public static string ToString(ulong value)
-        {
-            return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
-        }
-        #endregion
+        return true;
     }
+    #endregion
+
+    #region ToString
+    public static string ToString(bool value)
+    {
+        return value ? "TRUE" : "FALSE";
+    }
+
+    public static string ToString(decimal value)
+    {
+        return value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(double value)
+    {
+        return value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(float value)
+    {
+        return value.ToString("R", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(short value)
+    {
+        return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(int value)
+    {
+        return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(long value)
+    {
+        return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(ushort value)
+    {
+        return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(uint value)
+    {
+        return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+    }
+
+    public static string ToString(ulong value)
+    {
+        return value.ToString("D", CultureInfo.InvariantCulture.NumberFormat);
+    }
+    #endregion
 }

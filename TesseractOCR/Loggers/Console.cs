@@ -22,19 +22,18 @@ using Microsoft.Extensions.Logging;
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Loggers
+namespace TesseractOCR.Loggers;
+
+/// <summary>
+///     Writes log information to console at the <see cref="LogLevel.Debug"/>, <see cref="LogLevel.Error"/>
+///     and <see cref="LogLevel.Information"/> <see cref="LogLevel"/>
+/// </summary>
+/// <remarks>
+///     Other levels are ignored
+/// </remarks>
+public class Console : Stream
 {
-    /// <summary>
-    ///     Writes log information to console at the <see cref="LogLevel.Debug"/>, <see cref="LogLevel.Error"/>
-    ///     and <see cref="LogLevel.Information"/> <see cref="LogLevel"/>
-    /// </summary>
-    /// <remarks>
-    ///     Other levels are ignored
-    /// </remarks>
-    public class Console : Stream
+    public Console() : base(System.Console.OpenStandardOutput())
     {
-        public Console() : base(System.Console.OpenStandardOutput())
-        {
-        }
     }
 }

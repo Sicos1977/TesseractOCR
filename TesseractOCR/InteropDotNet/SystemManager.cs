@@ -27,52 +27,51 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace TesseractOCR.InteropDotNet
+namespace TesseractOCR.InteropDotNet;
+
+#region Internal enum OperatingSystem
+internal enum OperatingSystem
 {
-    #region Internal enum OperatingSystem
-    internal enum OperatingSystem
+    Windows,
+
+    Unix,
+
+    MacOSX,
+
+    Unknown
+}
+#endregion
+
+internal static class SystemManager
+{
+    #region GetPlatformName
+    internal static string GetPlatformName()
     {
-        Windows,
-
-        Unix,
-
-        MacOSX,
-
-        Unknown
+        switch (RuntimeInformation.ProcessArchitecture)
+        {
+            case Architecture.Arm64:
+                return "arm64";
+            case Architecture.X64:
+                return "x64";
+            case Architecture.X86:
+                return "x86";
+            default:
+                return IntPtr.Size == sizeof(int) ? "x86" : "x64";
+        }
     }
     #endregion
 
-    internal static class SystemManager
+    #region GetOperatingSystem
+    internal static OperatingSystem GetOperatingSystem()
     {
-        #region GetPlatformName
-        internal static string GetPlatformName()
-        {
-            switch (RuntimeInformation.ProcessArchitecture)
-            {
-                case Architecture.Arm64:
-                    return "arm64";
-                case Architecture.X64:
-                    return "x64";
-                case Architecture.X86:
-                    return "x86";
-                default:
-                    return IntPtr.Size == sizeof(int) ? "x86" : "x64";
-            }
-        }
-        #endregion
-
-        #region GetOperatingSystem
-        internal static OperatingSystem GetOperatingSystem()
-        {
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return OperatingSystem.Windows;
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                return OperatingSystem.Unix;
-            if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                return OperatingSystem.MacOSX;
-            
-            return OperatingSystem.Unknown;
-        }
-        #endregion
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            return OperatingSystem.Windows;
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            return OperatingSystem.Unix;
+        if(RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            return OperatingSystem.MacOSX;
+        
+        return OperatingSystem.Unknown;
     }
+    #endregion
 }

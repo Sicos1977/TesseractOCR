@@ -22,21 +22,20 @@ using System;
 using System.IO;
 using TesseractOCR.InteropDotNet;
 
-namespace TesseractOCR.Interop
+namespace TesseractOCR.Interop;
+
+internal static class Helper
 {
-    internal static class Helper
+    internal static void SetPath()
     {
-        internal static void SetPath()
-        {
-            var dllDirectory =
-                Path.Combine(
-                    Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty,
-                    SystemManager.GetPlatformName());
+        var dllDirectory =
+            Path.Combine(
+                Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty,
+                SystemManager.GetPlatformName());
 
-            var path = Environment.GetEnvironmentVariable("path") ?? string.Empty;
+        var path = Environment.GetEnvironmentVariable("path") ?? string.Empty;
 
-            if (!path.Contains(dllDirectory))
-                Environment.SetEnvironmentVariable("path", Environment.GetEnvironmentVariable("path") + ";" + dllDirectory);
-        }
+        if (!path.Contains(dllDirectory))
+            Environment.SetEnvironmentVariable("path", Environment.GetEnvironmentVariable("path") + ";" + dllDirectory);
     }
 }

@@ -21,33 +21,32 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Helpers
-{
-    /// <summary>
-    ///     Math helpers
-    /// </summary>
-    public static class Math
-    {
-        #region ToRadians
-        /// <summary>
-        ///     Convert a degrees to radians
-        /// </summary>
-        /// <param name="angleInDegrees"></param>
-        /// <returns></returns>
-        public static float ToRadians(float angleInDegrees)
-        {
-            return (float)ToRadians((double)angleInDegrees);
-        }
+namespace TesseractOCR.Helpers;
 
-        /// <summary>
-        ///     Convert a degrees to radians.
-        /// </summary>
-        /// <param name="angleInDegrees"></param>
-        /// <returns></returns>
-        public static double ToRadians(double angleInDegrees)
-        {
-            return angleInDegrees * System.Math.PI / 180.0;
-        }
-        #endregion
+/// <summary>
+///     Math helpers
+/// </summary>
+public static class Math
+{
+    #region ToRadians
+    /// <summary>
+    ///     Convert a degrees to radians
+    /// </summary>
+    /// <param name="angleInDegrees"></param>
+    /// <returns></returns>
+    public static float ToRadians(float angleInDegrees)
+    {
+        return (float)ToRadians((double)angleInDegrees);
     }
+
+    /// <summary>
+    ///     Convert a degrees to radians.
+    /// </summary>
+    /// <param name="angleInDegrees"></param>
+    /// <returns></returns>
+    public static double ToRadians(double angleInDegrees)
+    {
+        return angleInDegrees * System.Math.PI / 180.0;
+    }
+    #endregion
 }

@@ -21,31 +21,30 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+///     The Tesseract engine mode
+/// </summary>
+public enum EngineMode
 {
     /// <summary>
-    ///     The Tesseract engine mode
+    ///     Only the legacy tesseract OCR engine is used.
     /// </summary>
-    public enum EngineMode
-    {
-        /// <summary>
-        ///     Only the legacy tesseract OCR engine is used.
-        /// </summary>
-        TesseractOnly = 0,
+    TesseractOnly = 0,
 
-        /// <summary>
-        ///     Only the new LSTM-based OCR engine is used.
-        /// </summary>
-        LstmOnly,
+    /// <summary>
+    ///     Only the new LSTM-based OCR engine is used.
+    /// </summary>
+    LstmOnly,
 
-        /// <summary>
-        ///     Both the legacy and new LSTM based OCR engine is used.
-        /// </summary>
-        TesseractAndLstm,
+    /// <summary>
+    ///     Both the legacy and new LSTM based OCR engine is used.
+    /// </summary>
+    TesseractAndLstm,
 
-        /// <summary>
-        ///     The default OCR engine is used (currently LSTM-based OCR engine).
-        /// </summary>
-        Default
-    }
+    /// <summary>
+    ///     The default OCR engine is used (currently LSTM-based OCR engine).
+    /// </summary>
+    Default
 }

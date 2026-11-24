@@ -20,18 +20,17 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
-{
-    public enum RotationDirection
-    {
-        /// <summary>
-        ///     With the clock
-        /// </summary>
-        Clockwise = 1,
+namespace TesseractOCR.Enums;
 
-        /// <summary>
-        ///     Against the clock
-        /// </summary>
-        CounterClockwise = -1
-    }
+public enum RotationDirection
+{
+    /// <summary>
+    ///     With the clock
+    /// </summary>
+    Clockwise = 1,
+
+    /// <summary>
+    ///     Against the clock
+    /// </summary>
+    CounterClockwise = -1
 }

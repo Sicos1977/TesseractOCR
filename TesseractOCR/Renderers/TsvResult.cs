@@ -2,20 +2,19 @@
 using TesseractOCR.Interop;
 using TesseractOCR.Loggers;
 
-namespace TesseractOCR.Renderers
+namespace TesseractOCR.Renderers;
+
+/// <summary>
+///     Renders the result in TSV format
+/// </summary>
+
+public sealed class TsvResult : Result
 {
-    /// <summary>
-    ///     Renders the result in TSV format
-    /// </summary>
-
-    public sealed class TsvResult : Result
+    public TsvResult(string outputFilename)
     {
-        public TsvResult(string outputFilename)
-        {
-            Logger.LogInformation("Create TSV renderer");
+        Logger.LogInformation("Create TSV renderer");
 
-            var rendererHandle = TessApi.Native.TsvRendererCreate(outputFilename);
-            Initialize(rendererHandle);
-        }
+        var rendererHandle = TessApi.Native.TsvRendererCreate(outputFilename);
+        Initialize(rendererHandle);
     }
 }

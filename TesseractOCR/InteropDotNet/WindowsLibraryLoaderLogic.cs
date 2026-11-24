@@ -28,110 +28,109 @@ using System;
 using System.Runtime.InteropServices;
 using TesseractOCR.Helpers;
 
-namespace TesseractOCR.InteropDotNet
+namespace TesseractOCR.InteropDotNet;
+
+internal class WindowsLibraryLoaderLogic : ILibraryLoaderLogic
 {
-    internal class WindowsLibraryLoaderLogic : ILibraryLoaderLogic
+    #region LoadLibrary
+    public IntPtr LoadLibrary(string fileName)
     {
-        #region LoadLibrary
-        public IntPtr LoadLibrary(string fileName)
+        var libraryHandle = IntPtr.Zero;
+
+        try
         {
-            var libraryHandle = IntPtr.Zero;
+            Logger.LogInformation($"Trying to load native library '{fileName}'");
 
-            try
-            {
-                Logger.LogInformation($"Trying to load native library '{fileName}'");
+            libraryHandle = WindowsLoadLibrary(fileName);
 
-                libraryHandle = WindowsLoadLibrary(fileName);
-
-                if (libraryHandle != IntPtr.Zero)
-                    Logger.LogInformation($"Successfully loaded native library '{fileName}' with handle '{libraryHandle}'");
-                else
-                    Logger.LogError($"Failed to load native library '{fileName}', set logging to debug level and check logging");
-            }
-            catch (Exception exception)
-            {
-                var lastError = WindowsGetLastError();
-                Logger.LogError($"Failed to load native library '{fileName}', last error '{lastError}', inner Exception: {exception}");
-            }
-
-            return libraryHandle;
+            if (libraryHandle != IntPtr.Zero)
+                Logger.LogInformation($"Successfully loaded native library '{fileName}' with handle '{libraryHandle}'");
+            else
+                Logger.LogError($"Failed to load native library '{fileName}', set logging to debug level and check logging");
         }
-        #endregion
-
-        #region FreeLibrary
-        public bool FreeLibrary(IntPtr libraryHandle)
+        catch (Exception exception)
         {
-            try
-            {
-                Logger.LogInformation($"Trying to free native library with handle '{libraryHandle}'");
-                
-                var isSuccess = WindowsFreeLibrary(libraryHandle);
-                
-                if (isSuccess)
-                    Logger.LogInformation($"Successfully freed native library with handle '{libraryHandle}'");
-                else
-                    Logger.LogError($"Failed to free native library with handle '{libraryHandle}', check windows event log");
-
-                return isSuccess;
-            }
-            catch (Exception exception)
-            {
-                var lastError = WindowsGetLastError();
-                Logger.LogError($"Failed to free native library with handle '{libraryHandle}', last error '{lastError}', inner Exception: {exception}");
-                return false;
-            }
+            var lastError = WindowsGetLastError();
+            Logger.LogError($"Failed to load native library '{fileName}', last error '{lastError}', inner Exception: {exception}");
         }
-        #endregion
 
-        #region GetProcAddress
-        public IntPtr GetProcAddress(IntPtr libraryHandle, string functionName)
-        {
-            try
-            {
-                Logger.LogDebug($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
-                var functionHandle = WindowsGetProcAddress(libraryHandle, functionName);
-                
-                if (functionHandle != IntPtr.Zero)
-                    Logger.LogDebug($"Successfully loaded native function '{functionName}' with handle '{functionHandle}'");
-                else
-                    Logger.LogError($"Failed to load native function '{functionName}' with handle '{functionHandle}'");
-                
-                return functionHandle;
-            }
-            catch (Exception exception)
-            {
-                var lastError = WindowsGetLastError();
-                Logger.LogError($"Failed to load native function '{functionName}', last error '{lastError}', exception: {exception}");
-                return IntPtr.Zero;
-            }
-        }
-        #endregion
-
-        #region FixUpLibraryName
-        public string FixUpLibraryName(string fileName)
-        {
-            if (!string.IsNullOrEmpty(fileName) && !fileName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-                return fileName + ".dll";
-            return fileName;
-        }
-        #endregion
-
-        #region Native methods
-        [DllImport("kernel32", EntryPoint = "LoadLibrary", CallingConvention = CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-        private static extern IntPtr WindowsLoadLibrary(string dllPath);
-
-        [DllImport("kernel32", EntryPoint = "FreeLibrary", CallingConvention = CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
-        private static extern bool WindowsFreeLibrary(IntPtr handle);
-
-        [DllImport("kernel32", EntryPoint = "GetProcAddress", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
-        private static extern IntPtr WindowsGetProcAddress(IntPtr handle, string procedureName);
-        #endregion
-
-        #region WindowsGetLastError
-        private static int WindowsGetLastError()
-        {
-            return Marshal.GetLastWin32Error();
-        }
-        #endregion
+        return libraryHandle;
     }
+    #endregion
+
+    #region FreeLibrary
+    public bool FreeLibrary(IntPtr libraryHandle)
+    {
+        try
+        {
+            Logger.LogInformation($"Trying to free native library with handle '{libraryHandle}'");
+            
+            var isSuccess = WindowsFreeLibrary(libraryHandle);
+            
+            if (isSuccess)
+                Logger.LogInformation($"Successfully freed native library with handle '{libraryHandle}'");
+            else
+                Logger.LogError($"Failed to free native library with handle '{libraryHandle}', check windows event log");
+
+            return isSuccess;
+        }
+        catch (Exception exception)
+        {
+            var lastError = WindowsGetLastError();
+            Logger.LogError($"Failed to free native library with handle '{libraryHandle}', last error '{lastError}', inner Exception: {exception}");
+            return false;
+        }
+    }
+    #endregion
+
+    #region GetProcAddress
+    public IntPtr GetProcAddress(IntPtr libraryHandle, string functionName)
+    {
+        try
+        {
+            Logger.LogDebug($"Trying to load native function '{functionName}' from the library with handle '{libraryHandle}'");
+            var functionHandle = WindowsGetProcAddress(libraryHandle, functionName);
+            
+            if (functionHandle != IntPtr.Zero)
+                Logger.LogDebug($"Successfully loaded native function '{functionName}' with handle '{functionHandle}'");
+            else
+                Logger.LogError($"Failed to load native function '{functionName}' with handle '{functionHandle}'");
+            
+            return functionHandle;
+        }
+        catch (Exception exception)
+        {
+            var lastError = WindowsGetLastError();
+            Logger.LogError($"Failed to load native function '{functionName}', last error '{lastError}', exception: {exception}");
+            return IntPtr.Zero;
+        }
+    }
+    #endregion
+
+    #region FixUpLibraryName
+    public string FixUpLibraryName(string fileName)
+    {
+        if (!string.IsNullOrEmpty(fileName) && !fileName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            return fileName + ".dll";
+        return fileName;
+    }
+    #endregion
+
+    #region Native methods
+    [DllImport("kernel32", EntryPoint = "LoadLibrary", CallingConvention = CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+    private static extern IntPtr WindowsLoadLibrary(string dllPath);
+
+    [DllImport("kernel32", EntryPoint = "FreeLibrary", CallingConvention = CallingConvention.Winapi, SetLastError = true, CharSet = CharSet.Auto, BestFitMapping = false, ThrowOnUnmappableChar = true)]
+    private static extern bool WindowsFreeLibrary(IntPtr handle);
+
+    [DllImport("kernel32", EntryPoint = "GetProcAddress", CallingConvention = CallingConvention.Winapi, SetLastError = true)]
+    private static extern IntPtr WindowsGetProcAddress(IntPtr handle, string procedureName);
+    #endregion
+
+    #region WindowsGetLastError
+    private static int WindowsGetLastError()
+    {
+        return Marshal.GetLastWin32Error();
+    }
+    #endregion
 }

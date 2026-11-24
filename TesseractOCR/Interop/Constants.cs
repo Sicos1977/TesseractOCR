@@ -22,18 +22,30 @@
 // ReSharper disable InconsistentNaming
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Interop
+namespace TesseractOCR.Interop;
+
+/// <summary>
+///     Description of Constants.
+/// </summary>
+internal static class Constants
 {
     /// <summary>
-    ///     Description of Constants.
+    ///     The name of the Leptonica 1.87.0 native library DLL.
     /// </summary>
-    internal static class Constants
-    {
-        public const string LeptonicaDllName = "leptonica-1.85.0.dll";
-        public const string TesseractDllName = "tesseract55.dll";
+    public const string LeptonicaDllName = "leptonica-1.87.0.dll";
 
-        // Tesseract uses an int to represent true false values.
-        public const int True = 1;
-        public const int False = 0;
-    }
+    /// <summary>
+    ///     The name of the Tesseract native library.
+    /// </summary>
+    public const string TesseractDllName = "tesseract55.dll";
+
+    /// <summary>
+    ///     Tesseract uses an int to represent true values.
+    /// </summary>
+    public const int True = 1;
+
+    /// <summary>
+    ///     Tesseract uses an int to represent false values.
+    /// </summary>
+    public const int False = 0;
 }

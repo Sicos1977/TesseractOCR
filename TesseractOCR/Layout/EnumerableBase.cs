@@ -20,28 +20,27 @@
 
 using System.Runtime.InteropServices;
 
-namespace TesseractOCR.Layout
-{
-    /// <summary>
-    ///     Base enumerable
-    /// </summary>
-    public class EnumerableBase
-    {
-        #region Fields
-        /// <summary>
-        ///     Handle that is returned by Tesseract engine
-        /// </summary>
-        protected HandleRef EngineHandleRef;
-        
-        /// <summary>
-        ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
-        /// </summary>
-        protected HandleRef IteratorHandleRef;
+namespace TesseractOCR.Layout;
 
-        /// <summary>
-        ///     <see cref="Pix.Image"/>
-        /// </summary>
-        protected HandleRef ImageHandleRef;
-        #endregion
-    }
+/// <summary>
+///     Base enumerable
+/// </summary>
+public class EnumerableBase
+{
+    #region Fields
+    /// <summary>
+    ///     Handle that is returned by Tesseract engine
+    /// </summary>
+    protected HandleRef EngineHandleRef;
+    
+    /// <summary>
+    ///     Handle that is returned by TessApi.Native.BaseApiGetIterator
+    /// </summary>
+    protected HandleRef IteratorHandleRef;
+
+    /// <summary>
+    ///     <see cref="Pix.Image"/>
+    /// </summary>
+    protected HandleRef ImageHandleRef;
+    #endregion
 }

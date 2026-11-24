@@ -19,67 +19,66 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace TesseractOCR
+namespace TesseractOCR;
+
+public readonly struct Scew
 {
-    public readonly struct Scew
+    #region Properties
+    public float Angle { get; }
+
+    public float Confidence { get; }
+
+    public Scew(float angle, float confidence)
     {
-        #region Properties
-        public float Angle { get; }
-
-        public float Confidence { get; }
-
-        public Scew(float angle, float confidence)
-        {
-            Angle = angle;
-            Confidence = confidence;
-        }
-        #endregion
-
-        #region ToString
-        public override string ToString()
-        {
-            return $"Scew: {Angle} [conf: {Confidence}]";
-        }
-        #endregion
-
-        #region Equals
-        public override bool Equals(object obj)
-        {
-            return obj is Scew scew && Equals(scew);
-        }
-
-        public bool Equals(Scew other)
-        {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            return Confidence == other.Confidence && Angle == other.Angle;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
-        }
-        #endregion
-
-        #region GetHashCode
-        public override int GetHashCode()
-        {
-            var hashCode = 0;
-            unchecked
-            {
-                hashCode += 1000000007 * Angle.GetHashCode();
-                hashCode += 1000000009 * Confidence.GetHashCode();
-            }
-
-            return hashCode;
-        }
-        #endregion
-
-        #region Operators
-        public static bool operator ==(Scew lhs, Scew rhs)
-        {
-            return lhs.Equals(rhs);
-        }
-
-        public static bool operator !=(Scew lhs, Scew rhs)
-        {
-            return !(lhs == rhs);
-        }
-        #endregion
+        Angle = angle;
+        Confidence = confidence;
     }
+    #endregion
+
+    #region ToString
+    public override string ToString()
+    {
+        return $"Scew: {Angle} [conf: {Confidence}]";
+    }
+    #endregion
+
+    #region Equals
+    public override bool Equals(object obj)
+    {
+        return obj is Scew scew && Equals(scew);
+    }
+
+    public bool Equals(Scew other)
+    {
+        // ReSharper disable CompareOfFloatsByEqualityOperator
+        return Confidence == other.Confidence && Angle == other.Angle;
+        // ReSharper restore CompareOfFloatsByEqualityOperator
+    }
+    #endregion
+
+    #region GetHashCode
+    public override int GetHashCode()
+    {
+        var hashCode = 0;
+        unchecked
+        {
+            hashCode += 1000000007 * Angle.GetHashCode();
+            hashCode += 1000000009 * Confidence.GetHashCode();
+        }
+
+        return hashCode;
+    }
+    #endregion
+
+    #region Operators
+    public static bool operator ==(Scew lhs, Scew rhs)
+    {
+        return lhs.Equals(rhs);
+    }
+
+    public static bool operator !=(Scew lhs, Scew rhs)
+    {
+        return !(lhs == rhs);
+    }
+    #endregion
 }

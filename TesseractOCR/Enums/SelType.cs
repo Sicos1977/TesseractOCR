@@ -21,26 +21,25 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+/// 
+/// </summary>
+public enum SelType
 {
     /// <summary>
-    /// 
+    ///		Select and don't care
     /// </summary>
-    public enum SelType
-    {
-        /// <summary>
-        ///		Select and don't care
-        /// </summary>
-        SelDontCare = 0,
+    SelDontCare = 0,
 
-        /// <summary>
-        ///		Select hits
-        /// </summary>
-        SelHit = 1,
+    /// <summary>
+    ///		Select hits
+    /// </summary>
+    SelHit = 1,
 
-        /// <summary>
-        ///		Select misses
-        /// </summary>
-        SelMiss = 2
-    }
+    /// <summary>
+    ///		Select misses
+    /// </summary>
+    SelMiss = 2
 }

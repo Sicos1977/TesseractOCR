@@ -21,26 +21,25 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+///     Represents the method used to rotate an image.
+/// </summary>
+public enum RotationMethod
 {
     /// <summary>
-    ///     Represents the method used to rotate an image.
+    ///     Use area map rotation, if possible.
     /// </summary>
-    public enum RotationMethod
-    {
-        /// <summary>
-        ///     Use area map rotation, if possible.
-        /// </summary>
-        AreaMap = 1,
+    AreaMap = 1,
 
-        /// <summary>
-        ///     Use shear rotation.
-        /// </summary>
-        Shear = 2,
+    /// <summary>
+    ///     Use shear rotation.
+    /// </summary>
+    Shear = 2,
 
-        /// <summary>
-        ///     Use sampling.
-        /// </summary>
-        Sampling = 3
-    }
+    /// <summary>
+    ///     Use sampling.
+    /// </summary>
+    Sampling = 3
 }

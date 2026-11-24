@@ -21,21 +21,20 @@
 
 // ReSharper disable UnusedMember.Global
 
-namespace TesseractOCR.Enums
+namespace TesseractOCR.Enums;
+
+/// <summary>
+///     What color pixels should be used for the outside?
+/// </summary>
+public enum RotationFill
 {
     /// <summary>
-    ///     What color pixels should be used for the outside?
+    ///     Bring in white pixels from the outside.
     /// </summary>
-    public enum RotationFill
-    {
-        /// <summary>
-        ///     Bring in white pixels from the outside.
-        /// </summary>
-        White = 1,
+    White = 1,
 
-        /// <summary>
-        ///     Bring in black pixels from the outside.
-        /// </summary>
-        Black = 2
-    }
+    /// <summary>
+    ///     Bring in black pixels from the outside.
+    /// </summary>
+    Black = 2
 }

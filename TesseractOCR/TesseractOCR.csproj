@@ -16,6 +16,7 @@ which support the legacy engine, for example those from the tessdata repository.
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<SignAssembly>false</SignAssembly>
 		<TargetFrameworks>netstandard20;netstandard21</TargetFrameworks>
+		<LangVersion>10.0</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<FileVersion>5.521.0</FileVersion>
 		<AssemblyVersion>5.5.2.0</AssemblyVersion>

@@ -20,34 +20,33 @@
 
 using TesseractOCR.Enums;
 
-namespace TesseractOCR.Font
+namespace TesseractOCR.Font;
+
+/// <summary>
+///     Returns font properties
+/// </summary>
+public class Properties
 {
     /// <summary>
-    ///     Returns font properties
+    ///     Returns the point size of the font
     /// </summary>
-    public class Properties
+    /// <remarks>
+    ///     Point size is returned in printers points (1/72 inch)
+    /// </remarks>
+    public int PointSize { get; }
+
+    /// <summary>
+    ///     Returns other font attributes
+    /// </summary>
+    /// <remarks>
+    ///     This information is only available when using older engine modes like
+    ///     <see cref="EngineMode.TesseractOnly "/> and <see cref="EngineMode.TesseractAndLstm "/>
+    /// </remarks>
+    public Attributes Attributes { get; }
+
+    internal Properties(int pointSize, Attributes attributes = null)
     {
-        /// <summary>
-        ///     Returns the point size of the font
-        /// </summary>
-        /// <remarks>
-        ///     Point size is returned in printers points (1/72 inch)
-        /// </remarks>
-        public int PointSize { get; }
-
-        /// <summary>
-        ///     Returns other font attributes
-        /// </summary>
-        /// <remarks>
-        ///     This information is only available when using older engine modes like
-        ///     <see cref="EngineMode.TesseractOnly "/> and <see cref="EngineMode.TesseractAndLstm "/>
-        /// </remarks>
-        public Attributes Attributes { get; }
-
-        internal Properties(int pointSize, Attributes attributes = null)
-        {
-            PointSize = pointSize;
-            Attributes = attributes;
-        }
+        PointSize = pointSize;
+        Attributes = attributes;
     }
 }
