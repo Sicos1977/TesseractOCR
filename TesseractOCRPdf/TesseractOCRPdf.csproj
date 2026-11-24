@@ -4,6 +4,7 @@
     <LangVersion>10.0</LangVersion>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>TesseractOCRPdf</PackageId>
     <Version>5.5.4</Version>
     <Authors>Kees van Spelde</Authors>
