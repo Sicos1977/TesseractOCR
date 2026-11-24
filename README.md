@@ -6,6 +6,8 @@ What is TesseractOCR
 
 TesseractOCR is a .NET wrapper for Tesseract OCR. The native API bindings target **Tesseract 5.5.4**, and the bundled native image-processing library is **Leptonica 1.87.0**. The Windows native binaries are named `tesseract55.dll` and `leptonica-1.87.0.dll` (the Tesseract DLL name identifies the 5.5 series).
 
+For concurrent OCR with reusable engines, see [Recognize images in parallel with EnginePool](#recognize-images-in-parallel-with-enginepool).
+
 ## Install and prepare language data
 
 Install the NuGet package:
@@ -14,45 +16,21 @@ Install the NuGet package:
 dotnet add package TesseractOCR
 ```
 
-Tesseract also needs trained language data in a `tessdata` directory. Download the languages you need from [tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast). In the examples below, `dataPath` is the directory containing the `.traineddata` files (for example, `./tessdata`).
+Tesseract also needs trained language data. Choose one of these options:
 
-### Build local language packages
+- **NuGet:** Find the `TesseractOCR.Languages.*` packages on [nuget.org](https://www.nuget.org/packages?q=TesseractOCR.Languages). For example, install English with:
 
-The solution contains `_Powershell scripts_\Build-LanguagePackages.ps1`, which requires PowerShell, the .NET 8 SDK or later, and internet access. Run it from the repository root:
+  ```powershell
+  dotnet add package TesseractOCR.Languages.English
+  ```
 
-```powershell
-& '.\_Powershell scripts_\Build-LanguagePackages.ps1' -Version 1.0.0
-```
+  In projects using PackageReference, the language package copies its model to `tessdata` in the build and publish output. Pass `Path.Combine(AppContext.BaseDirectory, "tessdata")` as the engine data path. These packages contain `tessdata_fast` models and support the LSTM engine only, not the legacy engine. The `TesseractOCR.Languages.Osd` package supplies orientation and script detection data, not a recognition language.
 
-The script downloads all language and script models from one `tessdata_fast` commit and verifies their Git blob hashes. It temporarily saves the models under `_Powershell scripts_\artifacts\tessdata`, removes each model after its package is successfully created, and creates local NuGet packages under `_Powershell scripts_\artifacts\packages`. It does not publish them. Set `-Version` to the desired NuGet version; the version is independent of the upstream commit. Each package depends on TesseractOCR version 5.5.2 or later by default; use `-TesseractOCRVersion` to select another minimum version. Use `-Revision` to select an upstream branch, tag, or commit instead of `main`, `-OutputDirectory` to change the output location, and `-Models` to select specific models:
+  To use another output location, set `TesseractOCRLanguageDataDirectory` in `Directory.Build.props` before NuGet imports the package, and update the engine data path accordingly. The property is relative to the build and publish output directories; see the language package README for an example.
 
-```powershell
-& '.\_Powershell scripts_\Build-LanguagePackages.ps1' -Models eng,script/Latin -Version 1.0.0
-```
+- **Manual download:** Download the required `.traineddata` files from Tesseract's [tessdata](https://github.com/tesseract-ocr/tessdata) or [tessdata_fast](https://github.com/tesseract-ocr/tessdata_fast) repository, place them in a directory such as `tessdata`, and pass that directory as the engine data path. Choose data compatible with the selected engine mode; `tessdata_fast` supports LSTM only.
 
-Packages are named after the upstream model, for example `TesseractOCR.Languages.eng` or `TesseractOCR.Languages.script.Latin`. Add the output directory as a local NuGet source and install the desired packages. NuGet also restores the TesseractOCR dependency from a configured package source. For example, from a consuming project directory:
-
-```powershell
-dotnet nuget add source 'C:\path\to\TesseractOCR\_Powershell scripts_\artifacts\packages' --name TesseractOCR-Local
-dotnet add package TesseractOCR.Languages.eng --version 1.0.0
-```
-
-Use a new package version when the upstream revision changes, because NuGet caches packages by ID and version. Each package includes a README, the project icon, and an MSBuild `.props` file. In projects using PackageReference, the props copy models to `tessdata` (or `tessdata\script`) in the build and publish output. Pass the directory containing the model, for example `Path.Combine(AppContext.BaseDirectory, "tessdata")`, as the engine data path. These fast models support Tesseract's LSTM engine only, not the legacy engine. The `osd` package supplies orientation and script detection data, not a recognition language.
-
-If your application uses another location, configure `TesseractOCRLanguageDataDirectory` in `Directory.Build.props` before NuGet imports the package and update the engine data path to match. The property is a path relative to the build and publish output directories; see the language package README for an example.
-
-### Publish language packages
-
-To publish the generated `TesseractOCR.Languages.*.nupkg` files to nuget.org, supply an API key with permission to push the packages:
-
-```powershell
-& '.\_Powershell scripts_\Publish-LanguagePackages.ps1' -ApiKey $apiKey -WhatIf
-& '.\_Powershell scripts_\Publish-LanguagePackages.ps1' -ApiKey $apiKey
-```
-
-The first command previews the files; the second uploads them. The default directory is `_Powershell scripts_\artifacts\packages`; pass `-PackageDirectory` to use another directory (the `packages` subdirectory of the build script's `-OutputDirectory`). All matching versions in that directory are uploaded. The script stops at the first failed upload; use `-SkipDuplicate` on a retry to skip versions already present on nuget.org. Packages are not deleted after publishing.
-
-Avoid typing the API key as a literal in the command, as shell history can retain it. The script passes the key to `dotnet` as a command-line argument, which may be visible to other users or process-monitoring tools on the machine.
+In the examples below, `dataPath` is the directory containing the `.traineddata` files (for example, `./tessdata`).
 
 ## Microsoft Visual C++ runtimes
 
@@ -82,6 +60,54 @@ using var page = engine.Process(image);
 Console.WriteLine($"Mean confidence: {page.MeanConfidence}");
 Console.WriteLine(page.Text);
 ```
+
+For multiple images, reuse engines safely with [EnginePool](#recognize-images-in-parallel-with-enginepool) instead of sharing one `Engine` between concurrent scans.
+
+## Recognize images in parallel with EnginePool
+
+`EnginePool` belongs to this package and pools `TesseractOCR.Engine`, not the separate Charles Weld `Tesseract` package's `TesseractEngine`. Existing `Engine` constructors and `Process` overloads remain available. Create one pool for a group of scans or for the application lifetime, reuse it across workers, and dispose it after the workers finish. Creating a pool for each image prevents engine reuse.
+
+The pool bounds both active and retained engines; requests wait asynchronously when all engines are busy. `maximumEngines` must be positive and defaults to `Environment.ProcessorCount` when omitted. Engines are created lazily and exclusively used for one scan at a time. Each page is disposed before its engine is returned and adaptive classifier state is cleared between scans. Failed scans discard their engine. `ProcessAsync` returns recognized plain text; optionally pass a `PageSegMode` to select the page layout for a scan.
+
+To observe pool activity, pass an `ILogger` as the third argument, for example `new EnginePool(dataPath, Language.English, logger, maximumEngines: workers)`. Configure the logger to enable `Debug`: pool creation and closure, engine creation and disposal, and acquisition and return are logged at that level. Engine IDs correlate events within a process. This logger is used for pool events only and is not passed to the existing thread-local engine logger. With no logger, pool logging is disabled.
+
+Set `OMP_THREAD_LIMIT` at process startup, before any Tesseract or OpenMP initialization. It is process-wide and may affect other OpenMP libraries; setting it later may have no effect. Tune the pool size for available memory and workload rather than assuming more engines are always faster.
+
+The following example targets .NET 6 or later (`Parallel.ForEachAsync`); the library itself also supports .NET Standard. Each worker owns and disposes its image. Exceptions propagate from `Parallel.ForEachAsync`, and disposal occurs even on failure:
+
+```csharp
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using TesseractOCR;
+using TesseractOCR.Enums;
+using TesseractOCR.Pix;
+
+Environment.SetEnvironmentVariable("OMP_THREAD_LIMIT", "1");
+string dataPath = Path.Combine(AppContext.BaseDirectory, "tessdata");
+string[] paths = { "invoice1.bmp", "invoice2.bmp", "invoice3.bmp" };
+string[] results = new string[paths.Length];
+int workers = Environment.ProcessorCount;
+
+using var pool = new EnginePool(dataPath, Language.English, EngineMode.LstmOnly, workers);
+using var cancellation = new CancellationTokenSource();
+await Parallel.ForEachAsync(Enumerable.Range(0, paths.Length),
+    new ParallelOptions { MaxDegreeOfParallelism = workers, CancellationToken = cancellation.Token },
+    async (index, token) =>
+    {
+        using var image = Image.LoadFromFile(paths[index]);
+        results[index] = await pool.ProcessAsync(image, cancellationToken: token);
+    });
+
+for (int i = 0; i < paths.Length; i++)
+    Console.WriteLine($"{paths[i]}: {results[i]}");
+```
+
+The example uses BMP files. Image format support depends on the native Leptonica build; the bundled Windows x64 build currently reports that its PNG and TIFF decoders are not present.
+
+`ProcessAsync` waits asynchronously for capacity, but recognition itself runs synchronously on the calling worker. Cancellation stops waiting and is checked before recognition; it cannot interrupt a native scan already in progress. Do not share or dispose an image during a scan. Disposing the pool rejects new and waiting requests and disposes idle engines immediately; scans already running may finish and dispose their engines on return. Await all workers before disposing the pool when shutdown must wait for them. The pool is intended for independent documents and does not expose mutable engines or `Page` objects. For custom engine variables, result iterators, or other output formats, continue to use the existing `Engine` API with your own lifetime management.
 
 ## Choose an OCR engine and page segmentation mode
 

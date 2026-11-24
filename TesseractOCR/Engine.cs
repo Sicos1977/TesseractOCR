@@ -256,17 +256,24 @@ public class Engine : DisposableBase
         }
 
         _processCount++;
+        try
+        {
+            var actualPageSegmentMode = pageSegMode ?? DefaultPageSegMode;
+            TessApi.Native.BaseApiSetPageSegMode(_handle, actualPageSegmentMode);
+            TessApi.Native.BaseApiSetImage(_handle, image.Handle);
 
-        var actualPageSegmentMode = pageSegMode ?? DefaultPageSegMode;
-        TessApi.Native.BaseApiSetPageSegMode(_handle, actualPageSegmentMode);
-        TessApi.Native.BaseApiSetImage(_handle, image.Handle);
-        
-        if (!string.IsNullOrEmpty(inputName)) 
-            TessApi.Native.BaseApiSetInputName(_handle, inputName);
-        
-        var page = new Page(this, image, inputName, region, actualPageSegmentMode, 1);
-        page.Disposed += OnIteratorDisposed;
-        return page;
+            if (!string.IsNullOrEmpty(inputName))
+                TessApi.Native.BaseApiSetInputName(_handle, inputName);
+
+            var page = new Page(this, image, inputName, region, actualPageSegmentMode, 1);
+            page.Disposed += OnIteratorDisposed;
+            return page;
+        }
+        catch
+        {
+            _processCount--;
+            throw;
+        }
     }
     #endregion
 
@@ -346,7 +353,6 @@ public class Engine : DisposableBase
             Logger.LoggerInterface = logger;
 
         DefaultPageSegMode = PageSegMode.Auto;
-        _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
 
         if (string.IsNullOrEmpty(dataPath))
             dataPath = GetTessDataPrefix();
@@ -376,19 +382,25 @@ public class Engine : DisposableBase
         if (setOnlyNonDebugVariables)
             Logger.LogInformation("Setting only no debug variables");
 
-        if (TessApi.BaseApiInit(_handle, dataPath, string.Join("+", languages), (int)engineMode, configFiles ?? new List<string>(), initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) == Constants.False)
+        _handle = new HandleRef(this, TessApi.Native.BaseApiCreate());
+        var initialized = false;
+        try
         {
-            Logger.LogInformation("Tesseract engine initialized");
-            return;
-        }
+            if (TessApi.BaseApiInit(_handle, dataPath, string.Join("+", languages), (int)engineMode, configFiles ?? new List<string>(), initialValues ?? new Dictionary<string, object>(), setOnlyNonDebugVariables) != Constants.False)
+            {
+                const string message = "Failed to initialize Tesseract engine";
+                Logger.LogError(message);
+                throw new TesseractException(message);
+            }
 
-        // Special case logic to handle cleaning up as init has already released the handle if it fails
-        _handle = new HandleRef(this, IntPtr.Zero);
-        GC.SuppressFinalize(this);
-        
-        const string message = "Failed to initialize Tesseract engine";
-        Logger.LogError(message);
-        throw new TesseractException(message);
+            initialized = true;
+            Logger.LogInformation("Tesseract engine initialized");
+        }
+        finally
+        {
+            if (!initialized)
+                Dispose();
+        }
     }
     #endregion
 

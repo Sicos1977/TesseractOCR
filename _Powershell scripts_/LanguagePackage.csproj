@@ -3,10 +3,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <TesseractOCRVersion Condition="'$(TesseractOCRVersion)' == ''">5.5.2</TesseractOCRVersion>
-    <PackageId>TesseractOCR.Languages.$(ModelId)</PackageId>
+    <PackageName Condition="'$(PackageName)' == ''">$(ModelId)</PackageName>
+    <PackageId>TesseractOCR.Languages.$(PackageName)</PackageId>
     <Version>$(LanguagePackageVersion)</Version>
     <Authors>Tesseract OCR contributors</Authors>
-    <Description>Tesseract tessdata_fast model $(ModelId) for the LSTM OCR engine.</Description>
+    <Description>Tesseract tessdata_fast model $(ModelId) ($(PackageName)) for the LSTM OCR engine.</Description>
     <PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

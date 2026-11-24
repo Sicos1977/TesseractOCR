@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net8.0;net48</TargetFrameworks>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="TesseractOCR.Languages.eng" Version="1.0.0" />
-    <PackageReference Include="TesseractOCR.Languages.script.Latin" Version="1.0.0" />
-  </ItemGroup>
-</Project>

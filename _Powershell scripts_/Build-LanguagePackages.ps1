@@ -4,6 +4,9 @@ Downloads tessdata_fast models and creates a NuGet package for each model.
 .DESCRIPTION
 Packages all language and script models from one upstream commit. Use -Models to
 select specific models by their path without the .traineddata extension.
+Package names use the TesseractOCR Language enum name whose String attribute matches
+the model (for example TesseractOCR.Languages.English for eng). Models without an
+enum value keep their model name (for example TesseractOCR.Languages.script.Latin).
 Downloaded models are removed after their packages are successfully created.
 The package version is independent of the upstream repository revision.
 -TesseractOCRVersion specifies the minimum version of the TesseractOCR dependency.
@@ -22,6 +25,12 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$languageSource = Join-Path $PSScriptRoot '..\TesseractOCR\Enums\Language.cs'
+$languageNames = @{}
+foreach ($match in [regex]::Matches([IO.File]::ReadAllText($languageSource), '\[String\("([^"]+)"\)\]\s*(\w+)')) {
+	$languageNames[$match.Groups[1].Value] = $match.Groups[2].Value
+}
+if ($languageNames.Count -eq 0) { throw "No language mappings were found in $languageSource." }
 $headers = @{ 'User-Agent' = 'TesseractOCR-Language-Packager' }
 $api = 'https://api.github.com/repos/tesseract-ocr/tessdata_fast'
 $revisionName = [Uri]::EscapeDataString($Revision)
@@ -90,11 +99,12 @@ foreach ($entry in $available) {
 
 	$modelName = $entry.path.Substring(0, $entry.path.Length - '.traineddata'.Length)
 	$modelId = $modelName.Replace('/', '.')
+	$packageName = if ($languageNames.ContainsKey($modelName)) { $languageNames[$modelName] } else { $modelId }
 	$packageSubdirectory = if ($modelName.StartsWith('script/')) { 'script' } else { '' }
-	Write-Host "Packing TesseractOCR.Languages.$modelId $Version"
+	Write-Host "Packing TesseractOCR.Languages.$packageName $Version ($modelName)"
 	& dotnet pack $project --no-build --no-restore --output $packageDirectory --verbosity quiet `
 		"-p:LanguagePackageVersion=$Version" "-p:TesseractOCRVersion=$TesseractOCRVersion" "-p:ModelId=$modelId" `
-		"-p:ModelFile=$modelFile" "-p:ModelDirectory=$packageSubdirectory" "-p:ModelCommit=$commit"
+		"-p:PackageName=$packageName" "-p:ModelFile=$modelFile" "-p:ModelDirectory=$packageSubdirectory" "-p:ModelCommit=$commit"
 	if ($LASTEXITCODE -ne 0) { throw "dotnet pack failed for $modelName with exit code $LASTEXITCODE." }
 	Remove-Item -LiteralPath $modelFile
 }
