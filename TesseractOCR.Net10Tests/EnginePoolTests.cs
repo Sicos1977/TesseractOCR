@@ -49,6 +49,24 @@ public class EnginePoolTests
     }
 
     [TestMethod]
+    public async Task RecognizesWebPImageLoadedFromFile()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"tesseract-pool-{Guid.NewGuid():N}.webp");
+        try
+        {
+            using (var original = CreateTextImage())
+                original.Save(path, ImageFormat.WebP);
+            using var image = TesseractOCR.Pix.Image.LoadFromFile(path);
+            using var pool = new EnginePool(DataPath, Language.English, maximumEngines: 1);
+            Assert.AreEqual("TEST TEST", (await pool.ProcessAsync(image, PageSegMode.SingleLine)).Trim());
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [TestMethod]
     public async Task RecognizesBitmapLoadedFromFile()
     {
         var path = Path.Combine(Path.GetTempPath(), $"tesseract-pool-{Guid.NewGuid():N}.bmp");

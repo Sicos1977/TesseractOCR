@@ -105,7 +105,7 @@ for (int i = 0; i < paths.Length; i++)
     Console.WriteLine($"{paths[i]}: {results[i]}");
 ```
 
-The example uses BMP files. Image format support depends on the native Leptonica build; the bundled Windows x64 build currently reports that its PNG and TIFF decoders are not present.
+The example uses BMP files. Image format support depends on the native Leptonica build.
 
 `ProcessAsync` waits asynchronously for capacity, but recognition itself runs synchronously on the calling worker. Cancellation stops waiting and is checked before recognition; it cannot interrupt a native scan already in progress. Do not share or dispose an image during a scan. Disposing the pool rejects new and waiting requests and disposes idle engines immediately; scans already running may finish and dispose their engines on return. Await all workers before disposing the pool when shutdown must wait for them. The pool is intended for independent documents and does not expose mutable engines or `Page` objects. For custom engine variables, result iterators, or other output formats, continue to use the existing `Engine` API with your own lifetime management.
 
@@ -297,7 +297,7 @@ Tesseract uses the bundled Leptonica 1.87.0 library to read images. Supported fo
 - WebP (libwebp)
 - BMP and PNM
 
-Images are loaded through the library's Leptonica-backed `Pix.Image` API. `System.Drawing.Image` is not supported; using Leptonica keeps image loading cross-platform.
+Images are loaded through the library's Leptonica-backed `Pix.Image` API. `System.Drawing.Image` is not supported; using Leptonica keeps image loading cross-platform. To save a WebP image, specify the format explicitly: `image.Save("output.webp", ImageFormat.WebP)` (`ImageFormat` is in `TesseractOCR.Enums`).
 
 Logging
 =======
