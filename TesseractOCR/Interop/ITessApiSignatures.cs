@@ -15,7 +15,7 @@ namespace TesseractOCR.Interop;
 ///     It should be considered an internal interface and is NOT part of the public api and may have
 ///     breaking changes between releases.
 ///
-///     API URL: https://github.com/tesseract-ocr/tesseract/blob/main/include/tesseract/capi.h
+///     API URL: https://github.com/tesseract-ocr/tesseract/blob/5.5.4/include/tesseract/capi.h
 /// </remarks>
 public interface ITessApiSignatures
 {
@@ -30,80 +30,132 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Deallocates the memory block occupied by text array
     /// </summary>
-    /// <param name="arr"></param>
+    /// <param name="arr">The text array to free.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteTextArray")]
     void DeleteTextArray(IntPtr arr);
 
     /// <summary>
     ///     Deallocates the memory block occupied by integer array
     /// </summary>
-    /// <param name="arr"></param>
-    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteIntArray")] 
+    /// <param name="arr">The integer array to free.</param>
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteIntArray")]
     void DeleteIntArray(IntPtr arr);
 
     /// <summary>
     ///     Deallocates the memory block occupied by text array
     /// </summary>
-    /// <param name="textPtr"></param>
+    /// <param name="textPtr">The text pointer to free.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteText")]
     void DeleteText(IntPtr textPtr);
     #endregion
 
     #region Renderer API
+    /// <summary>Creates a renderer that writes recognized text as plain text.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessTextRendererCreate")]
     IntPtr TextRendererCreate(string outputbase);
 
+    /// <summary>Creates a renderer that writes recognized text in hOCR format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessHOcrRendererCreate")]
     IntPtr HOcrRendererCreate(string outputbase);
 
+    /// <summary>Creates an hOCR renderer, optionally including font information.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
+    /// <param name="font_info">Nonzero to include font information in the output.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessHOcrRendererCreate2")]
     IntPtr HOcrRendererCreate2(string outputbase, int font_info);
 
+    /// <summary>Creates a renderer that writes recognized text in ALTO XML format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessAltoRendererCreate")]
     IntPtr AltoRendererCreate(string outputbase);
 
+    /// <summary>
+    ///     Creates a renderer that writes recognized text in PAGE XML format.
+    /// </summary>
+    /// <param name="outputbase">The base name for the output files.</param>
+    /// <returns>A pointer to the PAGE renderer.</returns>
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPAGERendererCreate")]
+    IntPtr PAGERendererCreate(string outputbase);
+
+    /// <summary>Creates a renderer that writes recognized text in TSV format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessTsvRendererCreate")]
     IntPtr TsvRendererCreate(string outputbase);
 
+    /// <summary>Creates a renderer that writes searchable PDF output.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
+    /// <param name="datadir">The directory containing PDF resources.</param>
+    /// <param name="textonly">Nonzero to produce a text-only PDF.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPDFRendererCreate")]
     IntPtr PDFRendererCreate(string outputbase, IntPtr datadir, int textonly);
 
+    /// <summary>Creates a renderer that writes recognized text in UNLV format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessUnlvRendererCreate")]
     IntPtr UnlvRendererCreate(string outputbase);
 
+    /// <summary>Creates a renderer that writes recognized text in box-file format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBoxTextRendererCreate")]
     IntPtr BoxTextRendererCreate(string outputbase);
 
+    /// <summary>Creates a renderer that writes recognized text in LSTM box-file format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessLSTMBoxRendererCreate")]
     IntPtr LSTMBoxRendererCreate(string outputbase);
 
+    /// <summary>Creates a renderer that writes recognized text in WordStr box-file format.</summary>
+    /// <param name="outputbase">The base name for output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessWordStrBoxRendererCreate")]
     IntPtr WordStrBoxRendererCreate(string outputbase);
 
+    /// <summary>Deletes a result renderer and releases its resources.</summary>
+    /// <param name="renderer">The renderer to delete.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessDeleteResultRenderer")]
     void DeleteResultRenderer(HandleRef renderer);
 
+    /// <summary>Inserts a renderer after the specified renderer in the renderer chain.</summary>
+    /// <param name="renderer">The renderer in the chain after which to insert.</param>
+    /// <param name="next">The renderer to insert.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererInsert")]
     void ResultRendererInsert(HandleRef renderer, HandleRef next);
 
+    /// <summary>Returns the next renderer in the renderer chain.</summary>
+    /// <param name="renderer">The current renderer.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererNext")]
     IntPtr ResultRendererNext(HandleRef renderer);
 
+    /// <summary>Begins a document in the output renderer.</summary>
+    /// <param name="renderer">The renderer for the document.</param>
+    /// <param name="titlePtr">A pointer to the document title.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererBeginDocument")]
     int ResultRendererBeginDocument(HandleRef renderer, IntPtr titlePtr);
 
+    /// <summary>Adds the current image's recognition results to the output document.</summary>
+    /// <param name="renderer">The renderer receiving the image results.</param>
+    /// <param name="api">The Tesseract API instance containing the image results.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererAddImage")]
     int ResultRendererAddImage(HandleRef renderer, HandleRef api);
 
+    /// <summary>Ends the current output document.</summary>
+    /// <param name="renderer">The renderer for the document.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererEndDocument")]
     int ResultRendererEndDocument(HandleRef renderer);
 
+    /// <summary>Returns the output file extension used by the renderer.</summary>
+    /// <param name="renderer">The renderer whose output extension is requested.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererExtention")]
     IntPtr ResultRendererExtention(HandleRef renderer);
 
+    /// <summary>Returns the title associated with the renderer.</summary>
+    /// <param name="renderer">The renderer whose title is requested.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererTitle")]
     IntPtr ResultRendererTitle(HandleRef renderer);
 
+    /// <summary>Returns the number of images processed by the renderer.</summary>
+    /// <param name="renderer">The renderer whose processed image count is requested.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultRendererImageNum")]
     int ResultRendererImageNum(HandleRef renderer);
     #endregion
@@ -175,8 +227,8 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Set the name of the bonus output files. Needed only for debugging
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="name"></param>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The base name for Tesseract's auxiliary output files.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetOutputName")]
     void BaseApiSetOutputName(HandleRef handle, string name);
 
@@ -189,53 +241,56 @@ public interface ITessApiSignatures
     /// <remarks>
     ///     Must be called after Init(). Only works for non-init variables (init variables should be passed to Init())
     /// </remarks>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="name"></param>
-    /// <param name="valPtr"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The name of the parameter to set.</param>
+    /// <param name="valPtr">A pointer to the parameter value encoded as a string.</param>
+    /// <returns>Nonzero if the parameter was set; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetVariable")]
     int BaseApiSetVariable(HandleRef handle, string name, IntPtr valPtr);
 
     /// <summary>
     ///     Sets a debug variable
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="name"></param>
-    /// <param name="valPtr"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The name of the debug parameter to set.</param>
+    /// <param name="valPtr">A pointer to the parameter value encoded as a string.</param>
+    /// <returns>Nonzero if the parameter was set; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetDebugVariable")]
     int BaseApiSetDebugVariable(HandleRef handle, string name, IntPtr valPtr);
 
     /// <summary>
     ///     Get the value of an internal int parameter
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The name of the integer parameter to retrieve.</param>
+    /// <param name="value">Receives the parameter value when it is found.</param>
+    /// <returns>Nonzero if the parameter was found; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetIntVariable")]
     int BaseApiGetIntVariable(HandleRef handle, string name, out int value);
 
     /// <summary>
     ///     Get the value of an internal bool parameter
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The name of the boolean parameter to retrieve.</param>
+    /// <param name="value">Receives the parameter value as a 32-bit integer when found.</param>
+    /// <returns>Nonzero if the parameter was found; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoolVariable")]
     int BaseApiGetBoolVariable(HandleRef handle, string name, out int value);
 
     /// <summary>
     ///     Get the value of an internal double parameter
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="name"></param>
-    /// <param name="value"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The name of the double parameter to retrieve.</param>
+    /// <param name="value">Receives the parameter value when it is found.</param>
+    /// <returns>Nonzero if the parameter was found; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetDoubleVariable")]
     int BaseApiGetDoubleVariable(HandleRef handle, string name, out double value);
 
+    /// <summary>Gets the value of an internal string parameter.</summary>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="name">The name of the string parameter to retrieve.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetStringVariable")]
     IntPtr BaseApiGetStringVariableInternal(HandleRef handle, string name);
 
@@ -247,9 +302,9 @@ public interface ITessApiSignatures
     /// <remarks>
     ///     Must not be the first method called after instance create
     /// </remarks>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="filename"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="filename">The path of the file to which variables are written.</param>
+    /// <returns>Nonzero if the variables were written successfully; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIPrintVariablesToFile")]
     int BaseApiPrintVariablesToFile(HandleRef handle, string filename);
 
@@ -271,13 +326,13 @@ public interface ITessApiSignatures
     ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses that
     ///     require any parameters to be set before Init
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="datapath"></param>
-    /// <param name="language"></param>
-    /// <param name="mode"></param>
-    /// <param name="configs"></param>
-    /// <param name="configs_size"></param>
-    /// <returns>0 on success and -1 on initialization failure</returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="datapath">The path to the tessdata directory.</param>
+    /// <param name="language">The language code or codes to load.</param>
+    /// <param name="mode">The OCR engine mode.</param>
+    /// <param name="configs">Configuration file names to load.</param>
+    /// <param name="configs_size">The number of entries in <paramref name="configs"/>.</param>
+    /// <returns>0 on success and -1 on initialization failure.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit1")]
     int BaseApiInit1(HandleRef handle, string datapath, string language, EngineMode mode, string[] configs, int configs_size);
 
@@ -299,11 +354,11 @@ public interface ITessApiSignatures
     ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses that
     ///     require any parameters to be set before Init
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="datapath"></param>
-    /// <param name="language"></param>
-    /// <param name="mode"></param>
-    /// <returns>0 on success and -1 on initialization failure</returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="datapath">The path to the tessdata directory.</param>
+    /// <param name="language">The language code or codes to load.</param>
+    /// <param name="mode">The OCR engine mode.</param>
+    /// <returns>0 on success and -1 on initialization failure.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit2")]
     int BaseApiInit2(HandleRef handle, string datapath, string language, EngineMode mode);
 
@@ -325,10 +380,10 @@ public interface ITessApiSignatures
     ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses that
     ///     require any parameters to be set before Init
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="datapath"></param>
-    /// <param name="language"></param>
-    /// <returns>0 on success and -1 on initialization failure</returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="datapath">The path to the tessdata directory.</param>
+    /// <param name="language">The language code or codes to load.</param>
+    /// <returns>0 on success and -1 on initialization failure.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit3")]
     int BaseApiInit3(HandleRef handle, string datapath, string language);
 
@@ -350,19 +405,37 @@ public interface ITessApiSignatures
     ///     explicitly call End() and then use SetVariable before Init. This is only a very rare use case, since there are very few uses
     ///     that require any parameters to be set before Init
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="datapath"></param>
-    /// <param name="language"></param>
-    /// <param name="mode"></param>
-    /// <param name="configs"></param>
-    /// <param name="configs_size"></param>
-    /// <param name="vars_vec"></param>
-    /// <param name="vars_values"></param>
-    /// <param name="vars_vec_size"></param>
-    /// <param name="set_only_non_debug_params"></param>
-    /// <returns>0 on success and -1 on initialization failure</returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="datapath">The path to the tessdata directory.</param>
+    /// <param name="language">The language code or codes to load.</param>
+    /// <param name="mode">The OCR engine mode.</param>
+    /// <param name="configs">Configuration file names to load.</param>
+    /// <param name="configs_size">The number of entries in <paramref name="configs"/>.</param>
+    /// <param name="vars_vec">Names of variables to set during initialization.</param>
+    /// <param name="vars_values">Values corresponding to <paramref name="vars_vec"/>.</param>
+    /// <param name="vars_vec_size">The number of entries in the variable arrays.</param>
+    /// <param name="set_only_non_debug_params">Whether to set only non-debug parameters.</param>
+    /// <returns>0 on success and -1 on initialization failure.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit4")]
     int BaseApiInit4(HandleRef handle, string datapath, string language, int mode, string[] configs, int configs_size, string[] vars_vec, string[] vars_values, UIntPtr vars_vec_size, bool set_only_non_debug_params);
+
+    /// <summary>
+    ///     Initializes Tesseract using a traineddata file supplied as an in-memory buffer.
+    /// </summary>
+    /// <param name="handle">The TesseractAPI instance.</param>
+    /// <param name="data">The traineddata file contents.</param>
+    /// <param name="data_size">The size of the traineddata buffer in bytes.</param>
+    /// <param name="language">The language code(s) to initialize.</param>
+    /// <param name="mode">The OCR engine mode.</param>
+    /// <param name="configs">Configuration file names.</param>
+    /// <param name="configs_size">The number of configuration files.</param>
+    /// <param name="vars_vec">Variable names to set during initialization.</param>
+    /// <param name="vars_values">Values corresponding to <paramref name="vars_vec"/>.</param>
+    /// <param name="vars_vec_size">The number of variable names and values.</param>
+    /// <param name="set_only_non_debug_params">Whether to set only non-debug parameters.</param>
+    /// <returns>0 on success; -1 if initialization fails.</returns>
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInit5")]
+    int BaseApiInit5(HandleRef handle, byte[] data, int data_size, string language, EngineMode mode, string[] configs, int configs_size, string[] vars_vec, string[] vars_values, UIntPtr vars_vec_size, bool set_only_non_debug_params);
 
     /// <summary>
     ///     Returns the languages string used in the last valid initialization. If the last initialization specified "deu+hin" then that
@@ -393,8 +466,7 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Init only for page layout analysis. Use only for calls to SetImage and AnalysePage. Calls that attempt recognition will generate an error
     /// </summary>
-    /// <param name="handle"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance to initialize for page layout analysis.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIInitForAnalysePage")]
     void BaseAPIInitForAnalysePage(HandleRef handle);
 
@@ -402,28 +474,26 @@ public interface ITessApiSignatures
     ///     Read a "config" file containing a set of param, value pairs. Searches the standard places: tessdata/configs, tessdata/tessconfigs and
     ///     also accepts a relative or absolute path name. Note: only non-init params will be set (init params are set by Init())
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="filename"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="filename">The config file name or path to read.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIReadConfigFile")]
-    string BaseAPIReadConfigFile(HandleRef handle, string filename);
+    void BaseAPIReadConfigFile(HandleRef handle, string filename);
 
     /// <summary>
     ///     Read a DEBUG "config" file containing a set of param, value pairs. Searches the standard places: tessdata/configs, tessdata/tessconfigs and
     ///     also accepts a relative or absolute path name. Note: only non-init params will be set (init params are set by Init())
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="filename"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="filename">The debug config file name or path to read.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIReadDebugConfigFile")]
-    string BaseAPIReadDebugConfigFile(HandleRef handle, string filename);
+    void BaseAPIReadDebugConfigFile(HandleRef handle, string filename);
 
     /// <summary>
     ///     Set the current page segmentation mode. Defaults to PSM_SINGLE_BLOCK. The mode is stored as an IntParam
     ///     so it can also be modified by ReadConfigFile or SetVariable("tessedit_pageseg_mode", mode as string)
     /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="mode"></param>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="mode">The page segmentation mode to use.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetPageSegMode")]
     void BaseApiSetPageSegMode(HandleRef handle, PageSegMode mode);
 
@@ -438,17 +508,17 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Recognize a rectangle from an image and return the result as a string
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="imagedata"></param>
-    /// <param name="bytes_per_pixel"></param>
-    /// <param name="bytes_per_line"></param>
-    /// <param name="left"></param>
-    /// <param name="top"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="imagedata">The image pixel data.</param>
+    /// <param name="bytes_per_pixel">The number of bytes per pixel.</param>
+    /// <param name="bytes_per_line">The number of bytes per image row.</param>
+    /// <param name="left">The left coordinate of the rectangle.</param>
+    /// <param name="top">The top coordinate of the rectangle.</param>
+    /// <param name="width">The rectangle width in pixels.</param>
+    /// <param name="height">The rectangle height in pixels.</param>
+    /// <returns>A pointer to the recognized UTF-8 text.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRect")]
-    void BaseAPIRect(HandleRef handle, byte[] imagedata, int bytes_per_pixel, int bytes_per_line, int left, int top, int width, int height);
+    IntPtr BaseAPIRect(HandleRef handle, byte[] imagedata, int bytes_per_pixel, int bytes_per_line, int left, int top, int width, int height);
 
     /// <summary>
     ///     Call between pages or documents etc to free up memory and forget adaptive data
@@ -463,12 +533,12 @@ public interface ITessApiSignatures
     ///     SetImage clears all recognition results, and sets the rectangle to the full image, so it may be followed immediately by a GetUTF8Text,
     ///     and it will automatically perform recognition
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="imagedata"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
-    /// <param name="bytes_per_pixel"></param>
-    /// <param name="bytes_per_line"></param>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="imagedata">The image pixel data.</param>
+    /// <param name="width">The image width in pixels.</param>
+    /// <param name="height">The image height in pixels.</param>
+    /// <param name="bytes_per_pixel">The number of bytes per pixel.</param>
+    /// <param name="bytes_per_line">The number of bytes per image row.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetImage")]
     void BaseAPISetImage(HandleRef handle, byte[] imagedata, int width, int height, int bytes_per_pixel, int bytes_per_line);
 
@@ -486,8 +556,8 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Set the resolution of the source image in pixels per inch so font size information can be calculated in results. Call this after SetImage()
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="ppi"></param>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="ppi">The source image resolution in pixels per inch.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetSourceResolution")]
     void BaseAPISetSourceResolution(HandleRef handle, int ppi);
 
@@ -495,28 +565,36 @@ public interface ITessApiSignatures
     ///     Restrict recognition to a sub-rectangle of the image. Call after SetImage. Each SetRectangle clears the recognition results
     ///     so multiple rectangles can be recognized with the same image
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="left"></param>
-    /// <param name="top"></param>
-    /// <param name="width"></param>
-    /// <param name="height"></param>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="left">The left coordinate of the rectangle.</param>
+    /// <param name="top">The top coordinate of the rectangle.</param>
+    /// <param name="width">The rectangle width in pixels.</param>
+    /// <param name="height">The rectangle height in pixels.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetRectangle")]
     void BaseApiSetRectangle(HandleRef handle, int left, int top, int width, int height);
 
     /// <summary>
     ///     ONLY available after SetImage if you have Leptonica installed. Get a copy of the internal thresholded image from Tesseract
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance containing the image.</param>
+    /// <returns>A pointer to a copy of the thresholded image.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImage")]
     IntPtr BaseApiGetThresholdedImage(HandleRef handle);
 
     /// <summary>
+    ///     Returns the page orientation gradient calculated during layout analysis.
+    /// </summary>
+    /// <param name="handle">The TesseractAPI instance.</param>
+    /// <returns>The page orientation gradient.</returns>
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetGradient")]
+    float BaseApiGetGradient(HandleRef handle);
+
+    /// <summary>
     ///     Get the result of page layout analysis as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="pixa"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="pixa">Receives the images corresponding to the returned regions.</param>
+    /// <returns>A pointer to the region boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetRegions")]
     IntPtr BaseAPIGetRegions(HandleRef handle, IntPtr pixa);
 
@@ -526,10 +604,10 @@ public interface ITessApiSignatures
     ///     is not NULL, the paragraph-id of each line within its block is also returned as an array of one element per line. delete [] after use.
     ///     Helper method to extract from the thresholded image(most common usage).
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="pixa"></param>
-    /// <param name="blockids"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="pixa">Receives the images corresponding to the text lines.</param>
+    /// <param name="blockids">Receives the block ID for each line when provided.</param>
+    /// <returns>A pointer to the text-line boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTextlines")]
     IntPtr BaseAPIGetTextlines(HandleRef handle, IntPtr pixa, IntPtr blockids);
 
@@ -538,13 +616,13 @@ public interface ITessApiSignatures
     ///     is not NULL, the block-id of each line is also returned as an array of one element per line. delete [] after use. If paraids is
     ///     not NULL, the paragraph-id of each line within its block is also returned as an array of one element per line. delete [] after use.
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="raw_image"></param>
-    /// <param name="raw_padding"></param>
-    /// <param name="pixa"></param>
-    /// <param name="blockids"></param>
-    /// <param name="paraids"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="raw_image">Whether to extract line images from the original image instead of the thresholded image.</param>
+    /// <param name="raw_padding">The padding in pixels around extracted original-image regions.</param>
+    /// <param name="pixa">Receives the images corresponding to the text lines.</param>
+    /// <param name="blockids">Receives the block ID for each line when provided.</param>
+    /// <param name="paraids">Receives the paragraph ID for each line when provided.</param>
+    /// <returns>A pointer to the text-line boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTextlines1")]
     IntPtr TessBaseAPIGetTextlines1(HandleRef handle, bool raw_image, int raw_padding, IntPtr pixa, IntPtr blockids, IntPtr paraids);
 
@@ -553,30 +631,29 @@ public interface ITessApiSignatures
     ///     of non-rectangular regions. Can be called before or after Recognize. If blockids is not NULL, the block-id of each line is
     ///     also returned as an array of one element per line. delete [] after use.
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="pixa"></param>
-    /// <param name="blockids"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="pixa">Receives the images corresponding to the text strips.</param>
+    /// <param name="blockids">Receives the block ID for each strip when provided.</param>
+    /// <returns>A pointer to the text-strip boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetStrips")]
     IntPtr BaseAPIGetStrips(HandleRef handle, IntPtr pixa, IntPtr blockids);
 
     /// <summary>
     ///     Get the words as a Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="pixa"></param>
-    /// <param name="blockids"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="pixa">Receives the images corresponding to the words.</param>
+    /// <returns>A pointer to the word boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetWords")]
-    IntPtr BaseAPIGetWords(HandleRef handle, IntPtr pixa, IntPtr blockids);
+    IntPtr BaseAPIGetWords(HandleRef handle, IntPtr pixa);
 
     /// <summary>
     ///     Gets the individual connected (text) components (created after pages segmentation step, but before recognition) as a
     ///     Leptonica-style Boxa, Pixa pair, in reading order. Can be called before or after Recognize.
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="pixa"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="pixa">Receives the images of the connected components.</param>
+    /// <returns>A pointer to the connected-component boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetConnectedComponents")]
     IntPtr BaseAPIGetConnectedComponents(HandleRef handle, IntPtr pixa);
 
@@ -586,12 +663,12 @@ public interface ITessApiSignatures
     ///     array of one element per component. delete [] after use. If text_only is true, then only text components are returned.
     ///     Helper function to get binary images with no padding (most common usage).
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="level"></param>
-    /// <param name="text_only"></param>
-    /// <param name="pixa"></param>
-    /// <param name="blockids"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="level">The page iterator level of components to extract.</param>
+    /// <param name="text_only">Nonzero to return only text components.</param>
+    /// <param name="pixa">Receives images for the returned components.</param>
+    /// <param name="blockids">Receives the block ID for each component when provided.</param>
+    /// <returns>A pointer to the component boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetComponentImages")]
     IntPtr BaseApiGetComponentImages(HandleRef handle, PageIteratorLevel level, int text_only, IntPtr pixa, IntPtr blockids);
 
@@ -602,33 +679,38 @@ public interface ITessApiSignatures
     ///     returned as an array of one element per component. delete [] after use. If raw_image is true, then portions of the original image
     ///     are extracted instead of the thresholded image and padded with raw_padding. If text_only is true, then only text components are returned.
     /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="level"></param>
-    /// <param name="text_only"></param>
-    /// <param name="raw_image"></param>
-    /// <param name="pixa"></param>
-    /// <param name="blockids"></param>
-    /// <param name="paraids"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="level">The page iterator level of components to extract.</param>
+    /// <param name="text_only">Nonzero to return only text components.</param>
+    /// <param name="raw_image">Whether to extract regions from the original image.</param>
+    /// <param name="raw_padding">The padding in pixels around original-image regions.</param>
+    /// <param name="pixa">Receives images for the returned components.</param>
+    /// <param name="blockids">Receives the block ID for each component when provided.</param>
+    /// <param name="paraids">Receives the paragraph ID for each component when provided.</param>
+    /// <returns>A pointer to the component boxes.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetComponentImages1")]
-    IntPtr BaseApiGetComponentImages1(HandleRef handle, PageIteratorLevel level, int text_only, bool raw_image, IntPtr pixa, IntPtr blockids, IntPtr paraids);
+    IntPtr BaseApiGetComponentImages1(HandleRef handle, PageIteratorLevel level, int text_only, bool raw_image, int raw_padding, IntPtr pixa, IntPtr blockids, IntPtr paraids);
 
     /// <summary>
     ///     Scale factor from original image
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance containing the image.</param>
+    /// <returns>The scale factor applied to the original image.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetThresholdedImageScaleFactor")]
     int BaseAPIGetThresholdedImageScaleFactor(HandleRef handle);
 
     /// <summary>
     ///     Runs page layout analysis in the mode set by SetPageSegMode
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance containing the image.</param>
+    /// <returns>A pointer to the page iterator, or null if layout analysis fails.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIAnalyseLayout")]
     IntPtr BaseApiAnalyseLayout(HandleRef handle);
 
+    /// <summary>Recognizes the current image and stores the results in the Tesseract API instance.</summary>
+    /// <param name="handle">The Tesseract API instance containing the image.</param>
+    /// <param name="monitor">The progress monitor, or a null handle if no monitor is used.</param>
+    /// <returns>0 on success; nonzero if recognition fails or is cancelled.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIRecognize")]
     int BaseApiRecognize(HandleRef handle, HandleRef monitor);
 
@@ -636,26 +718,26 @@ public interface ITessApiSignatures
     ///     Recognize the image from SetAndThresholdImage, generating Tesseract internal structures. Returns 0 on success. Optional.
     ///     The Get*Text functions below will call Recognize if needed. After Recognize, the output is kept internally until the next SetImage
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="filename"></param>
-    /// <param name="retry_config"></param>
-    /// <param name="timeout_millisec"></param>
-    /// <param name="renderer"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="filename">The input file or page sequence to process.</param>
+    /// <param name="retry_config">The retry configuration name, or null for no retry.</param>
+    /// <param name="timeout_millisec">The recognition timeout in milliseconds.</param>
+    /// <param name="renderer">The renderer receiving the results.</param>
+    /// <returns>Nonzero if processing succeeds; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIProcessPages")]
     int BaseApiProcessPages(HandleRef handle, string filename, string retry_config, int timeout_millisec, HandleRef renderer);
 
     /// <summary>
-    ///     The recognized text is returned as a char* which is coded as UTF-8 and must be freed with the delete [] operator.
+    ///     Processes one image and sends the recognition results to the renderer.
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="pixHandle"><see cref="Pix.Image.Handle"/></param>
-    /// <param name="page_index"></param>
-    /// <param name="filename"></param>
-    /// <param name="retry_config"></param>
-    /// <param name="timeout_millisec"></param>
-    /// <param name="renderer"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="pixHandle">The Leptonica image to process.</param>
+    /// <param name="page_index">The page number to associate with this image.</param>
+    /// <param name="filename">The input file name associated with the image.</param>
+    /// <param name="retry_config">The retry configuration name, or null for no retry.</param>
+    /// <param name="timeout_millisec">The recognition timeout in milliseconds.</param>
+    /// <param name="renderer">The renderer receiving the results.</param>
+    /// <returns>Nonzero if processing succeeds; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIProcessPage")]
     int BaseApiProcessPage(HandleRef handle, HandleRef pixHandle, int page_index, string filename, string retry_config, int timeout_millisec, HandleRef renderer);
 
@@ -681,27 +763,58 @@ public interface ITessApiSignatures
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetMutableIterator")]
     IntPtr BaseAPIGetMutableIterator(HandleRef handle);
 
+    /// <summary>Returns the recognized text for the current image as UTF-8.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUTF8Text")]
     IntPtr BaseApiGetUTF8TextInternal(HandleRef handle);
 
+    /// <summary>Returns the recognized text for a page in hOCR format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetHOCRText")]
     IntPtr BaseApiGetHOcrTextInternal(HandleRef handle, int pageNum);
 
+    /// <summary>Returns the recognized text for a page in ALTO XML format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetAltoText")]
     IntPtr BaseApiGetAltoTextInternal(HandleRef handle, int pageNum);
 
+    /// <summary>
+    ///     Returns the recognized text for a page in PAGE XML format.
+    /// </summary>
+    /// <param name="handle">The TesseractAPI instance.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
+    /// <returns>A pointer to the PAGE XML text, or null if unavailable.</returns>
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetPAGEText")]
+    IntPtr BaseApiGetPAGETextInternal(HandleRef handle, int pageNum);
+
+    /// <summary>Returns the recognized text for a page in TSV format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTsvText")]
     IntPtr BaseApiGetTsvTextInternal(HandleRef handle, int pageNum);
 
+    /// <summary>Returns the recognized text for a page in box-file format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetBoxText")]
     IntPtr BaseApiGetBoxTextInternal(HandleRef handle, int pageNum);
 
+    /// <summary>Returns the recognized text for a page in LSTM box-file format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetLSTMBoxText")]
     IntPtr BaseApiGetLstmBoxTextInternal(HandleRef handle, int pageNum);
 
+    /// <summary>Returns the recognized text for a page in WordStr box-file format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
+    /// <param name="pageNum">The zero-based page number.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetWordStrBoxText")]
     IntPtr BaseApiGetWordStrBoxTextInternal(HandleRef handle, int pageNum);
 
+    /// <summary>Returns the recognized text for the current image in UNLV format.</summary>
+    /// <param name="handle">The Tesseract API instance containing the recognition result.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUNLVText")]
     IntPtr BaseApiGetUnlvTextInternal(HandleRef handle);
 
@@ -719,7 +832,7 @@ public interface ITessApiSignatures
     /// <param name="handle">The TesseractAPI instance</param>
     /// <returns></returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIAllWordConfidences")]
-    int BaseAPIAllWordConfidences(HandleRef handle);
+    IntPtr BaseAPIAllWordConfidences(HandleRef handle);
 
     /// <summary>
     ///     Applies the given word to the adaptive classifier if possible. The word must be SPACE-DELIMITED UTF-8 - l i k e t h i s ,
@@ -727,10 +840,10 @@ public interface ITessApiSignatures
     ///     given word. The mode arg should be PSM_SINGLE_WORD or PSM_CIRCLE_WORD, as that will be used to control layout analysis.
     ///     The currently set PageSegMode is preserved. Returns false if adaption was not possible for some reason
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="mode"><see cref="PageSegMode"/></param>
-    /// <param name="wordstr"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance configured with the image of the word.</param>
+    /// <param name="mode">The page segmentation mode used to analyze the word.</param>
+    /// <param name="wordstr">The space-delimited UTF-8 word to apply to the adaptive classifier.</param>
+    /// <returns>Nonzero if the word was applied successfully; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIAdaptToWordStr")]
     int BaseAPIAdaptToWordStr(HandleRef handle, PageSegMode mode, string wordstr);
 
@@ -753,8 +866,8 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Check whether a word is valid according to Tesseract's language model
     /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="word"></param>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="word">The word to check against the language model.</param>
     /// <remarks>
     ///     0 if the word is invalid, non-zero if valid
     /// </remarks>
@@ -769,14 +882,14 @@ public interface ITessApiSignatures
     /// <param name="out_slope">Slope</param>
     /// <returns>TRUE if text direction is valid</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetTextDirection")]
-    int BaseAPIGetTextDirection(HandleRef handle, int out_offset, float out_slope);
+    int BaseAPIGetTextDirection(HandleRef handle, out int out_offset, out float out_slope);
 
     /// <summary>
     ///     Gets the string of the specified unichar
     /// </summary>
-    /// <param name="handle">The TesseractAPI instance</param>
-    /// <param name="unichar_id"></param>
-    /// <returns></returns>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="unichar_id">The identifier of the character to retrieve.</param>
+    /// <returns>The string representation of the character.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIGetUnichar")]
     string BaseAPIGetUnichar(HandleRef handle, int unichar_id);
 
@@ -788,14 +901,26 @@ public interface ITessApiSignatures
     /// <param name="handle">The TesseractAPI instance</param>
     /// <returns></returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIClearPersistentCache")]
-    int BaseAPIClearPersistentCache(HandleRef handle);
+    void BaseAPIClearPersistentCache(HandleRef handle);
 
+    /// <summary>Detects the page orientation and writing script, returning confidence values for each result.</summary>
+    /// <param name="handle">The Tesseract API instance containing the page image.</param>
+    /// <param name="orient_deg">Receives the page orientation in degrees.</param>
+    /// <param name="orient_conf">Receives the orientation confidence.</param>
+    /// <param name="script_name">Receives a pointer to the detected script name.</param>
+    /// <param name="script_conf">Receives the script confidence.</param>
+    /// <returns>Nonzero if orientation and script detection succeeds; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDetectOrientationScript")]
     int BaseAPIDetectOrientationScript(HandleRef handle, out int orient_deg, out float orient_conf, out IntPtr script_name, out float script_conf);
 
-    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPIDetectOrientationScript")]
+    /// <summary>Sets the minimum margin used when detecting page orientation.</summary>
+    /// <param name="handle">The Tesseract API instance.</param>
+    /// <param name="margin">The minimum orientation confidence margin.</param>
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPISetMinOrientationMargin")]
     void BaseAPISetMinOrientationMargin(HandleRef handle, double margin);
 
+    /// <summary>Returns the number of loaded dictionary (Dawg) models.</summary>
+    /// <param name="handle">The Tesseract API instance.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseAPINumDawgs")]
     int BaseAPINumDawgs(HandleRef handle);
 
@@ -816,9 +941,9 @@ public interface ITessApiSignatures
     ///     The returned array is of length equal to the number of text blocks, which may be less than the total number of blocks.
     ///     The ordering is intended to be consistent with GetTextLines().
     /// </summary>
-    /// <param name="handle"></param>
-    /// <param name="block_orientation"></param>
-    /// <param name="vertical_writing"></param>
+    /// <param name="handle">The Tesseract API instance with completed layout analysis.</param>
+    /// <param name="block_orientation">Receives the orientation value for each text block.</param>
+    /// <param name="vertical_writing">Receives whether each text block uses vertical writing.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessBaseGetBlockTextOrientations")]
     void BaseGetBlockTextOrientations(HandleRef handle, out int[] block_orientation, out bool[] vertical_writing);
     #endregion
@@ -834,8 +959,8 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Creates a copy of the specified PageIterator instance
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator to copy.</param>
+    /// <returns>A pointer to the copied page iterator.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorCopy")]
     IntPtr PageIteratorCopy(HandleRef handle);
 
@@ -855,9 +980,9 @@ public interface ITessApiSignatures
     ///     intermixed.This function iterates words in right-to-left scripts correctly, if the appropriate language has
     ///     been loaded into Tesseract
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator to advance.</param>
+    /// <param name="level">The page hierarchy level at which to advance.</param>
+    /// <returns>Nonzero if another element exists at the requested level; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorNext")]
     int PageIteratorNext(HandleRef handle, PageIteratorLevel level);
 
@@ -868,9 +993,9 @@ public interface ITessApiSignatures
     /// <remarks>
     ///     1 if true
     /// </remarks>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator to inspect.</param>
+    /// <param name="level">The hierarchy level to check.</param>
+    /// <returns>Nonzero if the iterator is at the beginning of that level; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorIsAtBeginningOf")]
     int PageIteratorIsAtBeginningOf(HandleRef handle, PageIteratorLevel level);
 
@@ -880,23 +1005,23 @@ public interface ITessApiSignatures
     /// <remarks>
     ///     1 if true
     /// </remarks>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <param name="element"></param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator to inspect.</param>
+    /// <param name="level">The hierarchy level containing the current position.</param>
+    /// <param name="element">The element level whose final position is checked.</param>
+    /// <returns>Nonzero if this is the final element at the specified level; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorIsAtFinalElement")]
     int PageIteratorIsAtFinalElement(HandleRef handle, PageIteratorLevel level, PageIteratorLevel element);
 
     /// <summary>
     ///     Returns the bounding rectangle of the current object at the given level in coordinates of the original image
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <param name="left"></param>
-    /// <param name="top"></param>
-    /// <param name="right"></param>
-    /// <param name="bottom"></param>
-    /// <returns>FALSE if there is no such object at the current position</returns>
+    /// <param name="handle">The page iterator identifying the current object.</param>
+    /// <param name="level">The hierarchy level of the object.</param>
+    /// <param name="left">Receives the left coordinate of the bounding box.</param>
+    /// <param name="top">Receives the top coordinate of the bounding box.</param>
+    /// <param name="right">Receives the right coordinate of the bounding box.</param>
+    /// <param name="bottom">Receives the bottom coordinate of the bounding box.</param>
+    /// <returns>Nonzero if a bounding box is available; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorBoundingBox")]
     int PageIteratorBoundingBox(HandleRef handle, PageIteratorLevel level, out int left, out int top, out int right, out int bottom);
 
@@ -914,9 +1039,9 @@ public interface ITessApiSignatures
     ///     following methods are used to generate the images: RIL_BLOCK: mask the page image with the block polygon. RIL_TEXTLINE: Clip the
     ///     rectangle of the line box from the page image.
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator identifying the current object.</param>
+    /// <param name="level">The hierarchy level of the object image to retrieve.</param>
+    /// <returns>A pointer to the binary image, or null if unavailable.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorGetBinaryImage")]
     IntPtr PageIteratorGetBinaryImage(HandleRef handle, PageIteratorLevel level);
 
@@ -927,13 +1052,13 @@ public interface ITessApiSignatures
     ///     likely not match the coordinates returned by BoundingBox. If you do not supply an original image, you will get a binary one.
     ///     Use pixDestroy to delete the image after use
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <param name="padding"></param>
-    /// <param name="originalImage"></param>
-    /// <param name="left"></param>
-    /// <param name="top"></param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator identifying the current object.</param>
+    /// <param name="level">The hierarchy level of the object image to retrieve.</param>
+    /// <param name="padding">The number of pixels to add around the object.</param>
+    /// <param name="originalImage">The original image to crop, or a null handle to use a binary image.</param>
+    /// <param name="left">Receives the left coordinate of the returned image in the original image.</param>
+    /// <param name="top">Receives the top coordinate of the returned image in the original image.</param>
+    /// <returns>A pointer to the extracted image, or null if unavailable.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorGetImage")]
     IntPtr PageIteratorGetImage(HandleRef handle, PageIteratorLevel level, int padding, HandleRef originalImage, out int left, out int top);
 
@@ -941,24 +1066,24 @@ public interface ITessApiSignatures
     ///     Returns the baseline of the current object at the given level. The baseline is the line that passes through (x1, y1) and (x2, y2).
     ///     WARNING: with vertical text, baselines may be vertical!
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="level"></param>
-    /// <param name="x1"></param>
-    /// <param name="y1"></param>
-    /// <param name="x2"></param>
-    /// <param name="y2"></param>
-    /// <returns></returns>
+    /// <param name="handle">The page iterator identifying the current object.</param>
+    /// <param name="level">The hierarchy level whose baseline is requested.</param>
+    /// <param name="x1">Receives the x-coordinate of the baseline start.</param>
+    /// <param name="y1">Receives the y-coordinate of the baseline start.</param>
+    /// <param name="x2">Receives the x-coordinate of the baseline end.</param>
+    /// <param name="y2">Receives the y-coordinate of the baseline end.</param>
+    /// <returns>Nonzero if a baseline is available; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorBaseline")]
     int PageIteratorBaseline(HandleRef handle, PageIteratorLevel level, out int x1, out int y1, out int x2, out int y2);
 
     /// <summary>
     ///     Returns the orientation
     /// </summary>
-    /// <param name="handle">The TessPageIterator instance</param>
-    /// <param name="orientation"></param>
-    /// <param name="writing_direction"></param>
-    /// <param name="textLineOrder"></param>
-    /// <param name="deskew_angle"></param>
+    /// <param name="handle">The page iterator for the current text block.</param>
+    /// <param name="orientation">Receives the page orientation.</param>
+    /// <param name="writing_direction">Receives the text writing direction.</param>
+    /// <param name="textLineOrder">Receives the order of text lines.</param>
+    /// <param name="deskew_angle">Receives the estimated deskew angle in radians.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessPageIteratorOrientation")]
     void PageIteratorOrientation(HandleRef handle, out Orientation orientation, out WritingDirection writing_direction, out TextLineOrder textLineOrder, out float deskew_angle);
 
@@ -1003,20 +1128,28 @@ public interface ITessApiSignatures
     /// </summary>
     /// <param name="handle">The TessResultIterator instance</param>
     /// <returns></returns>
-    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetPageIterator")]
+    [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetPageIteratorConst")]
     IntPtr TessResultIteratorGetPageIteratorConst(HandleRef handle);
 
     /// <summary>
-    ///     Native API call to TessResultIteratorGetChoiceIterator
+    ///     Gets the choice iterator for the current result.
     /// </summary>
-    /// <param name="handle"></param>
-    /// <returns></returns>
+    /// <param name="handle">The result iterator for the current recognition result.</param>
+    /// <returns>A pointer to the choice iterator, or null if none is available.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetChoiceIterator")]
     IntPtr ResultIteratorGetChoiceIterator(HandleRef handle);
 
+    /// <summary>Advances the result iterator to the next element at the specified level.</summary>
+    /// <param name="handle">The result iterator to advance.</param>
+    /// <param name="level">The page hierarchy level at which to advance.</param>
+    /// <returns>Nonzero if another element exists at the requested level; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorNext")]
-    IntPtr ResultIteratorNext(HandleRef handle, PageIteratorLevel level);
+    int ResultIteratorNext(HandleRef handle, PageIteratorLevel level);
 
+    /// <summary>Returns the recognized text for the current result at the specified level as UTF-8.</summary>
+    /// <param name="handle">The result iterator positioned at the desired result.</param>
+    /// <param name="level">The hierarchy level whose text is requested.</param>
+    /// <returns>A pointer to the UTF-8 text, or null if unavailable.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorGetUTF8Text")]
     IntPtr ResultIteratorGetUTF8TextInternal(HandleRef handle, PageIteratorLevel level);
 
@@ -1029,6 +1162,9 @@ public interface ITessApiSignatures
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorConfidence")]
     float ResultIteratorGetConfidence(HandleRef handle, PageIteratorLevel level);
 
+    /// <summary>Returns the recognition language associated with the current word.</summary>
+    /// <param name="handle">The result iterator positioned at the word.</param>
+    /// <returns>A pointer to the language code.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordRecognitionLanguage")]
     IntPtr ResultIteratorWordRecognitionLanguageInternal(HandleRef handle);
 
@@ -1039,16 +1175,16 @@ public interface ITessApiSignatures
     ///     Lifespan is the same as the iterator itself, ie rendered invalid by various members of TessBaseAPI,
     ///     including Init, SetImage, End or deleting the TessBaseAPI. Point size is returned in printers points (1/72 inch)
     /// </summary>
-    /// <param name="handle">The TessResultIterator instance</param>
-    /// <param name="isBold"></param>
-    /// <param name="isItalic"></param>
-    /// <param name="isUnderlined"></param>
-    /// <param name="isMonospace"></param>
-    /// <param name="isSerif"></param>
-    /// <param name="isSmallCaps"></param>
-    /// <param name="pointSize"></param>
-    /// <param name="fontId"></param>
-    /// <returns></returns>
+    /// <param name="handle">The result iterator positioned at the word.</param>
+    /// <param name="isBold">Receives whether the font is bold.</param>
+    /// <param name="isItalic">Receives whether the font is italic.</param>
+    /// <param name="isUnderlined">Receives whether the text is underlined.</param>
+    /// <param name="isMonospace">Receives whether the font is monospaced.</param>
+    /// <param name="isSerif">Receives whether the font is a serif font.</param>
+    /// <param name="isSmallCaps">Receives whether the text uses small caps.</param>
+    /// <param name="pointSize">Receives the font size in points.</param>
+    /// <param name="fontId">Receives the internal font identifier.</param>
+    /// <returns>A pointer to the font name.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordFontAttributes")]
     IntPtr ResultIteratorWordFontAttributes(HandleRef handle, out bool isBold, out bool isItalic, out bool isUnderlined, out bool isMonospace, out bool isSerif, out bool isSmallCaps, out int pointSize, out int fontId);
 
@@ -1063,7 +1199,7 @@ public interface ITessApiSignatures
     /// <summary>
     ///     Returns TRUE if the current word is numeric
     /// </summary>
-    /// <param name="handle"></param>
+    /// <param name="handle">The result iterator positioned at the word.</param>
     /// <returns>1 if word is numeric</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessResultIteratorWordIsNumeric")]
     bool ResultIteratorWordIsNumeric(HandleRef handle);
@@ -1097,27 +1233,27 @@ public interface ITessApiSignatures
     #endregion
 
     #region Choice iterator
+    /// <summary>Deletes the specified choice iterator and releases its resources.</summary>
+    /// <param name="handle">The choice iterator to delete.</param>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorDelete")]
     void ChoiceIteratorDelete(HandleRef handle);
 
+    /// <summary>Advances the choice iterator to the next choice.</summary>
+    /// <param name="handle">The choice iterator to advance.</param>
+    /// <returns>Nonzero if another choice exists; otherwise, zero.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorNext")]
     int ChoiceIteratorNext(HandleRef handle);
 
+    /// <summary>Returns the UTF-8 text of the current choice.</summary>
+    /// <param name="handle">The choice iterator positioned at the desired choice.</param>
+    /// <returns>A pointer to the choice text.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorGetUTF8Text")]
     IntPtr ChoiceIteratorGetUTF8TextInternal(HandleRef handle);
 
+    /// <summary>Returns the confidence of the current choice.</summary>
+    /// <param name="handle">The choice iterator positioned at the desired choice.</param>
+    /// <returns>The choice confidence as a percentage.</returns>
     [RuntimeDllImport(Constants.TesseractDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "TessChoiceIteratorConfidence")]
     float ChoiceIteratorGetConfidence(HandleRef handle);
-    #endregion
-
-    #region Progress monitor
-    // TODO: Add support for : TESS_API ETEXT_DESC *TessMonitorCreate();
-    // TODO: Add support for : TESS_API void TessMonitorDelete(ETEXT_DESC *monitor);
-    // TODO: Add support for : TESS_API void TessMonitorSetCancelFunc(ETEXT_DESC *monitor, TessCancelFunc cancelFunc);
-    // TODO: Add support for : TESS_API void TessMonitorSetCancelThis(ETEXT_DESC *monitor, void *cancelThis);
-    // TODO: Add support for : TESS_API void *TessMonitorGetCancelThis(ETEXT_DESC *monitor);
-    // TODO: Add support for : TESS_API void TessMonitorSetProgressFunc(ETEXT_DESC *monitor, TessProgressFunc progressFunc);
-    // TODO: Add support for : TESS_API int TessMonitorGetProgress(ETEXT_DESC *monitor);
-    // TODO: Add support for : TESS_API void TessMonitorSetDeadlineMSecs(ETEXT_DESC *monitor, int deadline);
     #endregion
 }

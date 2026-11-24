@@ -49,7 +49,7 @@ public sealed class Colormap : IDisposable
         get
         {
             if (LeptonicaApi.Native.pixcmapGetColor32(Handle, index, out var color) == 0)
-                return Color.FromRgb((uint)color);
+                return Color.FromRgb(color);
             throw new InvalidOperationException("Failed to retrieve color.");
         }
         set

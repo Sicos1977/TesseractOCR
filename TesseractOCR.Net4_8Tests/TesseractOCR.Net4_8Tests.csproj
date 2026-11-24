@@ -191,6 +191,9 @@
     <None Update="x64\leptonica-1.85.0.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="x64\leptonica-1.87.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="x64\tesseract54.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

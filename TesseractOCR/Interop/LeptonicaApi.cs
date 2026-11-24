@@ -27,8 +27,6 @@ using TesseractOCR.InteropDotNet;
 
 namespace TesseractOCR.Interop;
 
-// TODO: Update leptonica interface
-
 internal static class LeptonicaApi
 {
     #region Fields

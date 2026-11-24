@@ -1,7 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
 
 namespace Tesseract.Tests;
 
@@ -9,11 +6,11 @@ namespace Tesseract.Tests;
 public class BaseApiTests : TesseractTestBase
 {
     [TestMethod]
-    public void GetVersion_Is552()
+    public void GetVersion_Is554()
     {
         using var engine = CreateEngine();
         var version = engine.Version;
-        Assert.IsTrue(version.StartsWith("5.5.2"));
+        Assert.IsTrue(version.StartsWith("5.5.4"));
     }
 
     [TestMethod]

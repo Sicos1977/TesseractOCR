@@ -279,7 +279,7 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
         IntPtr handle;
 
         fixed (byte* ptr = bytes)
-            handle = LeptonicaApi.Native.pixReadMem(ptr + offset, length);
+            handle = LeptonicaApi.Native.pixReadMem(ptr + offset, new UIntPtr((uint)length));
 
         if (handle == IntPtr.Zero)
         {
@@ -307,12 +307,14 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
         Logger.LogInformation("Loading multi-page TIFF image from memory");
 
         IntPtr handle;
+        var nativeOffset = new UIntPtr((uint)offSet);
 
         fixed (byte* ptr = bytes)
-            
-        { 
-            handle = LeptonicaApi.Native.pixReadMemFromMultipageTiff(ptr, bytes.Length, ref offSet);
+        {
+            handle = LeptonicaApi.Native.pixReadMemFromMultipageTiff(ptr, new UIntPtr((uint)bytes.Length), ref nativeOffset);
         }
+
+        offSet = checked((int)nativeOffset.ToUInt64());
 
         if (handle == IntPtr.Zero)
         {
@@ -363,7 +365,7 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
 
         fixed (byte* ptr = bytes)
         {
-            handle = LeptonicaApi.Native.pixReadMemTiff(ptr, bytes.Length, pageIndex);
+            handle = LeptonicaApi.Native.pixReadMemTiff(ptr, new UIntPtr((uint)bytes.Length), pageIndex);
         }
 
         if (handle == IntPtr.Zero)

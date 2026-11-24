@@ -87,7 +87,7 @@ public unsafe class Array : DisposableBase, IEnumerable<Image>
 
         fixed (byte* ptr = bytes)
         {
-            pixaHandle = LeptonicaApi.Native.pixaReadMemMultipageTiff(ptr, bytes.Length);
+            pixaHandle = LeptonicaApi.Native.pixaReadMemMultipageTiff(ptr, new UIntPtr((uint)bytes.Length));
         }
 
         if (pixaHandle == IntPtr.Zero) throw new IOException("Failed to load multi page image from memory");
