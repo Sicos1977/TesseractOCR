@@ -61,10 +61,6 @@ which support the legacy engine, for example those from the tessdata repository.
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="..\README.md">
-		  <Pack>True</Pack>
-		  <PackagePath>\</PackagePath>
-		</None>
 		<None Include="ocr.png">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>

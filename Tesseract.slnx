@@ -4,6 +4,9 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
   <Project Path="TesseractOCR.Net10Tests/TesseractOCR.Net10Tests.csproj" />
   <Project Path="TesseractOCR.Net4_8Tests/TesseractOCR.Net4_8Tests.csproj" />
   <Project Path="TesseractOCR/TesseractOCR.csproj" />
