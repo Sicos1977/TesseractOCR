@@ -40,7 +40,22 @@ The Windows native DLLs are compiled with Visual Studio 2026, so you need these 
 - X64: https://aka.ms/vs/18/release/vc_redist.x64.exe
 - ARM64: https://aka.ms/vs/18/release/vc_redist.arm64.exe
 
-Windows native binaries are included for x86, x64 and arm64.
+Windows native binaries are included for x86, x64 and arm64 under the NuGet runtime asset paths `runtimes/win-x86/native`, `runtimes/win-x64/native` and `runtimes/win-arm64/native`. NuGet selects the appropriate files when publishing for a Windows runtime identifier. The loader also accepts the existing architecture-specific directories for applications that deploy the libraries manually.
+
+## Linux native libraries
+
+The package includes glibc-based `linux-x64` and `linux-arm64` Tesseract 5.5.4 and Leptonica 1.87.0 libraries from [conda-forge](https://conda-forge.org/). Their other native dependencies are **not included**. In particular, they require recent conda-forge builds of the C++ runtime, libarchive, curl, and image codecs; standard distribution packages may not satisfy these requirements. These binaries do not support musl-based distributions such as Alpine.
+
+One way to provide the matching dependencies is to create a conda-forge environment and start the application with its library directory on the dynamic linker search path:
+
+```bash
+conda create -n tesseract-native -c conda-forge tesseract=5.5.4 leptonica=1.87.0
+conda activate tesseract-native
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+dotnet MyApplication.dll
+```
+
+Set `LD_LIBRARY_PATH` before starting the process. Install the environment for the same architecture as the application. The NuGet package supplies only the two OCR libraries; conda supplies their dependencies and their own licenses. Native library licenses are included in the NuGet package under `native-licenses`. The builds are conda-forge `tesseract` builds `h00735b0_0` (x64) and `hb27457c_0` (ARM64), and `leptonica` builds `hd4727f9_2` (x64) and `h775db3d_2` (ARM64).
 
 ## Recognize a page
 
@@ -51,7 +66,7 @@ using TesseractOCR.Enums;
 using TesseractOCR.Pix;
 
 var dataPath = @"./tessdata";
-var imagePath = @"./invoice.png";
+var imagePath = @"./invoice.png";voeg
 
 using var engine = new Engine(dataPath, Language.English, EngineMode.Default);
 using var image = Image.LoadFromFile(imagePath);
@@ -62,6 +77,23 @@ Console.WriteLine(page.Text);
 ```
 
 For multiple images, reuse engines safely with [EnginePool](#recognize-images-in-parallel-with-enginepool) instead of sharing one `Engine` between concurrent scans.
+
+## Recognize PDF documents (optional package)
+
+Install `TesseractOCRPdf` to add PDF input without adding PDF rendering dependencies to the base package:
+
+```powershell
+dotnet add package TesseractOCRPdf
+```
+
+```csharp
+using TesseractOCRPdf;
+
+var pages = engine.ProcessPdf("invoice.pdf", dpi: 300);
+var pooledPages = await pool.ProcessPdfAsync("invoice.pdf", dpi: 300);
+```
+
+Both methods accept files, byte arrays and readable, seekable streams, and return one text entry per page in document order. Streams remain open. `PdfImage.RenderPages` exposes disposable `Pix.Image` pages for preprocessing or advanced OCR output. PDFium renders the PDF through PDFtoImage; SkiaSharp provides the page bitmaps. These dependencies are only included when the optional package is installed. See [TesseractOCRPdf](TesseractOCRPdf/README.md) for full examples, cancellation, resource ownership and platform requirements (.NET Framework 4.8 or .NET Standard 2.1-compatible runtimes).
 
 ## Recognize images in parallel with EnginePool
 

@@ -401,6 +401,7 @@ public sealed class Page : DisposableBase
             else
                 scriptName = ScriptName.Unknown;
             
+            
             scriptConfidence = scriptConf;
 
             Logger.LogInformation($"Detected orientation '{orientDeg}', confidence '{orientConf}' and script name '{scriptName}', confidence '{scriptConf}'");

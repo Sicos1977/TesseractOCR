@@ -20,10 +20,10 @@
 
 using TesseractOCR.Enums;
 
-namespace TesseractOCR;
+namespace TesseractOCR.Layout;
 
 /// <summary>
-///     Returns information about a <see cref="Layout.Paragraph"/>
+///     Returns information about a <see cref="Paragraph"/>
 /// </summary>
 public readonly struct ParagraphInfo
 {
@@ -34,7 +34,7 @@ public readonly struct ParagraphInfo
     public ParagraphJustification Justification { get; }
 
     /// <summary>
-    ///     Returns <c>true</c> if the <see cref="Layout.Paragraph"/> is a list item
+    ///     Returns <c>true</c> if the <see cref="Paragraph"/> is a list item
     /// </summary>
     public bool IsListItem { get; }
 
@@ -53,6 +53,13 @@ public readonly struct ParagraphInfo
     #endregion
 
     #region Constructor
+    /// <summary>
+    ///     Initializes a paragraph with its justification, list status, crown status, and first-line indent.
+    /// </summary>
+    /// <param name="justification">The paragraph justification.</param>
+    /// <param name="isListItem">Whether the paragraph is a list item.</param>
+    /// <param name="isCrown">Whether the paragraph is a crown.</param>
+    /// <param name="firstLineIdent">The first-line indent.</param>
     internal ParagraphInfo(ParagraphJustification justification, bool isListItem, bool isCrown, int firstLineIdent)
     {
         Justification = justification;

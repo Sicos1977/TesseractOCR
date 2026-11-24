@@ -28,14 +28,21 @@ internal static class Helper
 {
     internal static void SetPath()
     {
-        var dllDirectory =
-            Path.Combine(
-                Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty,
-                SystemManager.GetPlatformName());
+        if (SystemManager.GetOperatingSystem() != InteropDotNet.OperatingSystem.Windows)
+            return;
 
+        var baseDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) ?? string.Empty;
+        var platformName = SystemManager.GetPlatformName();
+        var runtimeDirectory = Path.Combine(baseDirectory, "runtimes", "win-" + platformName, "native");
+        var legacyDirectory = Path.Combine(baseDirectory, platformName);
         var path = Environment.GetEnvironmentVariable("path") ?? string.Empty;
 
-        if (!path.Contains(dllDirectory))
-            Environment.SetEnvironmentVariable("path", Environment.GetEnvironmentVariable("path") + ";" + dllDirectory);
+        foreach (var directory in new[] { runtimeDirectory, legacyDirectory })
+        {
+            if (!path.Contains(directory))
+                path += ";" + directory;
+        }
+
+        Environment.SetEnvironmentVariable("path", path);
     }
 }

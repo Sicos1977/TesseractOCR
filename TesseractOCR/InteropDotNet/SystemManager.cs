@@ -56,6 +56,8 @@ internal static class SystemManager
             case Architecture.X86:
                 return "x86";
             default:
+                if (GetOperatingSystem() == OperatingSystem.Unix)
+                    throw new PlatformNotSupportedException($"Linux architecture '{RuntimeInformation.ProcessArchitecture}' is not supported.");
                 return IntPtr.Size == sizeof(int) ? "x86" : "x64";
         }
     }

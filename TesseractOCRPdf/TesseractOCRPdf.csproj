@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net48;netstandard2.1</TargetFrameworks>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageId>TesseractOCRPdf</PackageId>
+    <Version>5.5.3</Version>
+    <Authors>Kees van Spelde</Authors>
+    <Description>Optional PDF OCR extensions for TesseractOCR Engine and EnginePool, using PDFium and SkiaSharp.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Tesseract OCR PDF PDFium SkiaSharp</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>ocr.png</PackageIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TesseractOCR\TesseractOCR.csproj" />
+    <PackageReference Include="PDFtoImage" Version="5.4.0" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\TesseractOCR\ocr.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

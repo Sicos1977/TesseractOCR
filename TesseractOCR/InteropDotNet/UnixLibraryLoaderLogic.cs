@@ -48,13 +48,26 @@ internal class UnixLibraryLoaderLogic : ILibraryLoaderLogic
         try
         {
             Logger.LogInformation($"Trying to load native library '{fileName}'");
-            
+
+            UnixGetLastError();
             libraryHandle = UnixLoadLibrary(fileName, RtldNow);
-            
+
             if (libraryHandle != IntPtr.Zero)
                 Logger.LogInformation($"Successfully loaded native library '{fileName}' with handle '{libraryHandle}'");
             else
-                Logger.LogError($"Failed to load native library '{fileName}', set logging to debug level and check logging");
+            {
+                var detail = Marshal.PtrToStringAnsi(UnixGetLastError());
+                if (string.IsNullOrEmpty(detail))
+                    detail = "Check the library's native dependencies and dynamic linker search path.";
+                var message = $"Failed to load native library '{fileName}': {detail}";
+                Logger.LogError(message);
+                if (IsLinux)
+                    throw new DllNotFoundException(message);
+            }
+        }
+        catch (DllNotFoundException) when (IsLinux)
+        {
+            throw;
         }
         catch (Exception exception)
         {
@@ -110,6 +123,12 @@ internal class UnixLibraryLoaderLogic : ILibraryLoaderLogic
     {
         if (string.IsNullOrEmpty(fileName)) return fileName;
 
+        if (SystemManager.GetOperatingSystem() == OperatingSystem.Unix)
+        {
+            if (fileName == TesseractOCR.Interop.Constants.TesseractDllName) return "libtesseract.so.5";
+            if (fileName == TesseractOCR.Interop.Constants.LeptonicaDllName) return "libleptonica.so.6";
+        }
+
         if (!fileName.EndsWith(FileExtension, StringComparison.OrdinalIgnoreCase))
             fileName += FileExtension;
 
@@ -121,16 +140,28 @@ internal class UnixLibraryLoaderLogic : ILibraryLoaderLogic
     #endregion
 
     #region Native methods
+    private static readonly bool IsLinux = SystemManager.GetOperatingSystem() == OperatingSystem.Unix;
+    private static IntPtr UnixLoadLibrary(string fileName, int flags) => IsLinux ? LinuxLoadLibrary(fileName, flags) : MacLoadLibrary(fileName, flags);
+    private static int UnixFreeLibrary(IntPtr handle) => IsLinux ? LinuxFreeLibrary(handle) : MacFreeLibrary(handle);
+    private static IntPtr UnixGetProcAddress(IntPtr handle, string symbol) => IsLinux ? LinuxGetProcAddress(handle, symbol) : MacGetProcAddress(handle, symbol);
+    private static IntPtr UnixGetLastError() => IsLinux ? LinuxGetLastError() : MacGetLastError();
+
+    [DllImport("libdl.so.2", EntryPoint = "dlopen")]
+    private static extern IntPtr LinuxLoadLibrary(string fileName, int flags);
+    [DllImport("libdl.so.2", EntryPoint = "dlclose")]
+    private static extern int LinuxFreeLibrary(IntPtr handle);
+    [DllImport("libdl.so.2", EntryPoint = "dlsym")]
+    private static extern IntPtr LinuxGetProcAddress(IntPtr handle, string symbol);
+    [DllImport("libdl.so.2", EntryPoint = "dlerror")]
+    private static extern IntPtr LinuxGetLastError();
+
     [DllImport("libdl", EntryPoint = "dlopen")]
-    private static extern IntPtr UnixLoadLibrary(string fileName, int flags);
-
-    [DllImport("libdl", EntryPoint = "dlclose", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern int UnixFreeLibrary(IntPtr handle);
-
-    [DllImport("libdl", EntryPoint = "dlsym", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern IntPtr UnixGetProcAddress(IntPtr handle, string symbol);
-
-    [DllImport("libdl", EntryPoint = "dlerror", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern IntPtr UnixGetLastError();
+    private static extern IntPtr MacLoadLibrary(string fileName, int flags);
+    [DllImport("libdl", EntryPoint = "dlclose")]
+    private static extern int MacFreeLibrary(IntPtr handle);
+    [DllImport("libdl", EntryPoint = "dlsym")]
+    private static extern IntPtr MacGetProcAddress(IntPtr handle, string symbol);
+    [DllImport("libdl", EntryPoint = "dlerror")]
+    private static extern IntPtr MacGetLastError();
     #endregion
 }

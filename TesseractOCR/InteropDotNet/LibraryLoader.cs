@@ -169,6 +169,9 @@ public class LibraryLoader
     #region CheckCodeBase
     private IntPtr CheckCodeBase(string fileName, string platformName)
     {
+        if (SystemManager.GetOperatingSystem() == OperatingSystem.Unix)
+            return IntPtr.Zero;
+
         var assemblyLocation = Assembly.GetExecutingAssembly().GetName().CodeBase;
 
         if (IsNullOrEmpty(assemblyLocation))
@@ -256,6 +259,35 @@ public class LibraryLoader
     #region InternalLoadLibrary
     private IntPtr InternalLoadLibrary(string baseDirectory, string platformName, string fileName)
     {
+        if (SystemManager.GetOperatingSystem() == OperatingSystem.Unix)
+        {
+            if (platformName != "x64" && platformName != "arm64")
+                throw new PlatformNotSupportedException($"Linux architecture '{platformName}' is not supported.");
+
+            var nativeDirectory = Path.Combine(baseDirectory, "runtimes", "linux-" + platformName, "native");
+            var runtimePath = Path.Combine(nativeDirectory, fileName);
+            if (File.Exists(runtimePath))
+                return _logic.LoadLibrary(runtimePath);
+
+            var outputPath = Path.Combine(baseDirectory, fileName);
+            return File.Exists(outputPath) ? _logic.LoadLibrary(outputPath) : IntPtr.Zero;
+        }
+
+        if (SystemManager.GetOperatingSystem() == OperatingSystem.Windows)
+        {
+            var runtimeDirectory = Path.Combine(baseDirectory, "runtimes", "win-" + platformName, "native");
+            var runtimeLibrary = ResolveLibraryPath(runtimeDirectory, fileName);
+            if (runtimeLibrary != null)
+                return _logic.LoadLibrary(runtimeLibrary);
+
+            var legacyLibrary = ResolveLibraryPath(Path.Combine(baseDirectory, platformName), fileName);
+            if (legacyLibrary != null)
+                return _logic.LoadLibrary(legacyLibrary);
+
+            var outputLibrary = ResolveLibraryPath(baseDirectory, fileName);
+            return outputLibrary != null ? _logic.LoadLibrary(outputLibrary) : IntPtr.Zero;
+        }
+
         var platformDirectory = Path.Combine(baseDirectory, platformName);
         var fullPath = Path.Combine(platformDirectory, fileName);
 

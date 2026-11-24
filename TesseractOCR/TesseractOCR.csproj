@@ -9,7 +9,8 @@ which works by recognizing character patterns. Compatibility with Tesseract 3 is
 which support the legacy engine, for example those from the tessdata repository.</Description>
 		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2027 Kees van Spelde</Copyright>
 		<PackageReleaseNotes>- Updated to Tesseract 5.5.4
-- Updated nuget packages</PackageReleaseNotes>
+- Updated nuget packages
+- Includes EnginePool for concurrent OCR and the optional TesseractOCRPdf package</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>
@@ -18,35 +19,26 @@ which support the legacy engine, for example those from the tessdata repository.
 		<TargetFrameworks>netstandard20;netstandard21</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<FileVersion>5.521.0</FileVersion>
-		<AssemblyVersion>5.5.2.0</AssemblyVersion>
+		<FileVersion>5.5.4.0</FileVersion>
+		<AssemblyVersion>5.5.4.0</AssemblyVersion>
 		<PackageRequireLicenseAcceptance>False</PackageRequireLicenseAcceptance>
-		<Version>5.5.2</Version>
+		<Version>5.5.4</Version>
 		<PackageIcon>ocr.png</PackageIcon>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
 	<ItemGroup>
-		<Folder Include="x86\" />
-		<Folder Include="x64\" />
-		<Folder Include="arm64\" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="arm64/**/*.*" copyToOutput="true">
-			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>arm64</PackagePath>
-		</Content>
-		<Content Include="x64/**/*.*" copyToOutput="true">
-			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>x64;lib</PackagePath>
-		</Content>
-		<Content Include="x86/**/*.*" copyToOutput="true">
-			<IncludeInPackage>true</IncludeInPackage>
-			<PackagePath>x86;lib</PackagePath>
-		</Content>
+		<None Remove="runtimes\win-x64\native\*;runtimes\win-x86\native\*;runtimes\win-arm64\native\*;runtimes\linux-x64\native\*;runtimes\linux-arm64\native\*;native-licenses\*.txt" />
+		<None Include="runtimes\win-x64\native\*" Pack="true" PackagePath="runtimes\win-x64\native\" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="runtimes\win-x86\native\*" Pack="true" PackagePath="runtimes\win-x86\native\" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="runtimes\win-arm64\native\*" Pack="true" PackagePath="runtimes\win-arm64\native\" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="runtimes\linux-x64\native\*" Pack="true" PackagePath="runtimes\linux-x64\native\" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="runtimes\linux-arm64\native\*" Pack="true" PackagePath="runtimes\linux-arm64\native\" CopyToOutputDirectory="PreserveNewest" />
+		<None Include="native-licenses\*.txt" Pack="true" PackagePath="native-licenses\" />
+		<None Remove="buildTransitive\TesseractOCR.targets" />
+		<None Include="buildTransitive\TesseractOCR.targets" Pack="true" PackagePath="buildTransitive\" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -73,63 +65,4 @@ which support the legacy engine, for example those from the tessdata repository.
 		</None>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Content Update="x64\leptonica-1.85.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\leptonica-1.87.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract.exe">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract51.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract52.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract53.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract54.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x64\tesseract55.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\leptonica-1.85.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\leptonica-1.87.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract.exe">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract51.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract52.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract53.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract54.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="x86\tesseract55.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="arm64\leptonica-1.87.0.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="arm64\tesseract.exe">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	  <Content Update="arm64\tesseract55.dll">
-	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-	  </Content>
-	</ItemGroup>
-</Project>
+	</Project>

@@ -1,0 +1,7 @@
+<Project>
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">
+	<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x86\native\*" Link="runtimes\win-x86\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+	<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-x64\native\*" Link="runtimes\win-x64\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+	<None Include="$(MSBuildThisFileDirectory)..\runtimes\win-arm64\native\*" Link="runtimes\win-arm64\native\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
