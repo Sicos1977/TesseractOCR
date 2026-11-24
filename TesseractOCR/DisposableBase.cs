@@ -24,9 +24,15 @@ using TesseractOCR.Helpers;
 
 namespace TesseractOCR;
 
+/// <summary>
+///     Provides disposal state, a disposal event, and a finalizer for derived objects.
+/// </summary>
 public abstract class DisposableBase : IDisposable
 {
     #region Events
+    /// <summary>
+    ///     Occurs after the object is explicitly disposed.
+    /// </summary>
     public event EventHandler<EventArgs> Disposed;
     #endregion
 
@@ -38,6 +44,9 @@ public abstract class DisposableBase : IDisposable
     #endregion
 
     #region Destructor
+    /// <summary>
+    ///     Releases resources when the object was not explicitly disposed.
+    /// </summary>
     ~DisposableBase()
     {
         Dispose(false);
@@ -46,6 +55,9 @@ public abstract class DisposableBase : IDisposable
     #endregion
 
     #region Dispose
+    /// <summary>
+    ///     Releases resources, marks the object as disposed, and raises <see cref="Disposed"/>.
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
@@ -58,14 +70,22 @@ public abstract class DisposableBase : IDisposable
     #endregion
 
     #region VerifyNotDisposed
+    /// <summary>
+    ///     Verifies that this object has not been disposed.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">The object has been disposed.</exception>
     protected virtual void VerifyNotDisposed()
     {
-        if (IsDisposed) 
+        if (IsDisposed)
             throw new ObjectDisposedException(ToString());
     }
     #endregion
 
     #region Abstracts
+    /// <summary>
+    ///     Releases resources owned by the derived object.
+    /// </summary>
+    /// <param name="disposing"><c>true</c> for explicit disposal; <c>false</c> during finalization.</param>
     protected abstract void Dispose(bool disposing);
     #endregion
 }

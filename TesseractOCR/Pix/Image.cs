@@ -339,10 +339,8 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
         var offSet = 0;
         do
         {
-            using (var pix = LoadMultiPageTiffFromMemory(bytes, ref offSet))
-            {
-                yield return pix;
-            }
+            using var pix = LoadMultiPageTiffFromMemory(bytes, ref offSet);
+            yield return pix;
         } while (offSet != 0);
     }
     #endregion
@@ -915,11 +913,11 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     ///     The algorithm is based on Leptonica <code>lineremoval.c</code> example.
     ///     See <a href="http://www.leptonica.com/line-removal.html">line-removal</a>.
     /// </summary>
-    /// <param name="whiteTresh">Threshold value for white pixels.</param>
-    /// <param name="blackTresh">Threshold value for black pixels.</param>
+    /// <param name="whiteThreshold">Threshold value for white pixels.</param>
+    /// <param name="blackThreshold">Threshold value for black pixels.</param>
     /// <returns>Image with lines removed</returns>
     /// <exception cref="LeptonicaException">Raised when something fails</exception>
-    public Image RemoveLines(int whiteTresh = 127, int blackTresh = 127)
+    public Image RemoveLines(int whiteThreshold = 127, int blackThreshold = 127)
     {
         // ReSharper disable once JoinDeclarationAndInitializer
         IntPtr pix1, pix2, pix3, pix4, pix5, pix6, pix7, pix8, pix9;
@@ -947,12 +945,12 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
             pix4 = LeptonicaApi.Native.pixErodeGray(new HandleRef(this, pix3), 1, 5);
 
             // Clean the background of those lines
-            pix5 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4), whiteTresh, 255);
+            pix5 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix4), whiteThreshold, 255);
 
-            pix6 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix5), blackTresh, 0);
+            pix6 = LeptonicaApi.Native.pixThresholdToValue(new HandleRef(this, IntPtr.Zero), new HandleRef(this, pix5), blackThreshold, 0);
 
             // Get paint-through mask for changed pixels */
-            pix7 = LeptonicaApi.Native.pixThresholdToBinary(new HandleRef(this, pix6), whiteTresh);
+            pix7 = LeptonicaApi.Native.pixThresholdToBinary(new HandleRef(this, pix6), whiteThreshold);
 
             // Add the inverted, cleaned lines to orig. Because the background was cleaned, the inversion is 0,
             // so when you add, it doesn't lighten those pixels. It only lightens (to white) the pixels in the lines! */
@@ -1166,8 +1164,8 @@ public sealed unsafe class Image : DisposableBase, IEquatable<Image>
     /// <exception cref="LeptonicaException">Raised when something fails</exception>
     public Image Rotate(float angleInRadians, RotationMethod method = RotationMethod.AreaMap, RotationFill fillColor = RotationFill.White, int? width = null, int? height = null)
     {
-        if (width == null) width = Width;
-        if (height == null) height = Height;
+        width ??= Width;
+        height ??= Height;
 
         if (Math.Abs(angleInRadians) < VerySmallAngle)
             return Clone();

@@ -24,22 +24,32 @@ using System.Runtime.Serialization;
 
 namespace TesseractOCR.Exceptions;
 
+/// <summary>Represents an error reported by Leptonica.</summary>
 [Serializable]
 public class LeptonicaException : Exception
 {
     #region Constructors
+    /// <summary>Creates a Leptonica exception.</summary>
     public LeptonicaException()
     {
     }
 
+    /// <summary>Creates a Leptonica exception with an error message.</summary>
+    /// <param name="message">The error message.</param>
     public LeptonicaException(string message) : base(message)
     {
     }
 
+    /// <summary>Creates a Leptonica exception with an underlying cause.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="inner">The underlying exception.</param>
     public LeptonicaException(string message, Exception inner) : base(message, inner)
     {
     }
 
+    /// <summary>Restores a serialized Leptonica exception.</summary>
+    /// <param name="info">The serialized exception data.</param>
+    /// <param name="context">The serialization context.</param>
     protected LeptonicaException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

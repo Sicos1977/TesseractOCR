@@ -191,7 +191,7 @@ Install-Package TesseractOCR
 ## License Information
 
 * Copyright 2012-2019 Charles Weld (https://github.com/charlesw)
-* Copyright 2021-2025 Kees van Spelde
+* Copyright 2021-2027 Kees van Spelde
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -208,4 +208,3 @@ limitations under the License.
 Core Team
 =========
 * [Sicos1977](https://github.com/sicos1977) (Kees van Spelde)
-* [charlesw](https://github.com/charlesw) (Charles Weld) - Copied repro from him

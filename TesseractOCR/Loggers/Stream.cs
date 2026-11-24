@@ -42,7 +42,7 @@ public class Stream : ILogger, IDisposable
     /// <summary>
     ///     Logs information to the given <paramref name="stream"/>
     /// </summary>
-    /// <param name="stream"></param>
+    /// <param name="stream">The stream to write log messages to; it is disposed with the logger.</param>
     public Stream(System.IO.Stream stream)
     {
         _stream = stream;
@@ -50,6 +50,12 @@ public class Stream : ILogger, IDisposable
     #endregion
 
     #region BeginScope
+    /// <summary>
+    ///     Sets the current instance identifier from the state.
+    /// </summary>
+    /// <typeparam name="TState">The type of the scope state.</typeparam>
+    /// <param name="state">The state used to set the current instance identifier.</param>
+    /// <returns>Always null.</returns>
     public IDisposable BeginScope<TState>(TState state)
     {
         _instanceId = state?.ToString();
@@ -61,8 +67,8 @@ public class Stream : ILogger, IDisposable
     /// <summary>
     ///     Will always return <c>true</c>
     /// </summary>
-    /// <param name="logLevel"></param>
-    /// <returns></returns>
+    /// <param name="logLevel">The log level to check.</param>
+    /// <returns>Always <c>true</c>, regardless of whether <see cref="Log{TState}"/> writes that level.</returns>
     public bool IsEnabled(LogLevel logLevel)
     {
         return true;
@@ -71,14 +77,14 @@ public class Stream : ILogger, IDisposable
 
     #region Log
     /// <summary>
-    ///     Writes logging to the log
+    ///     Writes debug, information, or error messages to the stream when it is writable.
     /// </summary>
-    /// <typeparam name="TState"></typeparam>
-    /// <param name="logLevel"></param>
-    /// <param name="eventId"></param>
-    /// <param name="state"></param>
-    /// <param name="exception"></param>
-    /// <param name="formatter"></param>
+    /// <typeparam name="TState">The type of the log state.</typeparam>
+    /// <param name="logLevel">The severity of the message.</param>
+    /// <param name="eventId">The event identifier; it is not included in the output.</param>
+    /// <param name="state">The state passed to the formatter.</param>
+    /// <param name="exception">The exception passed to the formatter, if any.</param>
+    /// <param name="formatter">Formats the state and exception into a message.</param>
     public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
     {
         switch (logLevel)
@@ -106,6 +112,9 @@ public class Stream : ILogger, IDisposable
     #endregion
 
     #region Dispose
+    /// <summary>
+    ///     Disposes the underlying stream and releases its resources.
+    /// </summary>
     public void Dispose()
     {
         if (_stream == null)

@@ -24,25 +24,32 @@ using System.Runtime.Serialization;
 
 namespace TesseractOCR.Exceptions;
 
-/// <summary>
-/// Description of TesseractException.
-/// </summary>
+/// <summary>Represents an error reported by Tesseract.</summary>
 [Serializable]
 public class TesseractException : Exception
 {
     #region Constructors
+    /// <summary>Creates a Tesseract exception.</summary>
     public TesseractException()
     {
     }
 
+    /// <summary>Creates a Tesseract exception with an error message.</summary>
+    /// <param name="message">The error message.</param>
     public TesseractException(string message) : base(message)
     {
     }
 
+    /// <summary>Creates a Tesseract exception with an underlying cause.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="innerException">The underlying exception.</param>
     public TesseractException(string message, Exception innerException) : base(message, innerException)
     {
     }
 
+    /// <summary>Restores a serialized Tesseract exception.</summary>
+    /// <param name="info">The serialized exception data.</param>
+    /// <param name="context">The serialization context.</param>
     protected TesseractException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

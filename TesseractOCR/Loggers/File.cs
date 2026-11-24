@@ -35,7 +35,7 @@ public class File : Stream
     /// <summary>
     ///     Logs information to the given <paramref name="fileName"/>
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">The path of the log file to open for writing.</param>
     public File(string fileName) : base(System.IO.File.OpenWrite(fileName))
     {
     }

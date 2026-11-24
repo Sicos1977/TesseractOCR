@@ -66,6 +66,7 @@ public sealed class PdfResult : Result
     #endregion
 
     #region Dispose
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);

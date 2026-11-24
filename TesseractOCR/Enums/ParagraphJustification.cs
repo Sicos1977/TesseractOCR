@@ -21,6 +21,9 @@
 
 namespace TesseractOCR.Enums;
 
+/// <summary>
+///     Describes the alignment of text lines in a paragraph.
+/// </summary>
 public enum ParagraphJustification
 {
     /// <summary>

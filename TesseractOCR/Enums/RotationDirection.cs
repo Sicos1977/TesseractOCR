@@ -22,6 +22,9 @@
 
 namespace TesseractOCR.Enums;
 
+/// <summary>
+///     Specifies the direction of image rotation.
+/// </summary>
 public enum RotationDirection
 {
     /// <summary>

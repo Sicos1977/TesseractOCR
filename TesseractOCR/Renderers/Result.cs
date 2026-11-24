@@ -45,6 +45,9 @@ public abstract class Result : DisposableBase, IResult
     #endregion
 
     #region Properties
+    /// <summary>
+    ///     Gets the native result renderer handle.
+    /// </summary>
     protected HandleRef Handle => _handle;
 
     /// <summary>
@@ -62,6 +65,9 @@ public abstract class Result : DisposableBase, IResult
     #endregion
 
     #region Constructor
+    /// <summary>
+    ///     Initializes a renderer before its native handle is assigned.
+    /// </summary>
     protected Result()
     {
         _handle = new HandleRef(this, IntPtr.Zero);
@@ -72,7 +78,7 @@ public abstract class Result : DisposableBase, IResult
     /// <summary>
     ///     Add the page to the current document.
     /// </summary>
-    /// <param name="page"></param>
+    /// <param name="page">The page to recognize and add.</param>
     /// <returns><c>True</c> if the page was successfully added to the result renderer; otherwise false.</returns>
     public bool AddPage(Page page)
     {
@@ -141,10 +147,10 @@ public abstract class Result : DisposableBase, IResult
     /// <summary>
     ///     Creates renderers for specified output formats.
     /// </summary>
-    /// <param name="outputbase"></param>
+    /// <param name="outputbase">The output path without a file extension.</param>
     /// <param name="dataPath">The directory containing the pdf font data, normally same as your tessdata directory.</param>
-    /// <param name="outputFormats"></param>
-    /// <returns></returns>
+    /// <param name="outputFormats">The output formats to create, in the desired order.</param>
+    /// <returns>The created renderers, which the caller must dispose.</returns>
     public static IEnumerable<IResult> CreateRenderers(string outputbase, string dataPath,
         List<RenderFormat> outputFormats)
     {
@@ -342,7 +348,7 @@ public abstract class Result : DisposableBase, IResult
     /// <summary>
     ///     Initialize the render to use the specified native result renderer.
     /// </summary>
-    /// <param name="handle"></param>
+    /// <param name="handle">The nonzero native renderer handle to take ownership of.</param>
     protected void Initialize(IntPtr handle)
     {
         Guard.Require("handle", handle != IntPtr.Zero, "Handle must be initialized");
@@ -353,6 +359,7 @@ public abstract class Result : DisposableBase, IResult
     #endregion
 
     #region Dispose
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         try

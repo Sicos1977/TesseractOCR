@@ -24,6 +24,9 @@ using System.Runtime.InteropServices;
 
 namespace TesseractOCR.Pix;
 
+/// <summary>
+///     Represents red, green, blue, and alpha color components.
+/// </summary>
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public readonly struct Color : IEquatable<Color>
 {
@@ -50,6 +53,13 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region Constructor
+    /// <summary>
+    ///     Creates a color from its individual components.
+    /// </summary>
+    /// <param name="red">The red component.</param>
+    /// <param name="green">The green component.</param>
+    /// <param name="blue">The blue component.</param>
+    /// <param name="alpha">The alpha component; defaults to fully opaque.</param>
     public Color(byte red, byte green, byte blue, byte alpha = 255)
     {
         Red = red;
@@ -60,6 +70,11 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region PixColor
+    /// <summary>
+    ///     Creates a color from a packed RGBA value in <c>0xRRGGBBAA</c> order.
+    /// </summary>
+    /// <param name="value">The packed RGBA value.</param>
+    /// <returns>The unpacked color.</returns>
     public static Color FromRgba(uint value)
     {
         return new Color(
@@ -71,6 +86,11 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region FromRgb
+    /// <summary>
+    ///     Creates an opaque color from the upper three bytes of a packed value.
+    /// </summary>
+    /// <param name="value">The packed value in <c>0xRRGGBBxx</c> order; the low byte is ignored.</param>
+    /// <returns>The unpacked opaque color.</returns>
     public static Color FromRgb(uint value)
     {
         return new Color(
@@ -81,6 +101,10 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region ToRgba
+    /// <summary>
+    ///     Packs the color components in <c>0xRRGGBBAA</c> order.
+    /// </summary>
+    /// <returns>The packed RGBA value.</returns>
     public uint ToRgba()
     {
         return (uint)(Red << 24 |
@@ -91,6 +115,11 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region Color
+    /// <summary>
+    ///     Converts this color to a <see cref="System.Drawing.Color"/>.
+    /// </summary>
+    /// <param name="color">The source color.</param>
+    /// <returns>A color with the same components.</returns>
     public static explicit operator System.Drawing.Color(Color color)
     {
         return System.Drawing.Color.FromArgb(color.Alpha, color.Red, color.Green, color.Blue);
@@ -98,6 +127,11 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region PixColor
+    /// <summary>
+    ///     Converts a <see cref="System.Drawing.Color"/> to a pixel color.
+    /// </summary>
+    /// <param name="color">The source color.</param>
+    /// <returns>A color with the same components.</returns>
     public static explicit operator Color(System.Drawing.Color color)
     {
         return new Color(color.R, color.G, color.B, color.A);
@@ -105,6 +139,7 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region Equals
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
         return obj is Color color && Equals(color);
@@ -112,6 +147,11 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region Equals
+    /// <summary>
+    ///     Compares all four color components with another color.
+    /// </summary>
+    /// <param name="other">The color to compare.</param>
+    /// <returns><c>true</c> when all components match; otherwise, <c>false</c>.</returns>
     public bool Equals(Color other)
     {
         return Red == other.Red && Blue == other.Blue && Green == other.Green && Alpha == other.Alpha;
@@ -119,6 +159,7 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region GetHashCode
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         var hashCode = 0;
@@ -135,11 +176,19 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region Operator
+    /// <summary>Determines whether two colors have identical components.</summary>
+    /// <param name="lhs">The first color.</param>
+    /// <param name="rhs">The second color.</param>
+    /// <returns><c>true</c> if the colors match; otherwise, <c>false</c>.</returns>
     public static bool operator ==(Color lhs, Color rhs)
     {
         return lhs.Equals(rhs);
     }
 
+    /// <summary>Determines whether two colors differ in any component.</summary>
+    /// <param name="lhs">The first color.</param>
+    /// <param name="rhs">The second color.</param>
+    /// <returns><c>true</c> if the colors differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(Color lhs, Color rhs)
     {
         return !(lhs == rhs);
@@ -147,6 +196,7 @@ public readonly struct Color : IEquatable<Color>
     #endregion
 
     #region ToString
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"Color(0x{ToRgba():X})";

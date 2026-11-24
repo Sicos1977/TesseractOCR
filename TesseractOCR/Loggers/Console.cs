@@ -33,6 +33,9 @@ namespace TesseractOCR.Loggers;
 /// </remarks>
 public class Console : Stream
 {
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="Console"/> class that writes to the standard output stream.
+    /// </summary>
     public Console() : base(System.Console.OpenStandardOutput())
     {
     }

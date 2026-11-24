@@ -44,6 +44,9 @@ public unsafe class Array : DisposableBase, IEnumerable<Image>
     private int _count;
     private readonly int _version;
 
+    /// <summary>
+    ///     Gets or sets the filename associated with the image array.
+    /// </summary>
     public string Filename { get; set; }
     #endregion
 
@@ -347,6 +350,7 @@ public unsafe class Array : DisposableBase, IEnumerable<Image>
     #endregion
 
     #region Dispose
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         var handle = _handle.Handle;

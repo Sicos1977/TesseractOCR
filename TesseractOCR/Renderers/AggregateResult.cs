@@ -82,8 +82,8 @@ public class AggregateResult : DisposableBase, IResult
     /// <summary>
     ///     Adds a page to each of the child result renderers.
     /// </summary>
-    /// <param name="page"></param>
-    /// <returns></returns>
+    /// <param name="page">The page to add.</param>
+    /// <returns><c>true</c> if every child succeeds; otherwise, <c>false</c>.</returns>
     public bool AddPage(Page page)
     {
         Guard.RequireNotNull("page", page);
@@ -121,7 +121,7 @@ public class AggregateResult : DisposableBase, IResult
     ///     Begins a new document with the specified title.
     /// </summary>
     /// <param name="title">The title of the document.</param>
-    /// <returns></returns>
+    /// <returns>A handle that ends the child documents when disposed.</returns>
     public IDisposable BeginDocument(string title)
     {
         Guard.RequireNotNull("title", title);
@@ -161,6 +161,7 @@ public class AggregateResult : DisposableBase, IResult
     #endregion
 
     #region Dispose
+    /// <inheritdoc />
     protected override void Dispose(bool disposing)
     {
         try

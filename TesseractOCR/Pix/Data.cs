@@ -27,6 +27,9 @@ using TesseractOCR.Interop;
 
 namespace TesseractOCR.Pix;
 
+/// <summary>
+///     Provides access to and manipulation of image pixel data.
+/// </summary>
 public unsafe class Data
 {
     #region Properties
@@ -72,11 +75,14 @@ public unsafe class Data
     #endregion
 
     #region EncodeAsRGBA
+    /// <summary>
+    ///     Encodes the specified red, green, blue, and alpha components into a single 32-bit RGBA value.
+    /// </summary>
     public static uint EncodeAsRGBA(byte red, byte green, byte blue, byte alpha)
     {
-        return (uint)(red << 24 |
-                      green << 16 |
-                      blue << 8 |
+        return (uint)((red << 24) |
+                      (green << 16) |
+                      (blue << 8) |
                       alpha);
     }
     #endregion

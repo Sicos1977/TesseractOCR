@@ -21,13 +21,21 @@
 
 namespace TesseractOCR;
 
+/// <summary>
+///     Represents a detected image skew angle and its confidence.
+/// </summary>
 public readonly struct Scew
 {
     #region Properties
+    /// <summary>Gets the detected skew angle in degrees.</summary>
     public float Angle { get; }
 
+    /// <summary>Gets the confidence of the skew estimate.</summary>
     public float Confidence { get; }
 
+    /// <summary>Creates a skew estimate.</summary>
+    /// <param name="angle">The detected angle in degrees.</param>
+    /// <param name="confidence">The confidence of the estimate.</param>
     public Scew(float angle, float confidence)
     {
         Angle = angle;
@@ -36,6 +44,7 @@ public readonly struct Scew
     #endregion
 
     #region ToString
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"Scew: {Angle} [conf: {Confidence}]";
@@ -43,11 +52,15 @@ public readonly struct Scew
     #endregion
 
     #region Equals
+    /// <inheritdoc />
     public override bool Equals(object obj)
     {
         return obj is Scew scew && Equals(scew);
     }
 
+    /// <summary>Compares the angle and confidence with another estimate.</summary>
+    /// <param name="other">The estimate to compare.</param>
+    /// <returns><c>true</c> if both values match; otherwise, <c>false</c>.</returns>
     public bool Equals(Scew other)
     {
         // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -57,6 +70,7 @@ public readonly struct Scew
     #endregion
 
     #region GetHashCode
+    /// <inheritdoc />
     public override int GetHashCode()
     {
         var hashCode = 0;
@@ -71,11 +85,19 @@ public readonly struct Scew
     #endregion
 
     #region Operators
+    /// <summary>Determines whether two skew estimates match.</summary>
+    /// <param name="lhs">The first estimate.</param>
+    /// <param name="rhs">The second estimate.</param>
+    /// <returns><c>true</c> if both angle and confidence match; otherwise, <c>false</c>.</returns>
     public static bool operator ==(Scew lhs, Scew rhs)
     {
         return lhs.Equals(rhs);
     }
 
+    /// <summary>Determines whether two skew estimates differ.</summary>
+    /// <param name="lhs">The first estimate.</param>
+    /// <param name="rhs">The second estimate.</param>
+    /// <returns><c>true</c> if the estimates differ; otherwise, <c>false</c>.</returns>
     public static bool operator !=(Scew lhs, Scew rhs)
     {
         return !(lhs == rhs);

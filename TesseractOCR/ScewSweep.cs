@@ -27,24 +27,35 @@ namespace TesseractOCR;
 public struct ScewSweep
 {
     #region Constants
+    /// <summary>The default image reduction factor for the sweep.</summary>
     public const int DefaultReduction = 4; // Sweep part; 4 is good
+    /// <summary>The default sweep range in degrees.</summary>
     public const float DefaultRange = 7.0F;
+    /// <summary>The default sweep step in degrees.</summary>
     public const float DefaultDelta = 1.0F;
     #endregion
 
     #region Fields
+    /// <summary>The default sweep parameters.</summary>
     public static ScewSweep Default = new(DefaultReduction);
     #endregion
 
     #region Properties
+    /// <summary>Gets the image reduction factor for the sweep.</summary>
     public int Reduction { get; }
 
+    /// <summary>Gets the angular sweep range in degrees.</summary>
     public float Range { get; }
 
+    /// <summary>Gets the angular sweep step in degrees.</summary>
     public float Delta { get; }
     #endregion
 
     #region Constructor
+    /// <summary>Creates parameters for a skew sweep search.</summary>
+    /// <param name="reduction">The image reduction factor for the sweep.</param>
+    /// <param name="range">The angular search range in degrees.</param>
+    /// <param name="delta">The angular search step in degrees.</param>
     public ScewSweep(int reduction = DefaultReduction, float range = DefaultRange, float delta = DefaultDelta)
     {
         Reduction = reduction;

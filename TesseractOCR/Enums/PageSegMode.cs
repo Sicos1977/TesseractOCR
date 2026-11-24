@@ -84,6 +84,7 @@ public enum PageSegMode
     SingleChar = 10,
 
     /// <summary>
+    ///     Find as much text as possible without assuming a particular reading order.
     /// </summary>
     SparseText = 11,
 

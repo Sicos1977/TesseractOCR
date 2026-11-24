@@ -39,7 +39,7 @@ public interface IResult : IDisposable
     /// <summary>
     ///     Add the page to the current document.
     /// </summary>
-    /// <param name="page"></param>
+    /// <param name="page">The recognized page to add.</param>
     /// <returns><c>True</c> if the page was successfully added to the result renderer; otherwise false.</returns>
     bool AddPage(Page page);
 
@@ -55,7 +55,7 @@ public interface IResult : IDisposable
     /// and all other types the cmd line call of tesseract would support
     /// </param>
     /// <param name="engine">The engine to be used with the result</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if processing succeeded; otherwise, <c>false</c>.</returns>
     bool ProcessPages(byte[] data, Engine engine);
     
     /// <summary>
@@ -67,7 +67,7 @@ public interface IResult : IDisposable
     /// </summary>
     /// <param name="imgFilePath">The path to the image file to add. tiff, multipage tiff, jpg, etc.</param>
     /// <param name="engine">The engine to be used for processing</param>
-    /// <returns></returns>
+    /// <returns><c>true</c> if processing succeeded; otherwise, <c>false</c>.</returns>
     bool ProcessPages(string imgFilePath, Engine engine);
 
     /// <summary>

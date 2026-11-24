@@ -24,22 +24,32 @@ using System.Runtime.Serialization;
 
 namespace TesseractOCR.Exceptions;
 
+/// <summary>Represents a failure to load a native library.</summary>
 [Serializable]
 public class LoadLibraryException : SystemException
 {
     #region Constructors
+    /// <summary>Creates a library-loading exception.</summary>
     public LoadLibraryException()
     {
     }
 
+    /// <summary>Creates a library-loading exception with an error message.</summary>
+    /// <param name="message">The error message.</param>
     public LoadLibraryException(string message) : base(message)
     {
     }
 
+    /// <summary>Creates a library-loading exception with an underlying cause.</summary>
+    /// <param name="message">The error message.</param>
+    /// <param name="inner">The underlying exception.</param>
     public LoadLibraryException(string message, Exception inner) : base(message, inner)
     {
     }
 
+    /// <summary>Restores a serialized library-loading exception.</summary>
+    /// <param name="info">The serialized exception data.</param>
+    /// <param name="context">The serialization context.</param>
     protected LoadLibraryException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
