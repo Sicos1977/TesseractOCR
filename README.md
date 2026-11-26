@@ -101,7 +101,22 @@ var pages = engine.ProcessPdf("invoice.pdf", dpi: 300);
 var pooledPages = await pool.ProcessPdfAsync("invoice.pdf", dpi: 300);
 ```
 
-Both backends accept files, byte arrays and readable, seekable streams, and return one text entry per page in document order. Streams remain open. `PdfImage.RenderPages` exposes disposable `Pix.Image` pages for preprocessing or advanced OCR output. Import only the chosen backend's namespace for extension methods. See the package READMEs for platform requirements, cancellation and resource ownership; ImageMagick renders the entire document before yielding the first page.
+Alternatively, install the ImageMagick package and a compatible [Ghostscript](https://ghostscript.com/releases/gsdnld.html) for the application's architecture:
+
+```powershell
+dotnet add package TesseractOCRPdfImageMagick
+```
+
+```csharp
+using TesseractOCRPdfImageMagick;
+
+var pages = engine.ProcessPdf("invoice.pdf", dpi: 300);
+var pooledPages = await pool.ProcessPdfAsync("invoice.pdf", dpi: 300);
+```
+
+Ghostscript's free/open-source distribution is typically licensed under the GNU AGPL; a commercial license is also available. Check the [Ghostscript licensing terms](https://ghostscript.com/licensing/) and your obligations before deployment. On Windows, `MagickNET.SetGhostscriptDirectory` can specify its installation directory.
+
+Both backends accept files, byte arrays and readable, seekable streams, and return one text entry per page in document order. Streams remain open. `PdfImage.RenderPages` exposes disposable `Pix.Image` pages for preprocessing or advanced OCR output. Import only the chosen backend's namespace for extension methods. See the package READMEs for platform requirements, cancellation and resource ownership; ImageMagick renders the entire document before yielding the first page and may use substantial memory and temporary disk space.
 
 ## Recognize images in parallel with EnginePool
 
