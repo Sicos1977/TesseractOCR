@@ -86,7 +86,7 @@ For multiple images, reuse engines safely with [EnginePool](#recognize-images-in
 Choose one PDF renderer without adding its dependencies to the base package:
 
 - [TesseractOCRPdfSkiaSharp](TesseractOCRPdfSkiaSharp/README.md) uses PDFium and SkiaSharp. It replaces the `TesseractOCRPdf` package and retains its `TesseractOCRPdf` namespace.
-- [TesseractOCRPdfImageMagick](TesseractOCRPdfImageMagick/README.md) uses ImageMagick and requires a separately installed Ghostscript, which has its own licensing requirements. Its namespace is `TesseractOCRPdfImageMagick`.
+- [TesseractOCRPdfImageMagick](TesseractOCRPdfImageMagick/README.md) uses ImageMagick and requires a separately installed Ghostscript. The free/open-source Ghostscript distribution is typically licensed under the GNU AGPL; review its [licensing requirements](https://ghostscript.com/licensing/) before deployment. Its namespace is `TesseractOCRPdfImageMagick`.
 
 For example, with the SkiaSharp package:
 

@@ -31,7 +31,9 @@ For preprocessing or other OCR outputs, use `PdfImage.RenderPages` and dispose e
 
 ## Dependencies and platforms
 
-[Magick.NET Q8](https://github.com/dlemstra/Magick.NET) provides ImageMagick. PDF rendering also requires a separately installed [Ghostscript](https://ghostscript.com/releases/gsdnld.html) compatible with the process architecture. On Windows, `MagickNET.SetGhostscriptDirectory` can specify its installation directory. Ghostscript has its own licensing requirements, including for commercial use; review its license before deployment. ImageMagick and Ghostscript may use temporary files. Pages are composited on white and converted to Leptonica images in memory at the requested DPI. Rendering and annotation behavior can differ from the PDFium/SkiaSharp backend.
+[Magick.NET Q8](https://github.com/dlemstra/Magick.NET) provides ImageMagick. PDF rendering also requires a separately installed [Ghostscript](https://ghostscript.com/releases/gsdnld.html) compatible with the process architecture. On Windows, `MagickNET.SetGhostscriptDirectory` can specify its installation directory. ImageMagick and Ghostscript may use temporary files. Pages are composited on white and converted to Leptonica images in memory at the requested DPI. Rendering and annotation behavior can differ from the PDFium/SkiaSharp backend.
+
+**Ghostscript licensing:** The free/open-source distribution is typically licensed under the GNU AGPL. A commercial license is also available. Review the license of the Ghostscript distribution you use and its obligations before deployment; see [Ghostscript licensing](https://ghostscript.com/licensing/).
 
 The library targets .NET Framework 4.8 and .NET Standard 2.1. Platform support is the intersection of Magick.NET, Ghostscript, and TesseractOCR native dependencies; see the main repository README for OCR runtime requirements. Installing only `TesseractOCR` does not install these optional PDF dependencies.
 
