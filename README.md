@@ -8,6 +8,9 @@ TesseractOCR is a .NET wrapper for Tesseract OCR. The native API bindings target
 
 For concurrent OCR with reusable engines, see [Recognize images in parallel with EnginePool](#recognize-images-in-parallel-with-enginepool).
 
+## Documentation
+Documentation can be found [here](https://sicos1977.github.io/TesseractOCR/)
+
 ## Install and prepare language data
 
 Install the NuGet package:

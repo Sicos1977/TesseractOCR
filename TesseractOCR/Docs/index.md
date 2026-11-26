@@ -81,6 +81,8 @@ Use `AggregateResult` to send pages to multiple renderers in a single processing
 
 Install the [DocFX command-line tool](https://dotnet.github.io/docfx/) and run `build.bat` from this directory. The script generates API metadata from `TesseractOCR.csproj` and builds the site into `Docs/_site`. Run `serve.bat` to preview the generated site locally.
 
+The GitHub Pages workflow builds and publishes the site on pushes to `master` and can also be run manually. In the repository's Pages settings, set the build and deployment source to **GitHub Actions**.
+
 ## API reference
 
 Use the **API Reference** entry in the navigation to browse public classes, methods, properties, and their XML documentation.
