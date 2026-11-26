@@ -17,5 +17,7 @@
   <Project Path="TesseractOCR.Net4_8Tests/TesseractOCR.Net4_8Tests.csproj" />
   <Project Path="TesseractOCR/TesseractOCR.csproj" />
   <Project Path="TesseractOCRPdf.Tests/TesseractOCRPdf.Tests.csproj" />
-  <Project Path="TesseractOCRPdf/TesseractOCRPdf.csproj" />
+  <Project Path="TesseractOCRPdfImageMagick.Tests/TesseractOCRPdfImageMagick.Tests.csproj" />
+  <Project Path="TesseractOCRPdfImageMagick/TesseractOCRPdfImageMagick.csproj" />
+  <Project Path="TesseractOCRPdfSkiaSharp/TesseractOCRPdfSkiaSharp.csproj" />
 </Solution>

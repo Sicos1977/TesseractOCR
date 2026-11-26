@@ -10,7 +10,7 @@ which support the legacy engine, for example those from the tessdata repository.
 		<Copyright>Copyright 2012-2021 Charles Weld - Copyright 2021-2027 Kees van Spelde</Copyright>
 		<PackageReleaseNotes>- Updated to Tesseract 5.5.4
 - Updated nuget packages
-- Includes EnginePool for concurrent OCR and the optional TesseractOCRPdf package</PackageReleaseNotes>
+- Includes EnginePool for concurrent OCR and optional PDF packages</PackageReleaseNotes>
 		<PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
 		<PackageTags>Tesseract OCR text readable PDF</PackageTags>

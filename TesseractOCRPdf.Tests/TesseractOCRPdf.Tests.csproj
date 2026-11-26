@@ -12,7 +12,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.5.3" />
     <PackageReference Include="MSTest.TestFramework" Version="4.5.3" />
-    <ProjectReference Include="..\TesseractOCRPdf\TesseractOCRPdf.csproj" />
+    <ProjectReference Include="..\TesseractOCRPdfSkiaSharp\TesseractOCRPdfSkiaSharp.csproj" />
     <None Include="..\TesseractOCR.Tests\tessdata\eng.traineddata" Link="tessdata\eng.traineddata" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

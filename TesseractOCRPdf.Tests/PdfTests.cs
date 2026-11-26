@@ -4,12 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PDFtoImage.Exceptions;
 using SkiaSharp;
 using TesseractOCR;
 using TesseractOCR.Enums;
 using TesseractOCR.Exceptions;
-using TesseractOCRPdf;
+#if IMAGEMAGICK
+using TesseractOCRPdfImageMagick;
+using PdfReadException = ImageMagick.MagickException;
+#else
+using PdfReadException = PDFtoImage.Exceptions.PdfException;
+#endif
 using Image = TesseractOCR.Pix.Image;
 
 namespace Tesseract.Tests;
@@ -161,6 +165,24 @@ public class PdfTests
     }
 
     [TestMethod]
+    public void CancellationAfterLastPageIsObservedOnNextMove()
+    {
+        using var stream = new MemoryStream();
+        using (var document = SKDocument.CreatePdf(stream))
+        {
+            DrawPage(document, "FIRST PAGE", false);
+            document.Close();
+        }
+        using var cancellation = new CancellationTokenSource();
+        using var pages = PdfImage.RenderPages(stream.ToArray(), dpi: 72, cancellationToken: cancellation.Token).GetEnumerator();
+        Assert.IsTrue(pages.MoveNext());
+        using var image = pages.Current;
+        cancellation.Cancel();
+        Assert.ThrowsExactly<OperationCanceledException>(() => pages.MoveNext());
+        Assert.IsFalse(image.IsDisposed);
+    }
+
+    [TestMethod]
     public async Task PreCancelledRequestsDoNotOpenMissingFilesOrInitializeEngines()
     {
         using var cancellation = new CancellationTokenSource();
@@ -178,10 +200,10 @@ public class PdfTests
         var invalid = System.Text.Encoding.ASCII.GetBytes("This is not a PDF.");
         using var engine = new Engine(DataPath, Language.English);
         using var stream = new MemoryStream(invalid);
-        Assert.Throws<PdfException>(() => engine.ProcessPdf(stream));
+        Assert.Throws<PdfReadException>(() => engine.ProcessPdf(stream));
         Assert.IsTrue(stream.CanRead);
         using var pool = new EnginePool(DataPath, Language.English, maximumEngines: 1);
-        await Assert.ThrowsAsync<PdfException>(async () => await pool.ProcessPdfAsync(stream));
+        await Assert.ThrowsAsync<PdfReadException>(async () => await pool.ProcessPdfAsync(stream));
         Assert.IsTrue(stream.CanRead);
         AssertPages(await pool.ProcessPdfAsync(CreatePdf(), pageSegMode: PageSegMode.SingleLine));
     }

@@ -78,12 +78,17 @@ Console.WriteLine(page.Text);
 
 For multiple images, reuse engines safely with [EnginePool](#recognize-images-in-parallel-with-enginepool) instead of sharing one `Engine` between concurrent scans.
 
-## Recognize PDF documents (optional package)
+## Recognize PDF documents (optional packages)
 
-Install `TesseractOCRPdf` to add PDF input without adding PDF rendering dependencies to the base package:
+Choose one PDF renderer without adding its dependencies to the base package:
+
+- [TesseractOCRPdfSkiaSharp](TesseractOCRPdfSkiaSharp/README.md) uses PDFium and SkiaSharp. It replaces the `TesseractOCRPdf` package and retains its `TesseractOCRPdf` namespace.
+- [TesseractOCRPdfImageMagick](TesseractOCRPdfImageMagick/README.md) uses ImageMagick and requires a separately installed Ghostscript, which has its own licensing requirements. Its namespace is `TesseractOCRPdfImageMagick`.
+
+For example, with the SkiaSharp package:
 
 ```powershell
-dotnet add package TesseractOCRPdf
+dotnet add package TesseractOCRPdfSkiaSharp
 ```
 
 ```csharp
@@ -93,7 +98,7 @@ var pages = engine.ProcessPdf("invoice.pdf", dpi: 300);
 var pooledPages = await pool.ProcessPdfAsync("invoice.pdf", dpi: 300);
 ```
 
-Both methods accept files, byte arrays and readable, seekable streams, and return one text entry per page in document order. Streams remain open. `PdfImage.RenderPages` exposes disposable `Pix.Image` pages for preprocessing or advanced OCR output. PDFium renders the PDF through PDFtoImage; SkiaSharp provides the page bitmaps. These dependencies are only included when the optional package is installed. See [TesseractOCRPdf](TesseractOCRPdf/README.md) for full examples, cancellation, resource ownership and platform requirements (.NET Framework 4.8 or .NET Standard 2.1-compatible runtimes).
+Both backends accept files, byte arrays and readable, seekable streams, and return one text entry per page in document order. Streams remain open. `PdfImage.RenderPages` exposes disposable `Pix.Image` pages for preprocessing or advanced OCR output. Import only the chosen backend's namespace for extension methods. See the package READMEs for platform requirements, cancellation and resource ownership; ImageMagick renders the entire document before yielding the first page.
 
 ## Recognize images in parallel with EnginePool
 

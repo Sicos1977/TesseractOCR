@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>TesseractOCRPdf</PackageId>
+    <PackageId>TesseractOCRPdfSkiaSharp</PackageId>
     <Version>5.5.4</Version>
     <Authors>Kees van Spelde</Authors>
     <Description>Optional PDF OCR extensions for TesseractOCR Engine and EnginePool, using PDFium and SkiaSharp.</Description>

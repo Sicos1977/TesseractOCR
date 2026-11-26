@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-Builds and publishes the TesseractOCR and TesseractOCRPdf packages to nuget.org.
+Builds and publishes the TesseractOCR and optional PDF packages to nuget.org.
 .DESCRIPTION
-Packs both projects in Release mode before publishing either package. Each run
+Packs all projects in Release mode before publishing any package. Each run
 uses a separate output directory so older packages cannot be published by mistake.
 The core package is published first. Use -SkipDuplicate when retrying a partial
 upload. -WhatIf builds the packages but does not publish them.
@@ -27,14 +27,15 @@ New-Item -ItemType Directory -Path $packageDirectory -Force -WhatIf:$false -Conf
 $packageDirectory = (Resolve-Path -LiteralPath $packageDirectory).Path
 $projects = @(
 	@{ Name = 'TesseractOCR'; Path = (Join-Path $PSScriptRoot '..\TesseractOCR\TesseractOCR.csproj') },
-	@{ Name = 'TesseractOCRPdf'; Path = (Join-Path $PSScriptRoot '..\TesseractOCRPdf\TesseractOCRPdf.csproj') }
+	@{ Name = 'TesseractOCRPdfSkiaSharp'; Path = (Join-Path $PSScriptRoot '..\TesseractOCRPdfSkiaSharp\TesseractOCRPdfSkiaSharp.csproj') },
+	@{ Name = 'TesseractOCRPdfImageMagick'; Path = (Join-Path $PSScriptRoot '..\TesseractOCRPdfImageMagick\TesseractOCRPdfImageMagick.csproj') }
 )
 $packages = @()
 foreach ($project in $projects) {
 	$outputDirectory = Join-Path $packageDirectory $project.Name
 	New-Item -ItemType Directory -Path $outputDirectory -Force -WhatIf:$false -Confirm:$false | Out-Null
 	Write-Host "Building and packing $($project.Name) in Release mode"
-	& dotnet pack $project.Path --configuration Release --output $outputDirectory
+	& dotnet pack $project.Path --configuration Release --output $outputDirectory -p:GeneratePackageOnBuild=false
 	if ($LASTEXITCODE -ne 0) { throw "dotnet pack failed for $($project.Name) with exit code $LASTEXITCODE." }
 	$matches = @(Get-ChildItem -LiteralPath $outputDirectory -Filter "$($project.Name).*.nupkg" -File | Where-Object {
 		$_.Name -match ('^' + [regex]::Escape($project.Name) + '\.\d') -and $_.Name -notlike '*.symbols.nupkg'

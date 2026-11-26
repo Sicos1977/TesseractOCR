@@ -62,7 +62,15 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
-      - name: Test optional PDF input (.NET 10)
+      - name: Test SkiaSharp PDF input (.NET 10)
         run: dotnet test TesseractOCRPdf.Tests\TesseractOCRPdf.Tests.csproj -c Release
-      - name: Pack optional PDF package
-        run: dotnet pack TesseractOCRPdf\TesseractOCRPdf.csproj -c Release
+      - name: Pack SkiaSharp PDF package
+        run: dotnet pack TesseractOCRPdfSkiaSharp\TesseractOCRPdfSkiaSharp.csproj -c Release -p:GeneratePackageOnBuild=false
+      - name: Pack ImageMagick PDF package
+        run: dotnet pack TesseractOCRPdfImageMagick\TesseractOCRPdfImageMagick.csproj -c Release -p:GeneratePackageOnBuild=false
+      - name: Install Ghostscript
+        if: matrix.os == 'windows-latest'
+        run: choco install ghostscript --no-progress -y
+      - name: Test ImageMagick PDF input (.NET 10)
+        if: matrix.os == 'windows-latest'
+        run: dotnet test TesseractOCRPdfImageMagick.Tests\TesseractOCRPdfImageMagick.Tests.csproj -c Release

@@ -1,9 +1,9 @@
-# TesseractOCRPdf
+# TesseractOCRPdfSkiaSharp
 
-Optional PDF input for `TesseractOCR.Engine` and `TesseractOCR.EnginePool`.
+Optional PDF input for `TesseractOCR.Engine` and `TesseractOCR.EnginePool`. This package replaces `TesseractOCRPdf` and retains its `TesseractOCRPdf` namespace.
 
 ```powershell
-dotnet add package TesseractOCRPdf
+dotnet add package TesseractOCRPdfSkiaSharp
 dotnet add package TesseractOCR.Languages.English
 ```
 
@@ -50,7 +50,7 @@ Installing only `TesseractOCR` does **not** bring in PDFtoImage, PDFium or SkiaS
 
 ```powershell
 dotnet pack TesseractOCR\TesseractOCR.csproj -c Release -p:GeneratePackageOnBuild=false
-dotnet pack TesseractOCRPdf\TesseractOCRPdf.csproj -c Release
+dotnet pack TesseractOCRPdfSkiaSharp\TesseractOCRPdfSkiaSharp.csproj -c Release -p:GeneratePackageOnBuild=false
 ```
 
 Run PDF regression tests with `dotnet test TesseractOCRPdf.Tests\TesseractOCRPdf.Tests.csproj -c Release`. The test project targets .NET 10; packing the library builds both .NET Framework 4.8 and .NET Standard 2.1 assemblies.

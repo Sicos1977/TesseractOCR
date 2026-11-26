@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net48;netstandard2.1</TargetFrameworks>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <DefineConstants>$(DefineConstants);IMAGEMAGICK</DefineConstants>
+    <PackageId>TesseractOCRPdfImageMagick</PackageId>
+    <Version>5.5.4</Version>
+    <Authors>Kees van Spelde</Authors>
+    <Description>Optional PDF OCR extensions for TesseractOCR Engine and EnginePool, using ImageMagick and Ghostscript.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/Sicos1977/TesseractOCR</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Sicos1977/TesseractOCR</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>Tesseract OCR PDF ImageMagick Ghostscript</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>ocr.png</PackageIcon>
+    <PackageReleaseNotes>Adds PDF support for TesseractOCR using ImageMagick</PackageReleaseNotes>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TesseractOCR\TesseractOCR.csproj" />
+    <PackageReference Include="Magick.NET-Q8-AnyCPU" Version="14.17.2" />
+    <Compile Include="..\TesseractOCRPdfSkiaSharp\PdfExtensions.cs" Link="PdfExtensions.cs" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+    <None Include="..\TesseractOCR\ocr.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

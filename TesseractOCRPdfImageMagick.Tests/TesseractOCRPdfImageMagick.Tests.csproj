@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Tesseract.Tests</RootNamespace>
+    <DefineConstants>$(DefineConstants);IMAGEMAGICK</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.12.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="4.5.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="4.5.3" />
+    <ProjectReference Include="..\TesseractOCRPdfImageMagick\TesseractOCRPdfImageMagick.csproj" />
+    <PackageReference Include="PDFtoImage" Version="5.4.0" />
+    <Compile Include="..\TesseractOCRPdf.Tests\PdfTests.cs" Link="PdfTests.cs" />
+    <None Include="..\TesseractOCR.Tests\tessdata\eng.traineddata" Link="tessdata\eng.traineddata" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>
